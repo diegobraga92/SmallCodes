@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package simple;
+
+service TodoService {
+  rpc AddTodo(AddTodoRequest) returns (Todo);
+  rpc GetTodos(GetTodosRequest) returns (stream Todo);
+  rpc CompleteTodo(CompleteTodoRequest) returns (Todo);
+}
+
+message Todo {
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  bool completed = 4;
+  string created_at = 5;
+}
+
+message AddTodoRequest {
+  string title = 1;
+  string description = 2;
+}
+
+message GetTodosRequest {
+  bool show_completed = 1;
+}
+
+message CompleteTodoRequest {
+  string todo_id = 1;
+}

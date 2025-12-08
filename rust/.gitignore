@@ -1,0 +1,9 @@
+# Ignore targets
+/**/target/*
+
+# Ignore binaries
+*.exe
+*.pdb
+
+# Ignore lock files
+*.lock

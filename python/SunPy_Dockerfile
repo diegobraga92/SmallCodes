@@ -1,0 +1,22 @@
+FROM python:3.12-slim
+
+SHELL ["/bin/bash", "-c"]
+
+RUN apt-get update && apt-get install -y build-essential wget git wget
+
+RUN wget -O Miniforge3.sh "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh" && \
+    bash Miniforge3.sh -b -p "${HOME}/conda" && \
+    source "${HOME}/conda/etc/profile.d/conda.sh" && \
+    source "${HOME}/conda/etc/profile.d/mamba.sh" && \
+    conda create -n sunpy-dev pip && \
+    conda activate sunpy-dev
+
+RUN git config --global http.version HTTP/1.1 && \
+    git config --global http.postBuffer 1048576000
+
+RUN git clone https://github.com/sunpy/sunpy.git sunpy-git && \
+    cd sunpy-git && \
+    git checkout a1a081a
+
+WORKDIR /sunpy-git
+RUN pip install -e ".[dev]"
