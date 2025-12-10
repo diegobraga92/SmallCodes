@@ -1,0 +1,116 @@
+# ----------------------------------------
+# Python cache / compiled files
+# ----------------------------------------
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pym
+*.pdm
+*.pkl
+*.pyo
+*$py.class
+
+# C extensions
+*.so
+
+# ----------------------------------------
+# Virtual Environments
+# ----------------------------------------
+env/
+venv/
+.venv/
+ENV/
+env.bak/
+venv.bak/
+
+# ----------------------------------------
+# Distribution / packaging
+# ----------------------------------------
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# PyInstaller
+*.manifest
+*.spec
+
+# ----------------------------------------
+# Unit test / coverage
+# ----------------------------------------
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+pytest_cache/
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+.pyre/
+
+# ----------------------------------------
+# Jupyter Notebook
+# ----------------------------------------
+.ipynb_checkpoints
+
+# ----------------------------------------
+# Pycharm / VSCode / IDEs
+# ----------------------------------------
+.idea/
+.vscode/
+*.code-workspace
+
+# ----------------------------------------
+# Logs and local data
+# ----------------------------------------
+*.log
+*.sqlite3
+*.db
+
+# ----------------------------------------
+# dotenv / local settings
+# ----------------------------------------
+.env
+.env.*
+*.env
+*.ini
+*.local
+
+# ----------------------------------------
+# Django / Flask specific
+# ----------------------------------------
+# Django
+staticfiles/
+media/
+
+# Flask
+instance/
+.webassets-cache
+
+# ----------------------------------------
+# MyPy
+# ----------------------------------------
+.mypy_cache/
+
+# ----------------------------------------
+# Mac OS / Windows
+# ----------------------------------------
+.DS_Store
+Thumbs.db
