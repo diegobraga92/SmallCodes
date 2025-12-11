@@ -1,0 +1,46 @@
+// Request Body Example
+{
+  "user": {
+    "name": "John Doe",
+    "email": "john@example.com"
+  }
+}
+
+// Response Body Example (Standardized)
+{
+  "data": {
+    "id": "123",
+    "type": "users",
+    "attributes": {
+      "name": "John Doe",
+      "email": "john@example.com"
+    },
+    "links": {
+      "self": "/users/123"
+    }
+  },
+  "meta": {
+    "timestamp": "2024-01-15T10:30:00Z"
+  },
+  "links": {
+    "self": "/users/123",
+    "related": {
+      "orders": "/users/123/orders"
+    }
+  }
+}
+
+// Error Response
+{
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid email format",
+    "details": [
+      {
+        "field": "email",
+        "message": "Must be a valid email address"
+      }
+    ],
+    "request_id": "req_123456"
+  }
+}
