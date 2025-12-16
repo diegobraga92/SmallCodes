@@ -18,7 +18,7 @@ let x = 5;
 let y = x;          // Copy: both x and y are valid
 println!("{} {}", x, y);  // OK
 // Rule of thumb: Heap data → move. Small, fixed-size data → copy
-
+// Copy: Should be implemented for types that are: Small, Cheap to copy, Don't own heap data. Don't need custom cleanup (Drop trait)
 
 
 //// Borrowing (&T, &mut T)
@@ -54,18 +54,36 @@ impl SomeStruct {
 fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {
     if x.len() > y.len() { x } else { y }
 }
+// Struct with lifetime parameter
+struct Excerpt<'a> {
+    part: &'a str,
+}
 
+impl<'a> Excerpt<'a> {
+    fn new(text: &'a str) -> Self {
+        let first_sentence = text.split('.').next().unwrap();
+        Excerpt { part: first_sentence }
+    }
+    
+    fn get_part(&self) -> &str {
+        self.part
+    }
+}
+// Static Lifetime ('static)
+// 'static lives for entire program duration
+let s: &'static str = "I live forever";
+static NUM: i32 = 42;  // Static variable
 
+// Functions can return 'static
+fn get_static() -> &'static str {
+    "hello"
+}
 
-//// Stack vs Heap
-// Stack Allocation: Fast (just moves stack pointer), Fixed size, known at compile time, Automatic cleanup (pop off stack), Local variables, function arguments
-let x = 5;           // Stack allocated
-let y = [0u8; 1024]; // Stack allocated (fixed-size array)
-
-// Heap Allocation: Slower (requires allocation), Dynamic size, unknown at compile time, Manual or RAII-based cleanup, Box<T>, Vec<T>, String, etc.
-let boxed = Box::new(5);        // Heap allocated integer
-let vector = vec![1, 2, 3];     // Heap allocated vector
-let string = String::from("hi"); // Heap allocated string
+// But be careful - not everything is static
+fn not_static(s: String) -> &'static str {
+    // &s  // ERROR: s doesn't live long enough
+    Box::leak(s.into_boxed_str())  // Dangerous!
+}
 
 
 
@@ -93,3 +111,42 @@ fn main() {
 let res = Resource { name: String::from("test") };
 // res.drop();  // ERROR: explicit destructor calls not allowed
 drop(res);      // OK: std::mem::drop takes ownership
+
+
+
+//// Lifetime Variance and Subtyping, when a lifetime can be substituted by another
+/// Four Variance Types:
+/// Covariant ('long can be used where 'short is expected): &'a T or Box<T>
+/// Contravariant ('short can be used where 'long is expected): fn(T)
+/// Invariant (exact match required): &'a mut T
+/// Bivariant (any lifetime works) - rare in Rust
+// &'a T is covariant over 'a and T
+fn covariant_example<'long: 'short, 'short>() {
+    let long: &'long str = "hello";
+    let short: &'short str = long;  // OK: covariance
+    
+    // &'a mut T is covariant over 'a but invariant over T
+    let mut x = 5;
+    let long_mut: &'long mut i32 = &mut x;
+    // let short_mut: &'short mut i32 = long_mut;  // Would be OK for 'a
+}
+
+// Function pointers have complex variance
+type FnPtr = fn(&str) -> &str;
+
+// Subtyping, a 'bigger' lifetime type can be used where a shorter is expected: &'long T  →  &'short T  (allowed)
+// 'long is a subtype of 'short when 'long: 'short (lives at least as long)
+fn subtyping<'long: 'short, 'short>(long: &'long str) -> &'short str {
+    long  // OK: can use longer lifetime where shorter is expected
+}
+
+struct Container<'a> {
+    data: &'a str,
+}
+
+fn use_container<'long: 'short, 'short>(
+    long: Container<'long>
+) -> Container<'short> {
+    // Container<'long> is a subtype of Container<'short>
+    long
+}
