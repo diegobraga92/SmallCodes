@@ -68,7 +68,6 @@ let world = &s[6..11];
 // Vec<T> → growable, [T; N] → fixed, &[T] → borrowed view
 
 
-
 //// Structs
 // Classic
 struct User {
@@ -102,7 +101,6 @@ let user2 = User {
     name: "Alice".into(),
     ..user1 // This line basically says "Take all remaining fields from user1". Always come last
 };
-
 
 
 //// Enums and match

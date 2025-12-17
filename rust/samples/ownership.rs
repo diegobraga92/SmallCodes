@@ -20,6 +20,19 @@ println!("{} {}", x, y);  // OK
 // Rule of thumb: Heap data → move. Small, fixed-size data → copy
 // Copy: Should be implemented for types that are: Small, Cheap to copy, Don't own heap data. Don't need custom cleanup (Drop trait)
 
+/// Partial Moves can happen when part of a struct/tuple is moved, leaving the original invalid
+struct Bag { item: String, count: u32 }
+
+let b = Bag { item: String::from("rust"), count: 10 };
+let moved_item = b.item; // Moves `item` out of `b`.
+// println!("{}", b.item); // ❌ ERROR: `b.item` has been moved.
+println!("{}", b.count);   // ✅ OK: `b.count` is still accessible.
+// let b2 = b;            // ❌ ERROR: trying to move whole `b`, but it's partially invalid.
+
+/// Clone is an explicit duplication, uses Clone Trait. Can be expensive for large/heap data
+let b = a.clone();
+
+
 
 //// Borrowing (&T, &mut T)
 // Immutable Borrows (&T), allow multiple readers, no mutation allowed
@@ -34,6 +47,27 @@ let r1 = &mut s;    // OK: mutable borrow
 // let r2 = &mut s; // ERROR: second mutable borrow
 // let r3 = &s;     // ERROR: immutable borrow during mutable borrow
 // Either multiple immutable references OR one mutable reference, References must always be valid (dangling references prevented)
+
+// Edge cases:
+struct Point { x: i32, y: i32 }
+let mut p = Point { x: 0, y: 0 };
+let x_ref = &mut p.x; // Mutable borrow of `p.x`
+// p.y = 1;           // ✅ OK: `y` is a separate field.
+// let p2 = p;        // ❌ ERROR: cannot move `p` while `x_ref` is alive.
+println!("{}", x_ref);
+
+/// Reborrowing Rules, when a reference is created from another reference.
+// Mutable Reborrowing
+let mut x = 10;
+let r1 = &mut x;
+
+let r2 = &mut *r1; // reborrow
+*r2 += 1;
+// r1 is unusable while r2 exists
+// Immutable can be taken from Mutable or another Immutable (&'a T), Mutable can only be taken from Mutable
+
+
+
 
 
 
@@ -69,7 +103,8 @@ impl<'a> Excerpt<'a> {
         self.part
     }
 }
-// Static Lifetime ('static)
+
+/// Static Lifetime ('static)
 // 'static lives for entire program duration
 let s: &'static str = "I live forever";
 static NUM: i32 = 42;  // Static variable
@@ -83,6 +118,32 @@ fn get_static() -> &'static str {
 fn not_static(s: String) -> &'static str {
     // &s  // ERROR: s doesn't live long enough
     Box::leak(s.into_boxed_str())  // Dangerous!
+}
+
+/// Non-Lexical Lifetimes (NLL), is the borrow checker's feature to make lifetime analysis scope-based, rather than block-based (lexical), since 2018
+let mut x = 5;
+let r = &x;
+println!("{}", r); // last use of r
+x += 1;            // ✅ now allowed
+
+
+/// Higher-Rank Trait Bounds (HRTBs), HRTBs allow a function or trait to be generic over all lifetimes, not just one. 
+// Without HRTB - won't compile for closures with references
+fn call_with_ref<F>(f: F) 
+where
+    F: Fn(&i32),  // Error: need lifetime parameter
+{
+    let value = 10;
+    f(&value);
+}
+
+// With HRTB - works for any lifetime
+fn call_with_ref<F>(f: F) 
+where
+    F: for<'a> Fn(&'a i32),  // "For all lifetimes 'a..."
+{
+    let value = 10;
+    f(&value);
 }
 
 
@@ -149,4 +210,19 @@ fn use_container<'long: 'short, 'short>(
 ) -> Container<'short> {
     // Container<'long> is a subtype of Container<'short>
     long
+}
+
+
+
+//// Self-Referential Structs (and Why They’re Hard)
+struct SelfRef {
+    data: String,
+    // Can't do this: reference into own field
+    // pointer: &str,  
+}
+
+// Not allowed too
+struct Bad<'a> {
+    data: String,
+    slice: &'a str,
 }
