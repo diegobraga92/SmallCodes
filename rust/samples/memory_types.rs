@@ -210,53 +210,6 @@ if result.is_err() {
 
 
 // RwLock<T>, Read-Write Lock, Multiple reader OR one writer, better for heavy IO
-use std::sync::Mutex;
-use std::thread;
-
-// Thread-safe interior mutability
-let counter = Mutex::new(0);
-
-let mut handles = vec![];
-
-for _ in 0..10 {
-    let counter = Mutex::clone(&counter);
-    let handle = thread::spawn(move || {
-        let mut num = counter.lock().unwrap();  // Returns MutexGuard
-        *num += 1;
-    });
-    handles.push(handle);
-}
-
-for handle in handles {
-    handle.join().unwrap();
-}
-
-println!("Result: {}", *counter.lock().unwrap());  // 10
-
-// Poisoning: If a thread panics while holding lock
-let mutex = Mutex::new(42);
-
-let result = std::panic::catch_unwind(|| {
-    let mut data = mutex.lock().unwrap();
-    *data = 100;
-    panic!("Oops!");
-});
-
-if result.is_err() {
-    // Mutex is poisoned
-    match mutex.lock() {
-        Ok(guard) => println!("Not poisoned: {}", *guard),
-        Err(poisoned) => {
-            let guard = poisoned.into_inner();
-            println!("Recovered from poison: {}", *guard);
-        }
-    }
-}
-
-// When to use Mutex:
-// 1. Shared mutable state across threads
-// 2. When you need exclusive write access
-// 3. Simpler than RwLock but less concurrent
 
 
 

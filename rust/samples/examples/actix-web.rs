@@ -14,6 +14,9 @@ async fn index(data: web::Data<AppState>) -> impl Responder {
     HttpResponse::Ok().body(format!("Request count: {}", counter))
 }
 
+
+
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     std::env::set_var("RUST_LOG", "actix_web=info");
@@ -72,6 +75,15 @@ struct User {
 #[get("/users/{id}")]
 async fn get_user(path: web::Path<u64>) -> impl Responder {
     let user_id = path.into_inner();
+
+    if (30..=50).contains(&user_id) {
+        return HttpResponse::BadRequest().json(
+            serde_json::json!({
+                "error": "User ID between 30 and 50 is not allowed"
+            })
+        );
+    }
+
     HttpResponse::Ok().json(User {
         id: user_id,
         name: "John".to_string(),

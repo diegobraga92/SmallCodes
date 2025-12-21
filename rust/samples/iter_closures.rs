@@ -73,6 +73,7 @@ let doubled_alt = numbers.iter().map(|&x| x * 2).collect::<Vec<i32>>();
 let (even, odd): (Vec<i32>, Vec<i32>) = numbers.iter()
     .partition(|&&x| x % 2 == 0);  // ([2, 4], [1, 3, 5])
 
+
 // fold - accumulate values with initial accumulator
 let sum = numbers.iter().fold(0, |acc, &x| acc + x);  // 15
 let product = numbers.iter().fold(1, |acc, &x| acc * x);  // 120

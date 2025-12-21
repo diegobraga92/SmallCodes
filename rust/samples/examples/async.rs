@@ -14,6 +14,7 @@ async fn async_download() -> Result<String, Error> {
 
 /// async fn returns a Future<Output = Result<String, Error>>, not the actual result. The .await is where the magic happens.
 
+
 /// Futures & The Future Trait
 pub trait Future {
     type Output;

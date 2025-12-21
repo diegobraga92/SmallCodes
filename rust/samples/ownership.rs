@@ -84,6 +84,7 @@ impl SomeStruct {
     fn method(&self) -> &i32  // fn method<'a>(&'a self) -> &'a i32
 }
 
+
 // When Elision Rules do not apply, then Explicit Lifetimes are needed:
 fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {
     if x.len() > y.len() { x } else { y }
