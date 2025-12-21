@@ -1,0 +1,11 @@
+# Although required to use 1.22, the specified commit requires go 1.23. Added more info in the form
+FROM golang:1.23-alpine
+
+RUN apk add git
+WORKDIR /src
+
+RUN git clone https://github.com/alanprot/grpc-go.git grpc-go
+WORKDIR /src/grpc-go
+RUN git checkout d09c515
+
+RUN go mod download
