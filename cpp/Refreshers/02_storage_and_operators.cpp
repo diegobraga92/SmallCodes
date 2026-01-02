@@ -695,6 +695,99 @@ int main() {
     return 0;
 }
 
+// ============ 4. CONSTEXPR ============
+
+constexpr int factorial(int n) {
+    return (n <= 1) ? 1 : n * factorial(n - 1);
+}
+
+constexpr int fibonacci(int n) {
+    if (n <= 1) return n;
+    return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+template<typename T>
+constexpr auto get_type_name() {
+    if constexpr (std::is_integral_v<T>) {
+        return "integral";
+    } else if constexpr (std::is_floating_point_v<T>) {
+        return "floating";
+    } else {
+        return "other";
+    }
+}
+
+void demonstrate_constexpr() {
+    std::cout << "============ CONSTEXPR ============\n" << std::endl;
+    
+    // ============ constexpr Variables ============
+    std::cout << "=== constexpr Variables ===" << std::endl;
+    
+    constexpr int max_size = 100;           // Compile-time constant
+    constexpr int fact5 = factorial(5);     // Computed at compile-time
+    constexpr int fib10 = fibonacci(10);    // Computed at compile-time
+    
+    std::cout << "factorial(5) = " << fact5 << std::endl;
+    std::cout << "fibonacci(10) = " << fib10 << std::endl;
+    
+    // Can be used where constants are required
+    int array[fact5];  // Array size known at compile-time
+    std::cout << "Array size: " << sizeof(array)/sizeof(array[0]) << std::endl;
+    
+    // ============ constexpr Functions ============
+    std::cout << "\n=== constexpr Functions ===" << std::endl;
+    
+    // Can be used at compile-time or runtime
+    int runtime_n = 10;
+    int runtime_result = factorial(runtime_n);  // Evaluated at runtime
+    
+    std::cout << "factorial(10) at runtime: " << runtime_result << std::endl;
+    
+    // ============ constexpr if (C++17) ============
+    std::cout << "\n=== constexpr if (C++17) ===" << std::endl;
+    std::cout << "Condition evaluated at compile-time, unused branches discarded\n" << std::endl;
+    
+    std::cout << "Type of int: " << get_type_name<int>() << std::endl;
+    std::cout << "Type of double: " << get_type_name<double>() << std::endl;
+    std::cout << "Type of std::string: " << get_type_name<std::string>() << std::endl;
+    
+    // Example: Compile-time recursion depth limit
+    template<int N>
+    constexpr int sum() {
+        if constexpr (N > 0) {
+            return N + sum<N-1>();
+        } else {
+            return 0;
+        }
+    }
+    
+    std::cout << "sum<10>() = " << sum<10>() << std::endl;
+    
+    // ============ constexpr in C++20 ============
+    std::cout << "\n=== constexpr in C++20 ===" << std::endl;
+    
+    // C++20 allows more in constexpr:
+    // - Virtual functions
+    // - try-catch (but not throw)
+    // - Dynamic memory allocation (with restrictions)
+    // - Changing union active members
+    
+    // Example: constexpr vector (C++20)
+    #if __cplusplus >= 202002L
+    /*
+    constexpr std::vector<int> create_vector() {
+        std::vector<int> vec;
+        vec.push_back(1);
+        vec.push_back(2);
+        vec.push_back(3);
+        return vec;
+    }
+    
+    constexpr auto vec = create_vector();
+    */
+    #endif
+}
+
 ////////* CASTING *////////
 
 #include <iostream>

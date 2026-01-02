@@ -967,3 +967,109 @@ int main() {
     
     return 0;
 }
+
+// ============ LAMBDA EXPRESSIONS & IIFE ============
+
+void demonstrate_lambdas_iife() {
+    std::cout << "============ LAMBDAS & IIFE ============\n" << std::endl;
+    
+    // ============ Lambda Features ============
+    std::cout << "=== Lambda Features ===" << std::endl;
+    
+    // Basic lambda
+    auto add = [](int a, int b) { return a + b; };
+    std::cout << "add(3, 4) = " << add(3, 4) << std::endl;
+    
+    // With capture
+    int x = 10;
+    auto add_x = [x](int y) { return x + y; };
+    std::cout << "add_x(5) = " << add_x(5) << std::endl;
+    
+    // Generic lambda (C++14)
+    auto generic_add = [](auto a, auto b) { return a + b; };
+    std::cout << "generic_add(3, 4.5) = " << generic_add(3, 4.5) << std::endl;
+    
+    // Mutable lambda
+    auto counter = [count = 0]() mutable {
+        return ++count;
+    };
+    std::cout << "Counter: " << counter() << ", " << counter() << std::endl;
+    
+    // ============ IIFE (Immediately Invoked Function Expression) ============
+    std::cout << "\n=== IIFE Pattern ===" << std::endl;
+    std::cout << "Define and invoke lambda immediately\n" << std::endl;
+    
+    // Basic IIFE
+    int result = [](int a, int b) {
+        return a * a + b * b;
+    }(3, 4);
+    
+    std::cout << "3² + 4² = " << result << std::endl;
+    
+    // IIFE for complex initialization
+    std::string message = [](const std::string& name) {
+        return "Hello, " + name + "!";
+    }("World");
+    
+    std::cout << "Message: " << message << std::endl;
+    
+    // IIFE for scope control
+    auto complex_object = [&]() -> std::vector<int> {
+        std::vector<int> vec;
+        for (int i = 0; i < 10; ++i) {
+            if (i % 2 == 0) {
+                vec.push_back(i * i);
+            }
+        }
+        return vec;
+    }();
+    
+    std::cout << "Complex object size: " << complex_object.size() << std::endl;
+    
+    // ============ Use Cases for IIFE ============
+    std::cout << "\n=== IIFE Use Cases ===" << std::endl;
+    
+    std::cout << "1. Complex initialization:" << std::endl;
+    auto config = []() {
+        struct Config {
+            int timeout;
+            std::string host;
+            bool debug;
+        };
+        Config c;
+        c.timeout = 1000;
+        c.host = "localhost";
+        c.debug = true;
+        return c;
+    }();
+    
+    std::cout << "Config host: " << config.host << std::endl;
+    
+    std::cout << "\n2. Avoiding temporary variables:" << std::endl;
+    // Instead of:
+    // auto temp = some_complex_calculation();
+    // use_result(temp);
+    
+    // Use:
+    // use_result([](){ return some_complex_calculation(); }());
+    
+    std::cout << "\n3. Limiting scope of helper variables:" << std::endl;
+    {
+        // Helper variables don't pollute outer scope
+        auto processed = [](const std::string& input) {
+            std::string temp = input;
+            // Complex processing...
+            return temp + " processed";
+        }("input");
+        std::cout << "Processed: " << processed << std::endl;
+    }
+    // temp is not accessible here
+    
+    std::cout << "\n4. One-time initialization:" << std::endl;
+    static auto init_value = []() {
+        std::cout << "Initializing once..." << std::endl;
+        return 42;
+    }();
+    
+    std::cout << "Init value: " << init_value << std::endl;
+}

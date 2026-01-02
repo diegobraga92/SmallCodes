@@ -454,3 +454,177 @@ int main() {
     demonstrate_nullptr();
     return 0;
 }
+
+
+////////* const T* vs T* const *////////
+
+#include <iostream>
+
+void pointer_constness() {
+    int value = 10;
+    int another = 20;
+    
+    // const T* - Pointer to constant data
+    // The data pointed to cannot be modified through this pointer
+    const int* ptrToConst = &value;
+    // *ptrToConst = 30;  // ERROR: Can't modify const data
+    ptrToConst = &another;  // OK: Can change where pointer points
+    
+    // T* const - Constant pointer
+    // The pointer itself cannot point to different memory
+    int* const constPtr = &value;
+    *constPtr = 30;      // OK: Can modify the data
+    // constPtr = &another; // ERROR: Can't change pointer address
+    
+    // const T* const - Constant pointer to constant data
+    const int* const constPtrToConst = &value;
+    // *constPtrToConst = 40;  // ERROR: Can't modify data
+    // constPtrToConst = &another; // ERROR: Can't change pointer
+}
+
+////////* Stack vs Heap *////////
+
+#include <iostream>
+
+class Example {
+public:
+    Example() { std::cout << "Example constructed\n"; }
+    ~Example() { std::cout << "Example destroyed\n"; }
+    void show() { std::cout << "Example at work\n"; }
+};
+
+void stack_vs_heap() {
+    // Stack allocation - automatic lifetime
+    // Memory allocated when function is called, freed when function returns
+    Example stackObj;  // Constructor called here
+    stackObj.show();   // Use the object
+    
+    // Stack object automatically destroyed when function scope ends
+    // Destructor automatically called
+    
+    // Heap allocation - manual lifetime
+    // Memory persists until explicitly freed
+    Example* heapObj = new Example();  // Explicit allocation
+    heapObj->show();   // Use through pointer
+    
+    delete heapObj;    // MUST explicitly delete
+    // Forgetting delete causes memory leak
+}
+
+////////* new/delete vs malloc/free *////////
+
+#include <cstdlib>  // for malloc/free
+#include <iostream>
+
+class MyClass {
+public:
+    MyClass() { std::cout << "MyClass constructor\n"; }
+    ~MyClass() { std::cout << "MyClass destructor\n"; }
+    void method() { std::cout << "Method called\n"; }
+};
+
+void new_vs_malloc() {
+    // malloc/free - C style, no constructor/destructor calls
+    MyClass* cStyle = static_cast<MyClass*>(malloc(sizeof(MyClass)));
+    // Constructor NOT called!
+    // cStyle->method();  // DANGEROUS: Object not properly constructed
+    free(cStyle);  // Destructor NOT called!
+    
+    // new/delete - C++ style, proper constructor/destructor calls
+    MyClass* cppStyle = new MyClass();  // Constructor called
+    cppStyle->method();  // Safe: Object properly constructed
+    delete cppStyle;     // Destructor called
+    
+    // Operator new/delete overloading
+    class CustomAlloc {
+    public:
+        // Custom allocation
+        static void* operator new(size_t size) {
+            std::cout << "Custom new, size: " << size << "\n";
+            return malloc(size);
+        }
+        
+        // Custom deallocation
+        static void operator delete(void* ptr) {
+            std::cout << "Custom delete\n";
+            free(ptr);
+        }
+        
+        // Array versions
+        static void* operator new[](size_t size) {
+            std::cout << "Custom new[], size: " << size << "\n";
+            return malloc(size);
+        }
+        
+        static void operator delete[](void* ptr) {
+            std::cout << "Custom delete[]\n";
+            free(ptr);
+        }
+    };
+    
+    CustomAlloc* custom = new CustomAlloc();
+    delete custom;
+    
+    CustomAlloc* array = new CustomAlloc[3];
+    delete[] array;
+}
+
+////////* new/delete vs new[]/delete[] *////////
+
+#include <iostream>
+
+void array_allocation() {
+    // Single object allocation
+    int* single = new int(42);  // Initializes with 42
+    std::cout << "Single: " << *single << "\n";
+    delete single;  // Use delete for single objects
+    
+    // Array allocation
+    int* array = new int[5];  // Allocates array of 5 ints
+    for (int i = 0; i < 5; ++i) {
+        array[i] = i * 10;
+    }
+    
+    // CRITICAL: Must use matching form
+    delete[] array;  // Use delete[] for arrays
+    
+    // Mismatch causes undefined behavior:
+    // delete array;    // WRONG for new[] allocation
+    // delete[] single; // WRONG for new allocation
+    
+    // Array with initialization (C++11)
+    int* initialized = new int[5]{1, 2, 3, 4, 5};
+    delete[] initialized;
+}
+
+
+////////* Memory Alignment *////////
+
+#include <iostream>
+#include <type_traits>
+
+struct alignas(16) AlignedStruct {
+    char c;      // 1 byte
+    double d;    // 8 bytes
+    int i;       // 4 bytes
+    // Compiler adds padding for 16-byte alignment
+};
+
+void memory_alignment() {
+    // alignof - get alignment requirement
+    std::cout << "alignof(char): " << alignof(char) << "\n";
+    std::cout << "alignof(double): " << alignof(double) << "\n";
+    std::cout << "alignof(AlignedStruct): " 
+              << alignof(AlignedStruct) << "\n";
+    
+    // alignas - specify alignment
+    alignas(32) char buffer[256];  // 32-byte aligned buffer
+    
+    // std::aligned_storage - type with specific alignment
+    using AlignedType = std::aligned_storage<sizeof(AlignedStruct),
+                                             alignof(AlignedStruct)>::type;
+    
+    AlignedType storage;
+    AlignedStruct* ptr = new (&storage) AlignedStruct();
+    ptr->~AlignedStruct();  // Manual destructor call for placement new
+}
