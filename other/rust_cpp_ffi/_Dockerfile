@@ -1,0 +1,65 @@
+# ============================================================
+# Stage 1: Builder
+# ============================================================
+FROM rust:1.75-slim AS builder
+
+# Install system dependencies (only in builder)
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    pkg-config \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create app directory
+WORKDIR /app
+
+# ------------------------------------------------------------
+# Dependency caching layer
+# ------------------------------------------------------------
+# Copy only manifests first so dependencies are cached
+COPY Cargo.toml Cargo.lock ./
+
+# Create a fake src/main.rs so cargo build works
+RUN mkdir src && echo "fn main() {}" > src/main.rs
+
+# Build dependencies only (cached unless Cargo.toml changes)
+RUN cargo build --release
+
+# ------------------------------------------------------------
+# Build application
+# ------------------------------------------------------------
+# Copy real source code
+COPY src ./src
+
+# Build final optimized binary
+RUN cargo build --release
+
+# ============================================================
+# Stage 2: Runtime
+# ============================================================
+FROM debian:bookworm-slim AS runtime
+
+# Install runtime dependencies only
+RUN apt-get update && apt-get install -y \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create non-root user
+RUN useradd -m appuser
+
+WORKDIR /app
+
+# Copy binary from builder
+COPY --from=builder /app/target/release/myapp /usr/local/bin/myapp
+
+# Change ownership
+RUN chown appuser:appuser /usr/local/bin/myapp
+
+# Drop root
+USER appuser
+
+# Expose port (if applicable)
+EXPOSE 8080
+
+# Run binary
+ENTRYPOINT ["myapp"]
