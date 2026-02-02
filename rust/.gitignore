@@ -1,9 +1,51 @@
-# Ignore targets
-/**/target/*
+# ======================
+# Rust / Cargo
+# ======================
+target/
+**/*.rs.bk
 
-# Ignore binaries
-*.exe
-*.pdb
+# Cargo.lock
+# Include Cargo.lock for binaries, ignore for libraries if you prefer
+# Uncomment the next line if this is a library crate
+# Cargo.lock
 
-# Ignore lock files
-*.lock
+# ======================
+# IDEs & Editors
+# ======================
+.idea/
+.vscode/
+*.code-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*#
+.#*
+
+# ======================
+# OS files
+# ======================
+.DS_Store
+Thumbs.db
+
+# ======================
+# Build & profiling output
+# ======================
+perf.data
+perf.data.old
+flamegraph.svg
+
+# ======================
+# Rustfmt / Clippy
+# ======================
+rustfmt.toml.bk
+
+# ======================
+# Coverage
+# ======================
+coverage/
+*.profraw
+*.profdata
