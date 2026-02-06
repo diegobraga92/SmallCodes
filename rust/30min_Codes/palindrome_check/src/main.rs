@@ -1,13 +1,19 @@
 // Palindrome Check  Check if a string is a palindrome (ignore case/non-alphanumeric optional extension).
 
 fn pal_check(s: &str) -> bool {
-    let clean_s: Vec<char> = s
+    // Use lazy iterators to avoid allocation
+    let mut left = s
+        .chars()
+        .filter(|c| c.is_alphanumeric())
+        .map(|c| c.to_ascii_lowercase());
+
+    let mut right = s
         .chars()
         .filter(|c| c.is_alphanumeric())
         .map(|c| c.to_ascii_lowercase())
-        .collect();
+        .rev();
 
-    clean_s.iter().eq(clean_s.iter().rev())
+    left.by_ref().zip(right).all(|(a, b)| a == b)
 }
 
 fn main() {
