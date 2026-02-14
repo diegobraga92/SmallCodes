@@ -1,0 +1,414 @@
+========================================================
+🚀 Senior C++ 30-Minute Interview Challenges
+========================================================
+
+Goal: Train for senior-level interviews — not syntax drills.
+
+These exercises force:
+- API design decisions
+- RAII correctness
+- Value vs reference semantics
+- Concurrency correctness
+- Exception safety
+- STL fluency
+- Tradeoff discussion
+- Clean abstractions
+
+Each is scoped for ~30 minutes but rich in senior signal.
+
+
+========================================================
+🔥 HOW TO PRACTICE (IMPORTANT)
+========================================================
+
+For each 30-minute session:
+
+1. Spend 5 minutes designing API first
+2. Write clean, modern C++ (C++17+ minimum)
+3. Add minimal unit tests (or test main)
+4. Explain tradeoffs aloud:
+   - Why this container?
+   - Why this synchronization?
+   - Exception safety level?
+   - Strong/Basic/No-throw guarantee?
+5. Explain how you'd productionize it.
+
+That last step is what separates senior from mid-level.
+
+
+========================================================
+CORE SYSTEM DESIGN IN MINIATURE
+========================================================
+
+1. In-Memory Key-Value Store
+--------------------------------------------------------
+Design:
+
+class KvStore {
+public:
+    void set(std::string key, std::string value);
+    std::optional<std::string> get(std::string_view key) const;
+    bool erase(std::string_view key);
+};
+
+Senior signal:
+- std::string vs std::string_view
+- const correctness
+- API clarity
+- Complexity discussion
+
+Extension: Add TTL support.
+
+
+2. Thread-Safe Counter
+--------------------------------------------------------
+Implement:
+
+class Counter {
+public:
+    void increment();
+    size_t value() const;
+};
+
+Spawn multiple threads incrementing it.
+
+Senior signal:
+- std::mutex vs std::atomic<size_t>
+- False sharing discussion
+- Memory ordering basics
+
+
+3. LRU Cache
+--------------------------------------------------------
+Fixed capacity cache with:
+
+- get(key)
+- put(key, value)
+
+Senior signal:
+- std::unordered_map + std::list
+- Iterator stability
+- O(1) guarantees
+- Move semantics discussion
+
+
+4. Token Bucket Rate Limiter
+--------------------------------------------------------
+Implement allow() that respects rate limits.
+
+Senior signal:
+- std::chrono
+- Time measurement precision
+- Thread safety considerations
+
+
+5. Thread Pool
+--------------------------------------------------------
+Design:
+
+class ThreadPool {
+public:
+    explicit ThreadPool(size_t n);
+    ~ThreadPool();
+    template<class F>
+    void enqueue(F&& task);
+};
+
+Senior signal:
+- Condition variables
+- Graceful shutdown
+- Exception propagation
+- Work stealing discussion
+
+
+========================================================
+VALUE SEMANTICS & RAII
+========================================================
+
+6. Implement a Small Smart Pointer
+--------------------------------------------------------
+Implement minimal unique_ptr-like type.
+
+Senior signal:
+- Rule of 5
+- Move constructor/assignment
+- Deleted copy semantics
+- Ownership modeling
+
+
+7. Write a RAII File Wrapper
+--------------------------------------------------------
+Wrap FILE* or file descriptor.
+
+Senior signal:
+- Resource acquisition in constructor
+- Destructor correctness
+- Exception safety
+
+
+8. Implement a Scope Guard
+--------------------------------------------------------
+Execute a function on destruction.
+
+Senior signal:
+- Lambda capture
+- Move-only callable
+- noexcept destructor discussion
+
+
+========================================================
+ALGORITHMIC BUT SENIOR-SCOPED
+========================================================
+
+9. Streaming Median
+--------------------------------------------------------
+Maintain median as numbers arrive.
+
+Senior signal:
+- Two heaps
+- Complexity tradeoffs
+- STL priority_queue usage
+
+
+10. Top-K Frequent Elements
+--------------------------------------------------------
+Return top K elements.
+
+Senior signal:
+- Heap vs partial_sort
+- Complexity discussion
+
+
+11. Generic Binary Search (Iterator-Based)
+--------------------------------------------------------
+template<typename It, typename T>
+It binary_search(It begin, It end, const T& value);
+
+Senior signal:
+- Iterator categories
+- Random access vs forward iterator constraints
+
+
+12. Flatten Nested Vector
+--------------------------------------------------------
+std::vector<std::vector<int>> → std::vector<int>
+
+Senior signal:
+- Reserve optimization
+- Move semantics
+- Cache locality discussion
+
+
+========================================================
+DESIGN & ABSTRACTION
+========================================================
+
+13. Plugin System with Interfaces
+--------------------------------------------------------
+struct Plugin {
+    virtual ~Plugin() = default;
+    virtual std::string name() const = 0;
+    virtual void execute() = 0;
+};
+
+Senior signal:
+- Virtual destructors
+- Ownership of plugin instances
+- Factory pattern discussion
+
+
+14. Expression Evaluator
+--------------------------------------------------------
+Parse "3 + 4 * 2"
+
+Senior signal:
+- Separation of parsing and evaluation
+- Error handling strategy
+- std::variant for tokens (C++17+)
+
+
+15. State Machine (Circuit Breaker)
+--------------------------------------------------------
+States:
+- Closed
+- Open
+- HalfOpen
+
+Senior signal:
+- Enum vs class hierarchy
+- Time-based transitions
+- Thread safety implications
+
+
+========================================================
+ERROR HANDLING & SAFETY
+========================================================
+
+16. Safe Division API
+--------------------------------------------------------
+std::expected<double, Error> divide(double a, double b);
+
+Senior signal:
+- std::expected (C++23) or std::optional
+- Exception vs value-based error modeling
+
+
+17. Config Loader
+--------------------------------------------------------
+Parse simple config file into struct.
+
+Senior signal:
+- Exception boundaries
+- Validation vs parsing separation
+
+
+18. Retry Utility
+--------------------------------------------------------
+template<typename F>
+auto retry(F&& f, int attempts);
+
+Senior signal:
+- Perfect forwarding
+- noexcept correctness
+- Backoff discussion
+
+
+========================================================
+CONCURRENCY & SYNCHRONIZATION
+========================================================
+
+19. Bounded Blocking Queue
+--------------------------------------------------------
+push()
+pop()
+
+Senior signal:
+- std::condition_variable
+- Spurious wakeups
+- Shutdown signaling
+
+
+20. Producer–Consumer System
+--------------------------------------------------------
+One producer, multiple consumers.
+
+Senior signal:
+- Data race avoidance
+- Graceful shutdown
+- Performance tradeoffs
+
+
+21. Lock-Free Stack (Simplified)
+--------------------------------------------------------
+Using std::atomic<Node*>
+
+Senior signal:
+- ABA problem discussion
+- Memory ordering
+- Why production code is hard
+
+
+========================================================
+MODERN C++ MASTERY
+========================================================
+
+22. Custom Iterator
+--------------------------------------------------------
+Implement iterator for custom container.
+
+Senior signal:
+- Iterator traits
+- STL compatibility
+
+
+23. Implement a Small Vector
+--------------------------------------------------------
+Optimized for small size (like llvm::SmallVector).
+
+Senior signal:
+- Inline storage
+- Alignment issues
+- Move semantics
+
+
+24. Type-Erased Callable (Mini std::function)
+--------------------------------------------------------
+Implement callable wrapper.
+
+Senior signal:
+- Type erasure
+- Virtual dispatch
+- Heap allocation tradeoffs
+
+
+========================================================
+SYSTEMS THINKING IN MINIATURE
+========================================================
+
+25. Metrics Collector
+--------------------------------------------------------
+Counters, gauges.
+
+Senior signal:
+- Thread safety
+- API ergonomics
+- Lock granularity discussion
+
+
+26. Event Bus
+--------------------------------------------------------
+Subscribe / publish system.
+
+Senior signal:
+- Observer pattern
+- Lifetime management
+- Weak_ptr discussion
+
+
+27. Memory Pool Allocator
+--------------------------------------------------------
+Allocate fixed-size blocks.
+
+Senior signal:
+- Fragmentation discussion
+- Custom allocator interface
+
+
+28. Deduplicator with Bounded Memory
+--------------------------------------------------------
+Stream strings, deduplicate.
+
+Senior signal:
+- Bloom filter discussion
+- False positives tradeoff
+
+
+29. Domain Model with Invariants
+--------------------------------------------------------
+Example: BankAccount
+
+- No negative balance
+- Immutable ID
+
+Senior signal:
+- Private constructors
+- Factory methods
+- Invariant enforcement
+
+
+30. Refactor a Bad API
+--------------------------------------------------------
+Given:
+
+std::vector<std::string> process(std::vector<std::string> data);
+
+Refactor into:
+- Clear ownership model
+- Better naming
+- Smaller composable functions
+- Proper error modeling
+
+Senior signal:
+- Clean architecture thinking
+- Value vs reference correctness
+- Exception safety

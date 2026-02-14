@@ -1,214 +1,425 @@
-Rust 30-Minute Coding Interview Practice Problems
+Senior interviews (especially in Rust) expect:
 
-1.  FizzBuzz
-    - Print numbers 1-100, replace multiples of 3 with "Fizz", multiples of 5 with "Buzz", both with "FizzBuzz".
+- Clean API design under time pressure
+- Ownership-aware modeling
+- Trait-based extensibility
+- Error modeling
+- Concurrency correctness
+- Tradeoff articulation
+- Clean testing strategy
+- Incremental refactoring
 
-2.  Reverse a String
-    - Input: &str, Output: String (reversed). Handle UTF-8 correctly.
+========================================================
+🔥 How You Should Practice
+========================================================
 
-3.  Find the Maximum Value in a Slice/Array
-    - Input: &[i32], Output: Option<i32> (handle empty slice).
+For each 30-minute session:
 
-4.  Palindrome Check
-    - Check if a string is a palindrome (ignore case/non-alphanumeric optional extension).
+1. Spend 5 minutes designing the API on paper
+2. Code cleanly
+3. Add 2–3 unit tests
+4. Spend 5 minutes explaining tradeoffs aloud
+5. Identify how you'd productionize it
 
-5.  Fibonacci Sequence
-    - Return nth Fibonacci number (iterative or recursive with memoization).
+This mimics senior interviews far better than pure algorithm grind.
 
-6.  Two Sum
-    - Given slice &[i32] and target i32, return indices of two numbers that add to target (Option<(usize, usize)>).
+========================================================
+🦀 Senior Rust 30-Minute Interview Challenges
+========================================================
 
-7.  Prime Number Check
-    - Determine if a number is prime. Optimize (check up to sqrt(n)).
+Each is scoped to fit ~30 minutes but forces architectural decisions.
 
-8.  Count Vowels in a String
-    - Return count of vowels (a, e, i, o, u) in a given &str.
 
-9.  Integer to Binary String
-    - Convert i32 to a binary String representation (handle negative numbers optional).
+1. In-Memory Key-Value Store
+--------------------------------------------------------
+Implement:
 
-10. Find the Most Frequent Element in a Slice
-    - Input: &[i32], Output: Option<i32> (the mode). Handle ties.
+pub struct KvStore { ... }
 
-11. Remove Duplicates from a Sorted Vector
-    - In-place removal, return new length (like Leetcode problem).
+impl KvStore {
+    pub fn new() -> Self
+    pub fn set(&mut self, key: String, value: String)
+    pub fn get(&self, key: &str) -> Option<&String>
+    pub fn delete(&mut self, key: &str) -> bool
+}
 
-12. Simple Linked List Implementation
-    - Define Node struct with `next: Option<Box<Node>>` and implement push, pop.
+Senior signal:
+- API clarity
+- Borrowing decisions
+- &str vs String ergonomics
+- Testability
 
-13. Balanced Parentheses Check
-    - Check if a string containing only (, ), {, }, [, ] is balanced.
+Extension: Add TTL support.
 
-14. Merge Two Sorted Vectors
-    - Return a new sorted Vec<i32> containing all elements from two sorted input Vecs.
 
-15. Basic HashMap Usage
-    - Count frequency of words in a string, store in HashMap<&str, usize>.
+2. Thread-Safe Counter Service
+--------------------------------------------------------
+Implement a counter shared across threads:
 
-16. Factorial Calculation
-    - Compute n! (iterative and recursive). Handle overflow (use Option or u128).
+pub struct Counter { ... }
 
-17. Find the Missing Number
-    - Given a slice of n-1 numbers from 1..n, find the missing number (use Gauss' formula).
+impl Counter {
+    pub fn inc(&self)
+    pub fn get(&self) -> usize
+}
 
-18. Rotate Array by k Steps
-    - In-place rotation of Vec<i32> by k positions (optimize with reverse method).
+Spawn 10 threads incrementing it.
 
-19. Binary Search
-    - Implement iterative binary search on a sorted slice, return Option<usize> (index).
+Senior signal:
+- Arc
+- Mutex vs AtomicUsize tradeoffs
+- Contention discussion
 
-20. Flatten a Vector of Vectors
-    - Given Vec<Vec<T>>, return a single Vec<T> containing all elements.
 
-21. Find the Longest Common Prefix
-    - Given a Vec<String>, return the longest common prefix String.
+3. Mini LRU Cache (Real Version)
+--------------------------------------------------------
+Capacity-bound LRU:
 
-22. Valid Anagram Check
-    - Determine if two strings are anagrams (use HashMap or sort).
+- get
+- put
+- Evict least recently used
 
-23. First Unique Character in a String
-    - Return index of first non-repeating character (Option<usize>).
+Senior signal:
+- HashMap + VecDeque or LinkedHashMap pattern
+- Complexity discussion
+- API design
 
-24. Sum of Digits
-    - Calculate sum of digits of an integer (e.g., 123 -> 6).
 
-25. Implement a Simple Stack
-    - Use Vec<T> to implement push, pop, peek, is_empty.
+4. Generic Rate Limiter (Token Bucket)
+--------------------------------------------------------
+pub struct RateLimiter { ... }
 
-26. Find the Second Largest Element in a Slice
-    - Return Option<i32> (handle slices with <2 elements).
+pub fn allow(&mut self) -> bool
 
-27. Generate All Substrings of a String
-    - Return Vec<&str> or Vec<String> containing all possible substrings.
+Senior signal:
+- Time handling
+- Instant vs SystemTime
+- Edge cases
+- Deterministic testing discussion
 
-28. Check if a Number is a Power of Two
-    - Use bit manipulation (n & (n-1) == 0 for n > 0).
 
-29. Reverse Words in a String
-    - "hello world" -> "world hello". Handle multiple spaces optional.
+5. Generic Binary Search Tree
+--------------------------------------------------------
+- Insert
+- Contains
+- Inorder traversal iterator
 
-30. Find the K-th Smallest Element
-    - In an unsorted slice, find k-th smallest (sort or use selection algorithm).
+Senior signal:
+- Ownership modeling
+- Option<Box<Node<T>>>
+- Generics with Ord
 
-31. Implement `is_sorted` Function
-    - Check if a slice is sorted in ascending order (return bool).
 
-32. Convert Roman Numeral to Integer
-    - Given a valid Roman numeral string, return its integer value.
+6. Simple Logger
+--------------------------------------------------------
+- Log levels enum
+- Thread-safe
+- Output to stdout
 
-33. Implement a Basic Calculator
-    - Evaluate a simple string like "3+5*2" (only +, -, *, /, no parentheses).
+Senior signal:
+- Enum design
+- Trait implementations
+- API ergonomics
 
-34. Find All Prime Numbers up to N (Sieve of Eratosthenes)
-    - Return Vec<u32> of primes less than n.
 
-35. Depth-First Search on a Graph
-    - Represent graph as adjacency list (Vec<Vec<usize>>), implement DFS traversal.
+7. Mini Thread Pool
+--------------------------------------------------------
+pub struct ThreadPool { ... }
 
+pub fn execute<F>(&self, job: F)
+where
+    F: FnOnce() + Send + 'static
 
+Senior signal:
+- mpsc channels
+- Worker lifecycle
+- Drop handling
 
-    
 
-Rust 30-Minute Coding Interview Practice List
-=============================================
+8. TryFrom<&str> for Domain Type
+--------------------------------------------------------
+Example:
 
-Ownership & Borrowing
----------------------
-1. Reverse a String
-   - Input: String
-   - Output: reversed String
-   - Be careful with UTF-8 (chars vs bytes)
+struct Email(String);
 
-2. First Non-Repeating Character
-   - Use HashMap<char, usize>
+Validate format.
 
-3. Longest Word in a Sentence
-   - Input: &str
-   - Output: &str (not String)
-   - Light lifetime practice
+Senior signal:
+- Custom error enum
+- From / TryFrom traits
+- Encapsulation of invariants
 
-4. Remove Duplicates from a Vector
-   - In-place using HashSet
-   - Bonus: preserve order
 
+9. Streaming Median
+--------------------------------------------------------
+Insert numbers one-by-one and return current median.
 
-Iterators & Functional Style
-----------------------------
-5. Sum of Even Numbers
-   - Vec<i32> → i32
-   - Use filter, map, sum
+Senior signal:
+- Two-heap solution
+- Complexity analysis
+- Ownership modeling
 
-6. Word Frequency Counter
-   - Input: &str
-   - Output: HashMap<String, usize>
 
-7. Flatten a Vector of Vectors
-   - Vec<Vec<i32>> → Vec<i32>
-   - Use flat_map
+10. File-Based Config Loader
+--------------------------------------------------------
+- Load JSON or TOML
+- Parse into struct
+- Graceful error handling
 
-8. Check if All Elements Are Unique
-   - Vec<i32> → bool
-   - Early exit with HashSet
+Senior signal:
+- Result propagation
+- Layered error modeling
+- Separation of parsing vs IO
 
 
-Algorithms (Classic Interview Problems)
----------------------------------------
-9. Two Sum
-   - Input: Vec<i32>, target
-   - Output: indices
+11. Custom Iterator Implementation
+--------------------------------------------------------
+Example:
 
-10. Binary Search
-    - Manual implementation (no std helpers)
+pub struct EvenNumbers { ... }
 
-11. Palindrome Checker
-    - Ignore non-alphanumeric
-    - Case-insensitive
+Implement Iterator.
 
-12. Merge Two Sorted Arrays
-    - Bonus: without allocating a third vector
+Senior signal:
+- State ownership
+- Iterator trait mastery
+- Lifetimes if borrowing
 
 
-Structs, Enums & Pattern Matching
----------------------------------
-13. Mini LRU Cache
-    - Fixed capacity
-    - HashMap + VecDeque
+12. Simple Router
+--------------------------------------------------------
+Given routes like:
 
-14. Expression Evaluator
-    - Enum: Add | Sub | Mul | Div
+GET /users/:id
+POST /users
 
-15. State Machine
-    - Enum-based states
-    - Pattern match transitions
+Match request path to handler.
 
+Senior signal:
+- Pattern matching
+- Data modeling
+- Clean separation of routing vs handling
 
-Error Handling
---------------
-16. Safe Division Function
-    - Return Result<f64, String>
 
-17. Parse Integer from String
-    - Wrap parse() errors manually
+13. Expression Evaluator
+--------------------------------------------------------
+Evaluate:
 
-18. Read Numbers from stdin & Compute Average
-    - Graceful error handling
+"3 + 4 * 2"
 
+Senior signal:
+- Stack modeling
+- Tokenization vs evaluation separation
+- Error handling
 
-Concurrency (Short Exercises)
------------------------------
-19. Parallel Sum
-    - Split vector into chunks
-    - Use std::thread
 
-20. Producer / Consumer
-    - mpsc::channel
-    - One sender, one receiver
+14. Graph with BFS and DFS
+--------------------------------------------------------
+- Adjacency list
+- Implement both traversals
 
+Senior signal:
+- Borrowing with graph structures
+- Visited tracking
+- Complexity reasoning
 
-Interview Polish / Bonus
-------------------------
-21. Implement Debug manually for a struct
-22. Implement Display for pretty printing
-23. Implement From<&str> for a struct
-24. Create a custom iterator for a struct
-25. Write unit tests for any exercise above
+
+15. Plugin System with Traits
+--------------------------------------------------------
+trait Plugin {
+    fn name(&self) -> &str;
+    fn execute(&self, input: &str) -> String;
+}
+
+Store heterogeneous plugins in a vector.
+
+Senior signal:
+- Trait objects (dyn)
+- Extensibility tradeoffs
+- Object safety awareness
+
+
+16. Debouncer
+--------------------------------------------------------
+Given events happening rapidly, only process last event after delay.
+
+Senior signal:
+- Threading
+- Timing
+- Channel coordination
+
+
+17. Mini Metrics Collector
+--------------------------------------------------------
+- Counter
+- Gauge
+- Histogram (simplified)
+
+Expose:
+
+record_counter(name, value)
+
+Senior signal:
+- Data modeling
+- Concurrency
+- API design
+
+
+18. Safe Wrapper Around Unsafe API
+--------------------------------------------------------
+Mock unsafe pointer usage and encapsulate safely.
+
+Senior signal:
+- Safety boundaries
+- Documentation
+- Justifying unsafe blocks
+
+
+19. Generic Retry Mechanism
+--------------------------------------------------------
+fn retry<F, T, E>(f: F, attempts: usize) -> Result<T, E>
+
+Senior signal:
+- Generics
+- FnMut vs FnOnce
+- Backoff strategy discussion
+
+
+20. Bounded Queue
+--------------------------------------------------------
+- Fixed capacity
+- Blocking or non-blocking version
+
+Senior signal:
+- Mutex + Condvar
+- Deadlock awareness
+- Backpressure discussion
+
+
+21. Mini Scheduler
+--------------------------------------------------------
+Schedule tasks to run at certain times.
+
+Senior signal:
+- Time handling
+- Priority queue usage
+- Concurrency coordination
+
+
+22. Domain Model with Invariants
+--------------------------------------------------------
+Example:
+
+struct BankAccount { ... }
+
+Enforce:
+- No negative balance
+- Immutable account ID
+
+Senior signal:
+- Encapsulation
+- Preventing invalid states
+- API safety
+
+
+23. HTTP Client Abstraction
+--------------------------------------------------------
+trait HttpClient {
+    fn get(&self, url: &str) -> Result<Response, Error>;
+}
+
+Provide mock implementation.
+
+Senior signal:
+- Dependency inversion
+- Testability
+- Trait object usage
+
+
+24. Memory-Efficient Deduplicator
+--------------------------------------------------------
+Given stream of strings, deduplicate with bounded memory.
+
+Senior signal:
+- Hashing tradeoffs
+- Bloom filter discussion
+- Space/time tradeoffs
+
+
+25. Lock-Free Stack (Simplified)
+--------------------------------------------------------
+Using AtomicPtr.
+
+Senior signal:
+- Memory ordering discussion
+- Safety explanation
+- Advanced concurrency reasoning
+
+
+26. Circuit Breaker
+--------------------------------------------------------
+States:
+- Closed
+- Open
+- HalfOpen
+
+Senior signal:
+- State machine modeling
+- Time-based transitions
+- Production reliability discussion
+
+
+27. Simple Event Bus
+--------------------------------------------------------
+- Subscribe
+- Publish
+- Multiple listeners
+
+Senior signal:
+- Trait bounds
+- Thread safety
+- Arc usage
+
+
+28. Generic Cache with Expiration
+--------------------------------------------------------
+Keyed by K, V with TTL.
+
+Senior signal:
+- Generics
+- Trait bounds
+- Background cleanup thread discussion
+
+
+29. Small Domain-Driven Module
+--------------------------------------------------------
+Example: Order system.
+
+- Order
+- OrderItem
+- Status transitions
+
+Enforce valid transitions.
+
+Senior signal:
+- Enum state transitions
+- Invariant modeling
+- Clean module boundaries
+
+
+30. Refactor a Bad API
+--------------------------------------------------------
+Start with:
+
+fn process(data: Vec<String>) -> Vec<String>
+
+Refactor into:
+- Smaller traits
+- Error types
+- Better naming
+- Borrowing improvements
+
+Senior signal:
+- Refactoring ability
+- API thinking
+- Code quality under time constraint
