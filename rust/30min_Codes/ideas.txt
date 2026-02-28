@@ -423,3 +423,189 @@ Senior signal:
 - Refactoring ability
 - API thinking
 - Code quality under time constraint
+
+31. Borrowing-Based Text Index (Lifetimes Focus)
+--------------------------------------------------------
+Given a large input string, build an index of words to positions
+without allocating new Strings.
+
+pub struct WordIndex<'a> {
+    text: &'a str,
+    index: HashMap<&'a str, Vec<usize>>,
+}
+
+impl<'a> WordIndex<'a> {
+    pub fn new(text: &'a str) -> Self
+    pub fn positions(&self, word: &str) -> Option<&[usize]>
+}
+
+Senior signal:
+- Explicit lifetime annotations
+- &str slicing without allocation
+- Borrow checker reasoning
+- Zero-copy design tradeoffs
+
+
+
+32. Async Job Runner (Tokio)
+--------------------------------------------------------
+Execute async jobs with bounded concurrency.
+
+pub struct JobRunner { ... }
+
+impl JobRunner {
+    pub fn new(limit: usize) -> Self
+    pub async fn run<F>(&self, job: F)
+    where
+        F: Future<Output = Result<(), Error>> + Send + 'static;
+}
+
+Senior signal:
+- Semaphore for concurrency control
+- Send across await points
+- Spawn vs inline await tradeoffs
+- Cancellation discussion
+
+
+
+33. Interior Mutability Cache
+--------------------------------------------------------
+Cache computed value lazily using interior mutability.
+
+pub struct LazyCache<T> { ... }
+
+impl<T> LazyCache<T> {
+    pub fn new() -> Self
+    pub fn get_or_init<F>(&self, f: F) -> &T
+    where
+        F: FnOnce() -> T;
+}
+
+Senior signal:
+- RefCell vs Mutex vs OnceCell tradeoffs
+- Borrow rules at runtime
+- Thread-safe vs non-thread-safe versions
+
+
+
+34. Graceful Shutdown Worker System
+--------------------------------------------------------
+Spawn worker tasks that process messages and shut down cleanly.
+
+pub struct WorkerPool { ... }
+
+impl WorkerPool {
+    pub fn new(size: usize) -> Self
+    pub fn submit(&self, job: Job)
+    pub async fn shutdown(self)
+}
+
+Senior signal:
+- Channel closing semantics
+- JoinHandle management
+- Drop behavior
+- Cancellation coordination
+
+
+
+35. Zero-Copy CSV Line Parser
+--------------------------------------------------------
+Parse a single CSV line into fields without allocating new Strings.
+
+pub fn parse_line(input: &str) -> Result<Vec<&str>, ParseError>
+
+Senior signal:
+- String slicing
+- Lifetime propagation
+- Edge case handling
+- Performance discussion
+
+
+
+36. Minimal Axum REST Service
+--------------------------------------------------------
+Implement:
+
+POST /users
+GET  /users/:id
+
+In-memory storage.
+
+Requirements:
+- JSON input/output
+- Proper HTTP status codes
+- Shared state via Arc
+
+Senior signal:
+- Extractors
+- State injection
+- Error-to-response mapping
+- Transport vs domain separation
+
+
+
+37. JWT Authentication Middleware (Axum)
+--------------------------------------------------------
+- POST /login -> returns JWT
+- Protected route requiring valid token
+- Middleware or custom extractor for auth
+
+Senior signal:
+- Request extensions
+- Token validation
+- Error mapping to HTTP
+- Secret handling discussion
+- Expiration & clock skew reasoning
+
+
+
+38. Async Rate Limiter Middleware
+--------------------------------------------------------
+Per-IP rate limiting in Axum.
+
+- Wrap existing handler
+- Track request timestamps
+- Reject with 429
+
+Senior signal:
+- Shared async state
+- Mutex vs RwLock tradeoffs
+- Time handling with Instant
+- Memory growth discussion
+
+
+
+39. Repository Trait with Dependency Injection
+--------------------------------------------------------
+Define:
+
+trait UserRepository {
+    fn find(&self, id: UserId) -> Result<User, RepoError>;
+}
+
+Inject into service layer via Arc<dyn UserRepository + Send + Sync>.
+
+Senior signal:
+- Trait object usage
+- Send + Sync bounds
+- Testability via mock implementation
+- Inversion of control
+
+
+
+40. Versioned API Payload Handling
+--------------------------------------------------------
+Support two versions of incoming JSON payload:
+
+enum CreateUserRequest {
+    V1(V1Payload),
+    V2(V2Payload),
+}
+
+Convert both into a unified domain model.
+
+Senior signal:
+- Enum modeling
+- Validation layering
+- Backward compatibility strategy
+- Error mapping philosophy
