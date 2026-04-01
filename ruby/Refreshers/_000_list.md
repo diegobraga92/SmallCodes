@@ -37,11 +37,7 @@
 - Using `irb` / `pry`  
 - Basic debugging techniques (`puts`, `pp`)  
 
-## 7. Version Control
-- Git fundamentals  
-- Basic workflows (branching, commits, pull requests)  
-
-## 8. Testing Fundamentals
+## 7. Testing Fundamentals
 - Basic unit testing concepts  
 - Intro to frameworks like RSpec or Minitest  
 - Writing simple test cases  
