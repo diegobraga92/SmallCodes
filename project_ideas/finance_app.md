@@ -1,7 +1,7 @@
 # VaultFolio – Personal Finance & Investment Command Center
 
 ## Overview
-A self‑hosted financial cockpit that aggregates bank transactions, tracks budgets, monitors investment portfolios, and runs advanced analytics—all on private infrastructure. The system is designed to replace dependence on third‑party apps like Mint or spreadsheets, while deliberately deepening my skills in **Python (FastAPI) as an orchestrator**, **Rust for performance‑critical compute**, **cloud‑native architecture**, and **streaming data pipelines (Kafka/Redpanda)**.
+A self‑hosted financial cockpit that aggregates bank transactions, tracks budgets, monitors investment portfolios, and runs advanced analytics—all on private infrastructure. The system is designed to replace dependence on third‑party apps like Mint or spreadsheets, while deliberately deepening my skills in **Python (FastAPI) as an orchestrator**, **Rust for performance‑critical compute**, **cloud‑native architecture**, **streaming data pipelines (Kafka/Redpanda)**, **Kubernetes operations**, and **distributed tracing (OpenTelemetry)**.
 
 **Core principle:** local control with cloud mirroring; all sensitive financial data stays in my hands, with optional remote access and automated backups.
 
@@ -12,8 +12,10 @@ A self‑hosted financial cockpit that aggregates bank transactions, tracks budg
 - **Cloud Engineering**:
   - Advanced Terraform: multi‑service deployment, queues, object storage, IAM, monitoring.
   - AWS managed services: S3, EventBridge, DynamoDB, RDS (PostgreSQL), ElastiCache (Redis optional), MSK or self‑hosted Kafka.
-  - Cloud‑native patterns: dead‑letter queues, autoscaling workers, cost‑aware scheduling.
+  - **Kubernetes**: deploy the full stack on EKS with Helm, HPA, and pod disruption budgets.
 - **Streaming & Messaging**: Deep dive into Kafka/Redpanda (partitions, consumers, offsets, schema evolution) and optionally SQS/FIFO.
+- **Observability**: OpenTelemetry distributed tracing across Python → Kafka → Rust, metrics with Prometheus/Grafana.
+- **Security**: OAuth2 integration with financial APIs, KMS encryption, threat‑modeling the data pipeline.
 
 ## Core Features (MVP)
 1. **Bank Transaction Aggregation**
@@ -60,9 +62,10 @@ A self‑hosted financial cockpit that aggregates bank transactions, tracks budg
 
 ### Cloud & Infrastructure
 - **Compute:** AWS ECS Fargate (or EC2) for API and workers; Lambda for lightweight triggers.
+- **Kubernetes:** Primary deployment target on EKS (or local k3s) with Terraform Helm provider.
 - **Orchestration:** Terraform for all resources (state in S3, DynamoDB lock).
-- **CI/CD:** GitHub Actions → Docker build → ECR → deploy to ECS.
-- **Monitoring:** CloudWatch Logs, Metrics, and Dashboards; X‑Ray for tracing.
+- **CI/CD:** GitHub Actions → Docker build → ECR → deploy to ECS/K8s.
+- **Monitoring:** OpenTelemetry tracing (OTLP) → Honeycomb/Jaeger; Prometheus metrics, CloudWatch Logs.
 
 ### Local Development
 - Docker Compose with: Python API, Rust worker, Redpanda, PostgreSQL, Redis.
@@ -83,6 +86,7 @@ A self‑hosted financial cockpit that aggregates bank transactions, tracks budg
 [Processes txn] [Monte Carlo, XIRR]
 │ │
 [Writes to DB] [Returns via gRPC]
+(all services report OTel traces)
 
 
 ## Data Models (Key Entities)
@@ -123,18 +127,30 @@ A self‑hosted financial cockpit that aggregates bank transactions, tracks budg
 - Add alerts and notifications (SNS/SES).
 - Auto‑fetch from institutions on schedule using EventBridge.
 - Optional: DynamoDB for user preferences.
-- Performance testing, profiling, and documentation.
+
+### Phase 5: Kubernetes & Observability (Weeks 17‑20)
+- Migrate deployment to Kubernetes (EKS). Create Helm charts for API, workers, Kafka consumers.
+- Configure HPA for the Rust compute worker based on queue depth.
+- Add OpenTelemetry auto‑instrumentation to Python and manual instrumentation to Rust.
+- Deploy Jaeger or sign up for Grafana Cloud; visualize traces across message boundaries.
+- Set up Prometheus/Grafana for custom business metrics.
+
+### Phase 6: Security Hardening & Advanced Features
+- Implement OAuth2 flow for financial data providers.
+- Use KMS for field‑level encryption of sensitive data in DB.
+- Conduct a threat model exercise and document it in the repo.
+- (Optional) Replace local SQLite analytics with an embedded Rust KV store for high‑frequency portfolio snapshots.
 
 ## Gap‑Filling Deep Dives
 ### Python Backend (Solidify)
 - **Async patterns:** efficient I/O for multiple bank providers concurrently.
 - **Testing:** `pytest`, `httpx` for API tests, `testcontainers` for integration with Kafka/DB.
-- **Observability:** structured logging, correlation IDs, CloudWatch integration.
+- **Observability:** OpenTelemetry propagation, custom spans, trace‑aware logging.
 
 ### Rust Backend (Solidify)
 - **Performance:** memory‑safe simulation of thousands of Monte Carlo iterations.
 - **gRPC:** use `tonic` to define service and handle message serialization.
-- **Interoperability:** decoupled service that can be scaled independently.
+- **Interoperability:** decoupled service that can be scaled independently (K8s HPA).
 
 ### Kafka/Streaming
 - **Partitioning strategy:** by account_id for ordered transaction events.
@@ -143,10 +159,16 @@ A self‑hosted financial cockpit that aggregates bank transactions, tracks budg
 - **Offset management:** handle reprocessing and consumer failures.
 - **Comparison:** optionally also implement a SQS version to compare trade‑offs.
 
+### Kubernetes (New Gap)
+- **Helm charts:** packaging the whole application.
+- **Health probes:** liveness/readiness checks, graceful shutdown.
+- **HPA:** scale Rust workers based on Kafka consumer lag.
+- **Pod disruption budgets:** ensure zero‑downtime deployments.
+
 ### Advanced Cloud
 - **Terraform modules:** reusable modules for Kafka cluster, RDS, ECS.
 - **Security:** IAM roles for service ecsTaskRole, KMS for sensitive data.
-- **Cost management:** set up AWS Budget alerts; design architecture to stay within free tier for low traffic (use Serverless MSK, avoid NAT Gateways by using VPC endpoints).
+- **Cost management:** set up AWS Budget alerts; design architecture to stay within free tier for low traffic.
 
 ## Non‑Goals (for this project)
 - No embedded or real‑time hardware.
@@ -156,7 +178,7 @@ A self‑hosted financial cockpit that aggregates bank transactions, tracks budg
 ## Why I’ll Actually Use This
 - Complete control over my financial data, no sharing with third‑party aggregators.
 - Custom reports and alerts that match my exact needs.
-- A permanent lab for exploring streaming, distributed systems, and analytics.
+- A permanent lab for exploring streaming, distributed systems, Kubernetes, and analytics.
 - Saves money on premium finance apps while teaching skills that directly boost my career.
 
 ---

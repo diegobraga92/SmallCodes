@@ -1,16 +1,19 @@
 # SafeSync – Personal Backup & Sync Agent
 
 ## Overview
-A cross‑platform (Linux, macOS, Windows) backup agent and coordination server that provides deduplicated, encrypted, versioned backups of my most important files to cloud object storage. The system is designed to replace commercial backup tools, giving me full control over data security and retention policies while serving as a deep learning sandbox for **Rust backend engineering**, **advanced cloud storage infrastructure (Terraform)**, **sync protocol design**, and **reliability engineering**.
+A cross‑platform (Linux, macOS, Windows) backup agent and coordination server that provides deduplicated, encrypted, versioned backups of my most important files to cloud object storage. The system is designed to replace commercial backup tools, giving me full control over data security and retention policies while serving as a deep learning sandbox for **Rust backend engineering**, **advanced cloud storage infrastructure (Terraform)**, **distributed consensus (Raft)**, **Kubernetes operators**, and **security engineering (mTLS, remote attestation)**.
 
-**Core principle:** local agent syncs changes to a Rust coordination server, which handles versioning, conflict resolution, and secure cloud uploads. The entire cloud footprint is managed as code.
+**Core principle:** local agent syncs changes to a Rust coordination server, which handles versioning, conflict resolution, and secure cloud uploads. The server can be deployed as a highly‑available cluster using Raft. A Kubernetes operator (Go) will be built to manage backup schedules for containerised workloads.
 
 ## Learning Objectives (Gaps Filled)
-- **Rust Backend (Solidification):** Build a highly‑available coordination server in Rust (Axum) that manages device authentication, sync state, version history, and restore APIs.
+- **Rust Backend (Solidification):** Build a highly‑available coordination server in Rust (Axum) that manages device authentication, sync state, version history, and restore APIs. Evolve it into a clustered, consensus‑driven service.
 - **Cloud Engineering (Deep Dive):** 
   - Terraform for object storage infrastructure (S3/Backblaze B2), IAM, KMS encryption, lifecycle policies, cost alerting.
   - Cloud‑native storage patterns: versioning, object locking, replication, multipart uploads.
 - **Backend Systems:** Design a sync protocol with conflict resolution, compare‑and‑swap semantics, and point‑in‑time snapshot restores.
+- **Distributed Consensus:** Implement Raft consensus within the coordination server, enabling leader election and log replication for high availability.
+- **Kubernetes Operator (Golang):** Build an operator that schedules SafeSync backups for PersistentVolumeClaims in a K8s cluster.
+- **Security:** Mutual TLS (mTLS) between agents and server, remote attestation of agent integrity, KMS‑based encryption.
 - **Reliability & Observability:** Crash‑fault tolerance in the agent, graceful degradation, structured logging, and monitoring.
 
 ## Core Features (MVP)
@@ -20,10 +23,11 @@ A cross‑platform (Linux, macOS, Windows) backup agent and coordination server 
    - Client‑side encryption (AES‑256‑GCM or ChaCha20‑Poly1305) before upload.
    - Fault‑tolerant: resumes interrupted backups, handles network loss.
 2. **Coordination Server (Rust)**
-   - Device registration and authentication (API keys or mTLS).
+   - Device registration and authentication (API keys initially, then mTLS).
    - Version tree management for each file path.
    - Conflict detection and resolution (last‑write‑wins or interactive merge).
    - Snapshot creation and point‑in‑time restore.
+   - **Cluster mode:** Raft consensus for HA, leader handles writes, followers serve reads.
 3. **Cloud Storage Backend**
    - Primary: AWS S3 (or Backblaze B2 for cost efficiency).
    - Objects encrypted at rest (KMS) and optionally with Object Lock for immutability.
@@ -33,6 +37,9 @@ A cross‑platform (Linux, macOS, Windows) backup agent and coordination server 
    - View device status, recent backups, storage usage.
    - Browse file versions and trigger restores.
    - Simple shell script/CLI for command‑line restore.
+5. **Kubernetes Operator (Go)**
+   - Custom Resource `BackupSchedule`: target PVC, schedule, retention.
+   - Operator creates a sidecar agent that syncs data to SafeSync server.
 
 ## Tech Stack
 ### Agent (Rust)
@@ -41,14 +48,15 @@ A cross‑platform (Linux, macOS, Windows) backup agent and coordination server 
 
 ### Coordination Server (Rust)
 - **Framework:** Axum (async, high‑performance HTTP).
-- **Database:** PostgreSQL (via `sqlx`) for metadata (file versions, snapshots, devices).
-- **Authentication:** API keys stored hashed in DB, optional mTLS.
+- **Database:** PostgreSQL (via `sqlx`) for metadata, or an **embedded KV store** (e.g., a custom LSM‑tree in Rust) for version metadata – a stretch goal to deepen DB internals.
+- **Consensus:** `raft-rs` (with etcd’s Raft implementation or `openraft`) for clustering.
+- **Authentication:** API keys initially, then upgraded to mTLS using `rustls`.
 - **Blob Storage Abstraction:** Trait to support S3, B2, local disk.
 
 ### Cloud & Infrastructure
 - **Object Storage:** AWS S3 with cross‑region replication (optional).
-- **Compute:** AWS EC2 (single instance) or ECS Fargate for the coordination server.
-- **Queue (Optional):** SQS for processing large sync jobs asynchronously.
+- **Compute:** AWS EC2 (single instance initially, then a small cluster) or ECS Fargate.
+- **Kubernetes Operator:** Written in **Go** using `controller-runtime` and `client-go`.
 - **IaC:** Terraform with modules for S3 buckets, IAM roles, KMS keys, EC2/ECS, and CloudWatch alarms.
 
 ### Local Development
@@ -58,11 +66,11 @@ A cross‑platform (Linux, macOS, Windows) backup agent and coordination server 
 
 ## Architecture Diagram (Logical)
 [Agent (Laptop)] [Agent (Desktop)]
-│ │
+│ (mTLS) │ (mTLS)
 ▼ ▼
-[Coordination Server (Rust/Axum)]
+[SafeSync Cluster (Raft)]
 │
-├────────[PostgreSQL] (metadata)
+├────────[PostgreSQL / KV store] (metadata)
 │
 ▼
 [AWS S3 / Backblaze B2]
@@ -71,7 +79,7 @@ A cross‑platform (Linux, macOS, Windows) backup agent and coordination server 
 
 
 ## Data Models (Key Entities)
-- **Device:** id, name, platform, auth_key_hash, last_seen.
+- **Device:** id, name, platform, certificate_fingerprint, last_seen.
 - **BackupObject:** hash, size, chunk_list, encryption_key_id.
 - **FileVersion:** path, device_id, object_hash, timestamp, size, state (active, deleted).
 - **Snapshot:** id, timestamp, set of FileVersion IDs, total_size.
@@ -103,8 +111,22 @@ A cross‑platform (Linux, macOS, Windows) backup agent and coordination server 
 - Simple web UI (Vue/React) for status monitoring and restore operations.
 - Automated recovery tests (restore random snapshots and verify integrity).
 - Observability: structured logs, metrics (prometheus endpoint), alerting on failed backups.
-- Hardening: handle edge cases (disk full, network timeouts, corrupted chunks).
-- Write thorough documentation and a demo video.
+
+### Phase 5: High Availability with Raft (Weeks 17‑20)
+- Add `raft-rs` to the coordination server. Bootstrap a 3‑node cluster.
+- Metadata writes (new file versions) go through Raft log; reads can be eventually consistent.
+- Leader failover testing, network partition tests.
+- This directly demonstrates distributed consensus experience.
+
+### Phase 6: Kubernetes Operator (Weeks 21‑24)
+- Write a Go operator using `kubebuilder` that watches `BackupSchedule` CRDs.
+- For each schedule, it creates a sidecar container running SafeSync agent that backs up the PVC.
+- Register backups in the coordination server and show status in the dashboard.
+
+### Phase 7: Advanced Security (ongoing)
+- Migrate from API keys to mTLS for agent‑server communication.
+- Implement a simple remote attestation mechanism (agent sends hash of its binary; server verifies).
+- Encrypt metadata at rest using KMS.
 
 ## Gap‑Filling Deep Dives
 ### Rust Backend (Solidify)
@@ -122,8 +144,23 @@ A cross‑platform (Linux, macOS, Windows) backup agent and coordination server 
 - **Conflict scenarios:** simulate concurrent writes, verify resolution.
 - **Recovery time objective (RTO):** benchmark restore from cloud to a clean directory.
 
+### Distributed Consensus (New Gap)
+- **Raft implementation:** log replication, snapshots, cluster membership changes.
+- **Testing consensus:** chaos engineering – kill nodes, partition network, verify safety.
+- **Trade‑offs:** when to use leader‑based vs leaderless designs.
+
+### Kubernetes Operator (New Gap)
+- **Go client-go:** interacting with the Kubernetes API.
+- **Controller pattern:** reconciling desired state with actual.
+- **Operator SDK:** kubebuilder to scaffold and manage CRDs.
+
+### Security Engineering
+- **mTLS:** certificate provisioning and rotation.
+- **Remote attestation:** ensuring agent binaries haven’t been tampered.
+- **KMS integration:** envelope encryption for chunks.
+
 ## Non‑Goals (for this project)
-- No Golang – Go is only for the Productivity App.
+- No Golang – Go is solely for the Productivity App, except for the K8s operator (which is a deliberate small Go component).
 - No Python backend – Python lives in the Finance and Drone projects.
 - No embedded real‑time – this is pure software infrastructure.
 
@@ -131,8 +168,9 @@ A cross‑platform (Linux, macOS, Windows) backup agent and coordination server 
 - Protects my personal projects, documents, and memories with encryption only I control.
 - No monthly subscription for a backup service; I own the stack.
 - Demonstrates exactly the backup/recovery domain expertise from my Ancient experience, but in my own open‑source portfolio.
+- The Raft cluster and Kubernetes operator make it a standout project for senior systems/infrastructure roles.
 
 ---
 
 **Author:** Diego Braga  
-**Status:** Planning phase – to be built after VaultFolio reaches MVP.
+**Status:** Planning phase – to be built after VaultFolio MVP.

@@ -11,8 +11,9 @@ A private, self‑hosted productivity suite that consolidates task management, h
 - **Cloud & DevOps**:
   - Infrastructure as Code with Terraform (AWS EC2 + S3 + SQS + SES).
   - CI/CD pipeline (GitHub Actions) to build, test, and deploy.
+  - **Kubernetes** (optional): deploy the Go API on a small cluster (k3s, EKS) to strengthen operational K8s skills.
   - Message queues for async jobs (RabbitMQ or SQS).
-  - Observability: structured logging, metrics, and alerting.
+  - **Observability**: structured logging, metrics, and optional OpenTelemetry tracing.
 - **Solidification**: Keeps frontend (React/Vue) and React Native/Expo skills sharp, plus Rust for a small utility (optional).
 
 ## Core Features (MVP)
@@ -50,10 +51,11 @@ A private, self‑hosted productivity suite that consolidates task management, h
 
 ### Cloud & Infrastructure
 - **Compute:** AWS EC2 (single instance, t3.micro for start) or ECS Fargate.
+- **Kubernetes (optional):** Deploy the stack on a local KinD cluster or AWS EKS, managed via Terraform.
 - **Storage:** S3 for backups, RDS PostgreSQL, ElastiCache (Redis optional).
 - **Messaging:** RabbitMQ (self‑managed on EC2 or Amazon MQ) or SQS for reminder dispatching.
 - **IaC:** Terraform for all resources, remote state in S3.
-- **CI/CD:** GitHub Actions → Docker build → push to ECR → deploy to ECS/Fargate.
+- **CI/CD:** GitHub Actions → Docker build → push to ECR → deploy to ECS/K8s.
 
 ### Local Development
 - Docker Compose with all services: Go app, PostgreSQL, Redis, RabbitMQ.
@@ -111,6 +113,12 @@ REST + WS
 - End‑to‑end tests and performance profiling (pprof).
 - Write comprehensive documentation and a demo video.
 
+### Phase 5 (Optional Advanced): Kubernetes & Observability
+- Deploy the entire stack on a local k3s cluster, then to AWS EKS via Terraform.
+- Create Helm chart with ConfigMaps, Secrets, health probes, and HPA.
+- Add OpenTelemetry instrumentation (traces + metrics) to the Go API and background workers.
+- Integrate Jaeger or Grafana Tempo for distributed tracing.
+
 ## Gap‑Filling Deep Dives
 ### Golang
 - **Concurrency patterns:** goroutine pools for background jobs, channels for timer broadcast.
@@ -121,6 +129,7 @@ REST + WS
 - **Terraform:** multi‑environment (dev/prod) with workspaces, modules for SQS, RDS, EC2.
 - **Cost control:** setup budget alerts and `terraform destroy` schedule for unused resources.
 - **Monitoring:** CloudWatch dashboards for API latency, queue depth, error rates.
+- **Kubernetes (optional):** gain hands‑on operational K8s experience.
 
 ### RabbitMQ/SQS (Optional Deep Dive)
 - **Exchange types:** direct exchanges for reminder routing.
