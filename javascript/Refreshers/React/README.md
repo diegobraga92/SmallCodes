@@ -1,93 +1,48 @@
 # React Refreshers
 
-Comprehensive React guide from basics to advanced patterns.
+Comprehensive React guide from basics to upper-mid level.
 
 ## 📚 Topics Covered
 
-### Fundamentals
-- **00_jsx_basics.jsx** - JSX syntax, expressions, attributes
-- **01_components.jsx** - Function components, props, composition
-- **02_state_hooks.jsx** - useState, state management, updates
-- **03_effect_hooks.jsx** - useEffect, lifecycle, cleanup
-- **04_event_handling.jsx** - Events, synthetic events, form handling
-- **05_conditional_rendering.jsx** - if/else, ternary, &&, switch
+### Fundamentals ✅
+- **00_jsx_basics.jsx** ✅ - JSX syntax, expressions, attributes, fragments, comments
+- **01_components_props.jsx** ✅ - Functional components, props, children, PropTypes, composition
+- **02_hooks.jsx** ✅ - useState, useEffect, useContext, useReducer, useRef, useMemo, useCallback
 
-### Intermediate
-- **06_lists_keys.jsx** - Rendering lists, key prop, array methods
-- **07_forms.jsx** - Controlled components, form validation, submission
-- **08_lifting_state.jsx** - State lifting, prop drilling, data flow
-- **09_composition_children.jsx** - children prop, composition patterns
-- **10_ref_hook.jsx** - useRef, DOM refs, focus management
-- **11_context_api.jsx** - Context creation, Provider, Consumer, useContext
-- **12_custom_hooks.jsx** - Creating reusable hooks, hook rules
-- **13_reducer_hook.jsx** - useReducer, complex state, actions
+### Intermediate 📝
+- **03_state_management.jsx** 📝 - Context API patterns, Redux basics, Zustand, state lifting
+- **04_routing.jsx** 📝 - React Router DOM, navigation, route parameters, nested routes
+- **05_forms.jsx** 📝 - Controlled components, validation, React Hook Form
+- **06_styling.jsx** 📝 - CSS Modules, Styled Components, Tailwind CSS
+- **07_api_calls.jsx** 📝 - Fetch, Axios, React Query, SWR, error handling
+- **08_performance.jsx** 📝 - Optimization, React.memo, lazy loading, code splitting
+- **09_testing.jsx** 📝 - Jest, React Testing Library, component tests
+- **10_typescript_react.tsx** 📝 - React with TypeScript, typed components
+- **11_best_practices.jsx** 📝 - Patterns, anti-patterns, folder structure
 
-### Advanced
-- **14_memo_optimization.jsx** - useMemo, useCallback, React.memo
-- **15_error_boundaries.jsx** - Error handling, fallback UI
-- **16_portals.jsx** - ReactDOM.createPortal, modals, overlays
-- **17_code_splitting.jsx** - React.lazy, Suspense, dynamic imports
-- **18_routing.jsx** - React Router, navigation, params, guards
-- **19_state_management.jsx** - Redux, Zustand, Recoil patterns
-- **20_testing.jsx** - Jest, React Testing Library, test patterns
-- **21_typescript_react.tsx** - TypeScript with React, types, props
-- **22_server_components.jsx** - RSC patterns (if using Next.js)
-- **23_advanced_patterns.jsx** - HOCs, Render Props, Compound Components
+### Status Legend:
+- ✅ Complete with comprehensive examples  
+- 📝 Template/outline (ready to expand)
 
 ## 🎯 Learning Path
 
-1. **Start with Fundamentals** (00-05)
-2. **Build Interactive Apps** (06-09)
-3. **Master Hooks** (10-13)
-4. **Optimize Performance** (14-17)
-5. **Production Apps** (18-23)
+1. **React Basics** (00-02) - Components, props, hooks
+2. **App Architecture** (03-04) - State management, routing
+3. **User Experience** (05-07) - Forms, styling, API calls
+4. **Production Ready** (08-11) - Performance, testing, best practices
 
-## 💡 Best Practices
+## 💡 Quick Tips
 
-- Use functional components with hooks
-- Keep components small and focused
-- Prop-types or TypeScript for type checking
-- Lift state only when needed
-- Use keys properly in lists
-- Avoid inline functions in render
-- Memoize expensive computations
-- Split code for better performance
-- Test components thoroughly
+- Functional components are the standard
+- Hooks replace class lifecycle methods
+- Custom hooks for reusable logic
+- Context API for global state
+- React Query for server state
+- TypeScript for type safety
+- Keys must be stable and unique in lists
 
-## 🚀 Quick Start
+## 🔗 Related Topics
 
-```bash
-# Create new React app
-npx create-react-app my-app
-cd my-app
-npm start
-
-# Or with Vite (faster)
-npm create vite@latest my-app -- --template react
-cd my-app
-npm install
-npm run dev
-```
-
-## 📖 Key Concepts
-
-### Component Lifecycle
-1. Mount (useEffect with empty deps)
-2. Update (useEffect with deps)
-3. Unmount (useEffect cleanup)
-
-### State Management Options
-- **Local State**: useState, useReducer
-- **Context**: useContext for shared state
-- **External**: Redux, Zustand, Recoil, Jotai
-
-### Performance Optimization
-- React.memo - Prevent unnecessary re-renders
-- useMemo - Memoize expensive calculations
-- useCallback - Memoize functions
-- Code splitting - Lazy load components
-- Virtual scrolling - Large lists
-
----
-
-Happy React coding! ⚛️
+- See **TypeScript/** for React+TypeScript integration
+- See **Next/** for React framework patterns
+- See **Node/** for backend integration
