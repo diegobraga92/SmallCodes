@@ -1,0 +1,331 @@
+/* ============================================================================
+   CUSTOM PROPERTIES (CSS Variables)
+   File: 10_custom_properties.css
+   Covers: Defining variables, using var(), theming, fallbacks, scope
+   ============================================================================ */
+
+/* ============================================================================
+   1. DEFINING CUSTOM PROPERTIES
+   ============================================================================ */
+
+/*
+   Custom properties (CSS variables) store values for reuse throughout CSS.
+   Defined with -- prefix, accessed with var().
+   They cascade and inherit like regular CSS properties.
+*/
+
+/* Define variables on :root for global access */
+:root {
+    /* Colors */
+    --color-primary: #007bff;
+    --color-secondary: #6c757d;
+    --color-success: #28a745;
+    --color-danger: #dc3545;
+    --color-warning: #ffc107;
+    --color-info: #17a2b8;
+
+    /* Neutral colors */
+    --color-white: #ffffff;
+    --color-light: #f8f9fa;
+    --color-dark: #343a40;
+    --color-black: #000000;
+
+    /* Typography */
+    --font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-family-heading: Georgia, "Times New Roman", serif;
+    --font-family-mono: "Fira Code", "Courier New", monospace;
+    --font-size-base: 16px;
+    --font-size-sm: 0.875rem;
+    --font-size-lg: 1.25rem;
+    --line-height-base: 1.5;
+
+    /* Spacing */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    --spacing-xxl: 3rem;
+
+    /* Layout */
+    --container-max-width: 1200px;
+    --header-height: 60px;
+    --sidebar-width: 250px;
+
+    /* Borders */
+    --border-radius-sm: 4px;
+    --border-radius-md: 8px;
+    --border-radius-lg: 16px;
+    --border-radius-round: 50%;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
+
+    /* Transitions */
+    --transition-fast: 0.15s ease;
+    --transition-base: 0.3s ease;
+    --transition-slow: 0.5s ease;
+
+    /* Z-index scale */
+    --z-dropdown: 100;
+    --z-sticky: 200;
+    --z-modal-backdrop: 300;
+    --z-modal: 400;
+    --z-tooltip: 500;
+}
+
+/* ============================================================================
+   2. USING VARIABLES WITH var()
+   ============================================================================ */
+
+.using-variables {
+    /* Basic usage */
+    color: var(--color-primary);
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-base);
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-sm);
+    box-shadow: var(--shadow-sm);
+}
+
+/* ============================================================================
+   3. FALLBACK VALUES
+   ============================================================================ */
+
+/*
+   var() accepts a fallback value as second argument.
+   Used when the variable is not defined or invalid.
+*/
+
+.fallback-examples {
+    /* Fallback if --color-primary is not defined */
+    color: var(--color-primary, blue);
+
+    /* Multiple fallbacks (nested) */
+    color: var(--color-primary, var(--color-blue, blue));
+
+    /* Fallback with complex values */
+    padding: var(--spacing-md, 16px);
+    font-family: var(--font-family-base, Arial, sans-serif);
+}
+
+/* ============================================================================
+   4. VARIABLE SCOPE AND CASCADING
+   ============================================================================ */
+
+/*
+   Variables cascade like regular CSS properties.
+   Define at :root for global scope, or on specific elements for local scope.
+*/
+
+/* Component-scoped variables */
+.card {
+    --card-padding: 20px;
+    --card-bg: white;
+    --card-border-color: #e0e0e0;
+
+    padding: var(--card-padding);
+    background: var(--card-bg);
+    border: 1px solid var(--card-border-color);
+    border-radius: var(--border-radius-md);
+}
+
+/* Override variables for specific card variants */
+.card-featured {
+    --card-bg: #f0f8ff;
+    --card-border-color: var(--color-primary);
+}
+
+/* Override in media queries */
+@media (max-width: 768px) {
+    :root {
+        --font-size-base: 14px;
+        --spacing-md: 0.75rem;
+        --container-max-width: 100%;
+    }
+}
+
+/* ============================================================================
+   5. THEMING WITH CSS VARIABLES
+   ============================================================================ */
+
+/* Light theme (default) */
+:root {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8f9fa;
+    --text-primary: #212529;
+    --text-secondary: #6c757d;
+    --border-color: #dee2e6;
+    --link-color: #007bff;
+    --link-hover: #0056b3;
+}
+
+/* Dark theme */
+[data-theme="dark"] {
+    --bg-primary: #1a1a2e;
+    --bg-secondary: #16213e;
+    --text-primary: #e0e0e0;
+    --text-secondary: #a0a0a0;
+    --border-color: #2a2a4a;
+    --link-color: #64ffda;
+    --link-hover: #45e0be;
+}
+
+/* High contrast theme */
+[data-theme="high-contrast"] {
+    --bg-primary: #000000;
+    --bg-secondary: #1a1a1a;
+    --text-primary: #ffffff;
+    --text-secondary: #cccccc;
+    --border-color: #ffffff;
+    --link-color: #ffff00;
+    --link-hover: #ffcc00;
+}
+
+/* Apply theme variables */
+.themed-element {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.themed-link {
+    color: var(--link-color);
+}
+
+.themed-link:hover {
+    color: var(--link-hover);
+}
+
+/* ============================================================================
+   6. VARIABLES IN CALCULATIONS
+   ============================================================================ */
+
+.variable-calculations {
+    /* Variables can be used in calc() */
+    width: calc(100% - var(--sidebar-width));
+    height: calc(100vh - var(--header-height));
+    padding: calc(var(--spacing-md) * 2);
+    margin: calc(var(--spacing-md) + 10px);
+}
+
+/* ============================================================================
+   7. VARIABLES WITH @MEDIA AND @CONTAINER
+   ============================================================================ */
+
+/* Variables can be changed in media queries */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-primary: #1a1a2e;
+        --text-primary: #e0e0e0;
+    }
+}
+
+/* Variables in container queries */
+@container (min-width: 500px) {
+    .card {
+        --card-padding: 30px;
+        --card-font-size: 1.125rem;
+    }
+}
+
+/* ============================================================================
+   8. VARIABLES IN ANIMATIONS
+   ============================================================================ */
+
+@keyframes slideWithVariable {
+    from {
+        transform: translateX(calc(-1 * var(--slide-distance, 100px)));
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+.animated-with-variable {
+    --slide-distance: 200px;
+    animation: slideWithVariable 0.5s ease forwards;
+}
+
+/* ============================================================================
+   9. INHERITING AND RESETTING VARIABLES
+   ============================================================================ */
+
+/*
+   Variables inherit by default. Use initial to reset.
+   Use @property for type-checked variables (modern browsers).
+*/
+
+@property --primary-color {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #007bff;
+}
+
+@property --spacing-large {
+    syntax: "<length>";
+    inherits: false;
+    initial-value: 2rem;
+}
+
+/* ============================================================================
+   10. COMMON VARIABLE PATTERNS
+   ============================================================================ */
+
+/* Design token system */
+:root {
+    /* Spacing scale */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 1rem;
+    --space-4: 1.5rem;
+    --space-5: 2rem;
+    --space-6: 3rem;
+    --space-7: 4rem;
+    --space-8: 6rem;
+
+    /* Font size scale */
+    --text-xs: 0.75rem;
+    --text-sm: 0.875rem;
+    --text-base: 1rem;
+    --text-lg: 1.125rem;
+    --text-xl: 1.25rem;
+    --text-2xl: 1.5rem;
+    --text-3xl: 1.875rem;
+    --text-4xl: 2.25rem;
+
+    /* Color palette */
+    --blue-50: #eff6ff;
+    --blue-100: #dbeafe;
+    --blue-200: #bfdbfe;
+    --blue-500: #3b82f6;
+    --blue-700: #1d4ed8;
+    --blue-900: #1e3a5f;
+}
+
+/* Using the token system */
+.token-usage {
+    padding: var(--space-4);
+    font-size: var(--text-base);
+    color: var(--blue-700);
+    background: var(--blue-50);
+    border: 1px solid var(--blue-200);
+}
+
+/* ============================================================================
+   BEST PRACTICES
+   ============================================================================
+
+   1. Define global variables on :root
+   2. Use descriptive, consistent naming (--component-property)
+   3. Always provide fallback values for robustness
+   4. Use variables for theming (dark mode, brand variants)
+   5. Use calc() with variables for dynamic values
+   6. Scope variables to components for encapsulation
+   7. Use @property for type-safe variables
+   8. Keep variable names semantic, not presentational
+   9. Use design tokens as a single source of truth
+   10. Override variables in media queries for responsive design
+*/

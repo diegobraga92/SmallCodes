@@ -1,0 +1,333 @@
+/* ============================================================================
+   CASCADE, SPECIFICITY, AND INHERITANCE
+   File: 12_cascade_specificity.css
+   Covers: Cascade algorithm, specificity calculation, inheritance,
+           !important, @layer, cascade control
+   ============================================================================ */
+
+/* ============================================================================
+   1. THE CASCADE
+   ============================================================================ */
+
+/*
+   The cascade is the algorithm that determines which CSS rules apply
+   when multiple rules target the same element. Resolution order:
+
+   1. Origin and Importance (highest priority first):
+      a. Transition declarations
+      b. !important browser (user agent) styles
+      c. !important user styles (browser settings)
+      d. !important author styles (your CSS)
+      e. Animation declarations
+      f. Normal author styles
+      g. Normal user styles
+      h. Normal browser (user agent) styles
+
+   2. Specificity: More specific selectors win
+   3. Order: Later declarations override earlier ones
+   4. Inheritance: Some properties inherit from parent
+*/
+
+/* ============================================================================
+   2. SPECIFICITY CALCULATION
+   ============================================================================ */
+
+/*
+   Specificity is calculated as a 4-part value (a,b,c,d):
+
+   Inline styles:    1,0,0,0
+   IDs:              0,1,0,0
+   Classes, attributes, pseudo-classes: 0,0,1,0
+   Elements, pseudo-elements:          0,0,0,1
+
+   Compare left to right. Higher value wins.
+*/
+
+/* Specificity: 0,0,0,1 (one element) */
+p {
+    color: blue;
+}
+
+/* Specificity: 0,0,1,0 (one class) */
+.text {
+    color: red;
+}
+
+/* Specificity: 0,1,0,0 (one ID) */
+#unique {
+    color: green;
+}
+
+/* Specificity: 0,0,2,1 (two classes + one element) */
+div.highlight.active {
+    color: purple;
+}
+
+/* Specificity: 0,1,1,1 (one ID + one class + one element) */
+#content .text p {
+    color: orange;
+}
+
+/* Specificity examples with calculations:
+   p                        → 0,0,0,1
+   .text                    → 0,0,1,0
+   #unique                  → 0,1,0,0
+   div p                    → 0,0,0,2
+   .container .text         → 0,0,2,0
+   #header .nav a           → 0,1,1,1
+   #main #sidebar .widget   → 0,2,1,0
+   style="color: red"       → 1,0,0,0 (inline wins over everything except !important)
+*/
+
+/* ============================================================================
+   3. SPECIFICITY COMPARISON EXAMPLES
+   ============================================================================ */
+
+/* Which wins? The one with higher specificity or later in source */
+
+/* Example 1: Class vs element - class wins */
+p { color: blue; }           /* 0,0,0,1 */
+.paragraph { color: red; }   /* 0,0,1,0 - WINS */
+
+/* Example 2: ID vs class - ID wins */
+.highlight { color: yellow; }  /* 0,0,1,0 */
+#special { color: green; }     /* 0,1,0,0 - WINS */
+
+/* Example 3: Same specificity - later wins */
+.nav-item { color: blue; }     /* 0,0,1,0 */
+.nav-item { color: red; }      /* 0,0,1,0 - WINS (later in source) */
+
+/* Example 4: Compound selectors */
+ul li a { color: black; }          /* 0,0,0,3 */
+.nav-link { color: blue; }         /* 0,0,1,0 - WINS (class beats 3 elements) */
+
+/* ============================================================================
+   4. !IMPORTANT - The Nuclear Option
+   ============================================================================ */
+
+/*
+   !important overrides ALL specificity rules within the same origin.
+   Use it SPARINGLY - it breaks the natural cascade and makes debugging hard.
+*/
+
+.override-normal {
+    color: blue !important;
+    /* This will override any other color declaration (except other !important) */
+}
+
+#very-specific {
+    color: red;
+    /* Even ID specificity loses to !important */
+}
+
+/*
+   !important priority within same origin:
+   - !important inline styles (highest)
+   - !important ID selectors
+   - !important class selectors
+   - !important element selectors
+   - Normal inline styles
+   - Normal ID selectors
+   - Normal class selectors
+   - Normal element selectors (lowest)
+*/
+
+/* Better alternatives to !important: */
+/* 1. Increase specificity */
+.container .button { /* More specific than .button */ }
+
+/* 2. Use cascade layers */
+/* 3. Reorder source */
+/* 4. Use more specific selector */
+
+/* ============================================================================
+   5. INHERITANCE
+   ============================================================================ */
+
+/*
+   Some CSS properties are INHERITED from parent to child.
+   Others are NOT inherited (they default to initial value).
+
+   Inherited properties:
+   - color, font-*, line-height, text-*, visibility, cursor
+   - list-style, white-space, word-spacing, letter-spacing
+
+   Non-inherited properties:
+   - margin, padding, border, width, height, display
+   - background, position, top/right/bottom/left
+   - overflow, z-index, float, clear
+*/
+
+.parent-text {
+    color: blue;           /* Inherited by children */
+    font-family: Georgia;  /* Inherited by children */
+    border: 1px solid;     /* NOT inherited */
+}
+
+.child-text {
+    /* Inherits color: blue and font-family: Georgia from parent */
+    /* Does NOT inherit border */
+}
+
+/* ============================================================================
+   6. CONTROLLING INHERITANCE
+   ============================================================================ */
+
+/*
+   Four special CSS-wide keyword values control inheritance:
+   - inherit  : Forces inheritance from parent
+   - initial  : Uses browser default (initial value)
+   - unset    : inherit if property is inherited, initial if not
+   - revert   : Reverts to browser default (or user stylesheet)
+*/
+
+.inheritance-control {
+    /* Force inheritance */
+    color: inherit;     /* Takes parent's color */
+    border: inherit;    /* Forces border to inherit (normally doesn't) */
+
+    /* Reset to initial value */
+    color: initial;     /* Browser default (usually black) */
+    margin: initial;    /* 0 (initial value for margin) */
+
+    /* Unset - natural behavior */
+    color: unset;       /* Inherits (color is inherited property) */
+    border: unset;      /* Initial (border is not inherited) */
+
+    /* Revert - browser stylesheet value */
+    color: revert;      /* Back to browser default */
+}
+
+/* Reset all properties on an element */
+.reset-element {
+    all: initial;    /* Resets ALL properties to initial values */
+    all: unset;      /* Resets all to inherit/initial as appropriate */
+    all: revert;     /* Resets all to browser defaults */
+}
+
+/* ============================================================================
+   7. @LAYER - Cascade Layers (Modern CSS)
+   ============================================================================ */
+
+/*
+   @layer allows explicit control over the cascade order.
+   Styles in later layers override earlier layers, regardless of specificity.
+   This is the MODERN way to manage cascade without !important.
+*/
+
+/* Define layers (order matters - later layers win) */
+@layer reset, base, components, utilities;
+
+/* Layer: reset - lowest priority */
+@layer reset {
+    *,
+    *::before,
+    *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    a {
+        text-decoration: none;
+        color: inherit;
+    }
+}
+
+/* Layer: base - second priority */
+@layer base {
+    body {
+        font-family: system-ui, sans-serif;
+        line-height: 1.5;
+        color: #333;
+    }
+
+    h1, h2, h3 {
+        font-weight: 700;
+        line-height: 1.2;
+    }
+}
+
+/* Layer: components - third priority */
+@layer components {
+    .button {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        background: #007bff;
+        color: white;
+        border-radius: 4px;
+    }
+
+    .card {
+        padding: 1.5rem;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+    }
+}
+
+/* Layer: utilities - highest priority */
+@layer utilities {
+    .text-center {
+        text-align: center;
+    }
+
+    .mt-4 {
+        margin-top: 1rem;
+    }
+
+    .hidden {
+        display: none;
+    }
+}
+
+/* Unlayered styles have HIGHER priority than layered styles */
+/* This means unlayered styles override all layers */
+.unlayered-style {
+    /* This beats everything in @layer reset, base, components, utilities */
+}
+
+/* ============================================================================
+   8. @IMPORT AND LAYER
+   ============================================================================ */
+
+/*
+   Third-party CSS can be imported into a specific layer:
+   @import url('bootstrap.css') layer(framework);
+   @import url('normalize.css') layer(reset);
+*/
+
+/* ============================================================================
+   9. PRACTICAL SPECIFICITY MANAGEMENT
+   ============================================================================ */
+
+/* BEM naming helps keep specificity flat and predictable */
+/* Block__Element--Modifier */
+.card__title--featured {
+    /* Specificity: 0,0,1,0 - always just one class */
+    color: gold;
+}
+
+/* Avoid deep nesting in preprocessors (creates high specificity) */
+/* BAD: .sidebar .widget .title .text { } */
+/* GOOD: .widget-text { } */
+
+/* Use :where() for zero-specificity selectors */
+:where(.sidebar) .widget {
+    /* :where() adds 0 specificity, so this is 0,0,1,0 */
+}
+
+/* ============================================================================
+   BEST PRACTICES
+   ============================================================================
+
+   1. Keep specificity as LOW as possible (prefer single classes)
+   2. Use BEM or similar naming to avoid specificity wars
+   3. NEVER use !important in application code (only for utilities)
+   4. Use @layer for managing third-party vs app styles
+   5. Use :where() for zero-specificity resets
+   6. Understand inheritance - use inherit/initial/unset intentionally
+   7. Avoid ID selectors in CSS (use classes instead)
+   8. Avoid deep nesting in preprocessors
+   9. Later source order beats earlier (same specificity)
+   10. Use all: unset for complete element resets
+*/

@@ -1,0 +1,388 @@
+/* ============================================================================
+   RESPONSIVE DESIGN
+   File: 07_responsive_design.css
+   Covers: Media queries, responsive units, mobile-first, breakpoints
+   ============================================================================ */
+
+/* ============================================================================
+   1. RESPONSIVE UNITS
+   ============================================================================ */
+
+/*
+   Key to responsive design: use relative units that adapt to the viewport.
+   - %   : Relative to parent element
+   - em  : Relative to parent font-size
+   - rem : Relative to root (html) font-size
+   - vw  : 1% of viewport width
+   - vh  : 1% of viewport height
+   - vmin: Smaller of vw or vh
+   - vmax: Larger of vw or vh
+   - ch  : Width of "0" character
+*/
+
+/* Fluid sizing with viewport units */
+.fluid-sizing {
+    font-size: 2vw;           /* Scales with viewport width */
+    padding: 5vh 3vw;         /* Vertical: 5% viewport height, Horizontal: 3% viewport width */
+    width: 80vw;              /* 80% of viewport width */
+    height: 50vh;             /* 50% of viewport height */
+}
+
+/* clamp() - fluid values with min/max bounds */
+.clamp-examples {
+    font-size: clamp(1rem, 2.5vw, 2rem);
+    /* Minimum: 1rem, Preferred: 2.5vw, Maximum: 2rem */
+
+    width: clamp(300px, 80%, 1200px);
+    /* Minimum: 300px, Preferred: 80%, Maximum: 1200px */
+
+    padding: clamp(1rem, 3vw, 3rem);
+}
+
+/* ============================================================================
+   2. MOBILE-FIRST APPROACH
+   ============================================================================ */
+
+/*
+   Mobile-first: Start with base styles for mobile, then add media queries
+   to enhance for larger screens. Uses min-width queries.
+   Benefits: simpler code, better performance on mobile, progressive enhancement.
+*/
+
+/* Base styles (mobile first - no media query needed) */
+body {
+    font-size: 16px;
+    line-height: 1.5;
+    padding: 16px;
+}
+
+/* Single column layout by default (mobile) */
+.container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+
+/* ============================================================================
+   3. MEDIA QUERIES
+   ============================================================================ */
+
+/*
+   @media allows applying styles based on device characteristics.
+   Common features: width, height, orientation, resolution, prefers-color-scheme
+*/
+
+/* Tablet (min-width: 768px) */
+@media (min-width: 768px) {
+    .container {
+        grid-template-columns: repeat(2, 1fr);  /* Two columns */
+    }
+
+    body {
+        padding: 24px;
+        font-size: 18px;
+    }
+}
+
+/* Desktop (min-width: 1024px) */
+@media (min-width: 1024px) {
+    .container {
+        grid-template-columns: repeat(3, 1fr);  /* Three columns */
+    }
+
+    body {
+        padding: 32px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+}
+
+/* Large desktop (min-width: 1440px) */
+@media (min-width: 1440px) {
+    .container {
+        grid-template-columns: repeat(4, 1fr);  /* Four columns */
+    }
+}
+
+/* ============================================================================
+   4. COMMON BREAKPOINTS
+   ============================================================================ */
+
+/*
+   Standard breakpoints (device-agnostic approach):
+   - 480px  : Small mobile
+   - 768px  : Tablet portrait
+   - 1024px : Tablet landscape / small desktop
+   - 1200px : Desktop
+   - 1440px : Large desktop
+
+   Better approach: breakpoints based on CONTENT, not devices.
+*/
+
+/* Content-based breakpoints */
+.content-based {
+    /* Base: single column (mobile) */
+}
+
+@media (min-width: 600px) {
+    /* Two columns when there's enough space */
+}
+
+@media (min-width: 900px) {
+    /* Three columns */
+}
+
+@media (min-width: 1200px) {
+    /* Four columns with sidebar */
+}
+
+/* ============================================================================
+   5. MEDIA QUERY FEATURES
+   ============================================================================ */
+
+/* Orientation */
+@media (orientation: portrait) {
+    /* Styles for portrait mode (height > width) */
+}
+
+@media (orientation: landscape) {
+    /* Styles for landscape mode (width > height) */
+}
+
+/* Resolution (retina displays) */
+@media (min-resolution: 2dppx) {
+    /* High-DPI / Retina displays */
+    .logo {
+        background-image: url("logo@2x.png");
+    }
+}
+
+/* Pointer (input device) */
+@media (pointer: coarse) {
+    /* Touch devices - larger touch targets */
+    .button {
+        min-height: 44px;
+        min-width: 44px;
+    }
+}
+
+@media (pointer: fine) {
+    /* Mouse/stylus - can have smaller targets */
+    .button {
+        min-height: 32px;
+    }
+}
+
+/* Hover capability */
+@media (hover: hover) {
+    /* Device supports hover (mouse) */
+    .card:hover {
+        transform: translateY(-4px);
+    }
+}
+
+@media (hover: none) {
+    /* Touch device - no hover */
+    .card:active {
+        transform: translateY(-2px);
+    }
+}
+
+/* Reduced motion (accessibility) */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Color scheme (dark/light mode) */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-color: #1a1a2e;
+        --text-color: #e0e0e0;
+        --primary: #64ffda;
+    }
+}
+
+@media (prefers-color-scheme: light) {
+    :root {
+        --bg-color: #ffffff;
+        --text-color: #333333;
+        --primary: #007bff;
+    }
+}
+
+/* Print styles */
+@media print {
+    body {
+        font-size: 12pt;
+        color: black;
+        background: white;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+
+    a[href]::after {
+        content: " (" attr(href) ")";
+    }
+}
+
+/* ============================================================================
+   6. RESPONSIVE IMAGES
+   ============================================================================ */
+
+/* Fluid images */
+img {
+    max-width: 100%;   /* Never exceeds container width */
+    height: auto;      /* Maintains aspect ratio */
+}
+
+/* Responsive image with srcset (HTML) */
+/*
+   <img src="small.jpg"
+        srcset="small.jpg 400w,
+                medium.jpg 800w,
+                large.jpg 1200w"
+        sizes="(max-width: 600px) 100vw,
+               (max-width: 1200px) 50vw,
+               33vw"
+        alt="Responsive image">
+*/
+
+/* Object-fit for controlling image fit */
+.image-cover {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;      /* Covers area, may crop */
+    object-fit: contain;    /* Fits entirely, may have gaps */
+    object-fit: fill;       /* Stretches to fill */
+    object-position: center; /* Position within the box */
+}
+
+/* ============================================================================
+   7. RESPONSIVE TYPOGRAPHY
+   ============================================================================ */
+
+/* Fluid typography scale */
+h1 { font-size: clamp(1.75rem, 4vw, 3rem); }
+h2 { font-size: clamp(1.5rem, 3vw, 2.25rem); }
+h3 { font-size: clamp(1.25rem, 2.5vw, 1.75rem); }
+p  { font-size: clamp(1rem, 1.5vw, 1.125rem); }
+
+/* ============================================================================
+   8. RESPONSIVE LAYOUT PATTERNS
+   ============================================================================ */
+
+/* Mostly fluid pattern */
+.mostly-fluid {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.mostly-fluid .item {
+    flex: 1 1 300px;  /* Base 300px, grows/shrinks */
+}
+
+/* Column drop pattern */
+.column-drop {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.column-drop .primary {
+    flex: 2 1 400px;  /* Takes more space */
+}
+
+.column-drop .secondary {
+    flex: 1 1 200px;  /* Takes less space */
+}
+
+/* Layout shifter pattern */
+.layout-shifter {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.layout-shifter .main {
+    flex: 1 1 100%;
+}
+
+@media (min-width: 768px) {
+    .layout-shifter .main {
+        display: flex;
+    }
+}
+
+/* Off-canvas pattern (sidebar slides in) */
+.off-canvas-nav {
+    position: fixed;
+    top: 0;
+    left: -250px;       /* Hidden off-screen */
+    width: 250px;
+    height: 100vh;
+    transition: left 0.3s ease;
+}
+
+.off-canvas-nav.open {
+    left: 0;            /* Slides in */
+}
+
+/* ============================================================================
+   9. CONTAINER QUERIES (Modern)
+   ============================================================================ */
+
+/*
+   Container queries allow styling based on a parent container's size,
+   not the viewport. More powerful than media queries for reusable components.
+*/
+
+/* Define a containment context */
+.card-container {
+    container-type: inline-size;
+    container-name: card;
+}
+
+/* Query based on container width */
+@container card (min-width: 400px) {
+    .card {
+        display: flex;           /* Horizontal layout in wide container */
+        flex-direction: row;
+    }
+
+    .card-image {
+        width: 200px;
+    }
+}
+
+@container card (max-width: 399px) {
+    .card {
+        display: flex;
+        flex-direction: column;  /* Vertical layout in narrow container */
+    }
+
+    .card-image {
+        width: 100%;
+    }
+}
+
+/* ============================================================================
+   BEST PRACTICES
+   ============================================================================
+
+   1. Use mobile-first approach (min-width queries)
+   2. Use relative units (rem, %, vw, vh) over fixed pixels
+   3. Use clamp() for fluid typography and spacing
+   4. Use breakpoints based on content, not devices
+   5. Use container queries for reusable components
+   6. Always set max-width: 100% on images
+   7. Use srcset for responsive images
+   8. Test on real devices, not just browser resize
+   9. Use prefers-reduced-motion for accessibility
+   10. Use prefers-color-scheme for dark mode support
+*/

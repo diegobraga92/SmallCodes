@@ -1,0 +1,365 @@
+/* ============================================================================
+   CSS COMPREHENSIVE REVIEW
+   File: _css_review.css
+   Covers: Quick reference for all CSS topics, common patterns,
+           browser support notes, debugging tips
+   ============================================================================ */
+
+/* ============================================================================
+   1. CSS ARCHITECTURE OVERVIEW
+   ============================================================================ */
+
+/*
+   CSS is a declarative language for styling HTML documents.
+   Key concepts:
+   - Selectors: Target HTML elements
+   - Properties: What to style (color, size, position)
+   - Values: How to style (red, 16px, absolute)
+   - Cascade: How conflicts are resolved
+   - Box Model: How elements are sized
+
+   CSS Processing Pipeline:
+   1. Parse stylesheets
+   2. Match selectors to elements
+   3. Cascade (resolve conflicts)
+   4. Compute values (inherit, initial, etc.)
+   5. Layout (box model, positioning)
+   6. Paint (colors, images, borders)
+   7. Composite (layers, stacking)
+*/
+
+/* ============================================================================
+   2. QUICK REFERENCE - SELECTORS
+   ============================================================================ */
+
+/*
+   SELECTOR              | EXAMPLE              | SPECIFICITY
+   ---------------------|----------------------|-------------
+   Universal            | *                    | 0,0,0,0
+   Type/element         | div                  | 0,0,0,1
+   Pseudo-element       | ::before             | 0,0,0,1
+   Class                | .card                | 0,0,1,0
+   Attribute            | [type="text"]        | 0,0,1,0
+   Pseudo-class         | :hover               | 0,0,1,0
+   ID                   | #header              | 0,1,0,0
+   Inline style         | style="..."          | 1,0,0,0
+   !important           | color: red !important| ∞ (overrides all)
+
+   COMBINATORS:
+   Descendant:    div p          (any p inside div)
+   Child:         div > p        (direct child only)
+   Adjacent:      h2 + p         (p immediately after h2)
+   Sibling:       h2 ~ p         (any p after h2)
+*/
+
+/* ============================================================================
+   3. QUICK REFERENCE - BOX MODEL
+   ============================================================================ */
+
+/*
+   Content → Padding → Border → Margin
+
+   box-sizing: content-box (default)
+     width = content width only
+     total = width + padding + border
+
+   box-sizing: border-box (recommended)
+     width = content + padding + border
+     total = width (predictable!)
+*/
+
+/* ============================================================================
+   4. QUICK REFERENCE - LAYOUT
+   ============================================================================ */
+
+/*
+   DISPLAY VALUES:
+   block       : Full width, new line
+   inline      : Flows inline, no width/height
+   inline-block: Inline flow, respects box model
+   flex        : 1D layout container
+   grid        : 2D layout container
+   none        : Removed from document flow
+
+   POSITION VALUES:
+   static   : Normal flow (default)
+   relative : Offset from normal position
+   absolute : Removed from flow, relative to positioned ancestor
+   fixed    : Removed from flow, relative to viewport
+   sticky   : Relative until scroll threshold, then fixed-like
+*/
+
+/* ============================================================================
+   5. QUICK REFERENCE - FLEXBOX
+   ============================================================================ */
+
+/*
+   CONTAINER:
+   display: flex
+   flex-direction: row | column
+   flex-wrap: nowrap | wrap
+   justify-content: main axis alignment
+   align-items: cross axis alignment (single line)
+   align-content: cross axis alignment (multi-line)
+   gap: spacing between items
+
+   ITEMS:
+   flex: grow shrink basis (shorthand)
+   flex-grow: 0 (no grow) | 1+ (proportional)
+   flex-shrink: 1 (can shrink) | 0 (no shrink)
+   flex-basis: auto | size
+   align-self: override align-items
+   order: visual order (default 0)
+*/
+
+/* ============================================================================
+   6. QUICK REFERENCE - GRID
+   ============================================================================ */
+
+/*
+   CONTAINER:
+   display: grid
+   grid-template-columns: track sizes
+   grid-template-rows: track sizes
+   grid-template-areas: named layout
+   gap: spacing
+   justify-items: horizontal cell alignment
+   align-items: vertical cell alignment
+   grid-auto-flow: row | column | dense
+
+   ITEMS:
+   grid-column: start / end
+   grid-row: start / end
+   grid-area: row-start / col-start / row-end / col-end
+   justify-self: horizontal self-alignment
+   align-self: vertical self-alignment
+
+   KEY FUNCTIONS:
+   repeat(3, 1fr)     - Repeat pattern
+   minmax(200px, 1fr) - Flexible range
+   auto-fill          - Fill with empty tracks
+   auto-fit           - Fill, collapse empty tracks
+*/
+
+/* ============================================================================
+   7. QUICK REFERENCE - RESPONSIVE
+   ============================================================================ */
+
+/*
+   MEDIA QUERIES:
+   @media (min-width: 768px) { }
+   @media (prefers-color-scheme: dark) { }
+   @media (prefers-reduced-motion: reduce) { }
+   @media (orientation: portrait) { }
+   @media (pointer: coarse) { }
+
+   CONTAINER QUERIES:
+   @container (min-width: 400px) { }
+
+   UNITS:
+   rem  : Root em (relative to html font-size)
+   em   : Parent font-size
+   vw   : 1% viewport width
+   vh   : 1% viewport height
+   %    : Parent element
+
+   FUNCTIONS:
+   clamp(min, preferred, max)
+   min(a, b)
+   max(a, b)
+*/
+
+/* ============================================================================
+   8. QUICK REFERENCE - ANIMATIONS
+   ============================================================================ */
+
+/*
+   TRANSITIONS:
+   transition: property duration timing-function delay
+   transition: opacity 0.3s ease, transform 0.2s;
+
+   ANIMATIONS:
+   @keyframes name {
+     from { ... }
+     to { ... }
+   }
+   @keyframes name {
+     0% { ... }
+     50% { ... }
+     100% { ... }
+   }
+
+   animation: name duration timing-function delay iteration-count direction fill-mode
+   animation: fadeIn 0.5s ease forwards;
+
+   TRANSFORMS:
+   transform: translate(x, y) | rotate(angle) | scale(n) | skew(angle)
+   transform-origin: center | top left | x y
+   perspective: distance (for 3D)
+   transform-style: flat | preserve-3d
+   backface-visibility: visible | hidden
+*/
+
+/* ============================================================================
+   9. QUICK REFERENCE - CUSTOM PROPERTIES
+   ============================================================================ */
+
+/*
+   DEFINE:  --name: value;
+   ACCESS:  var(--name, fallback);
+   SCOPE:   :root for global, element for local
+   THEMING: [data-theme="dark"] { --bg: black; }
+   CALC:    calc(var(--size) * 2)
+*/
+
+/* ============================================================================
+   10. COMMON CSS RESET
+   ============================================================================ */
+
+/*
+   A minimal modern CSS reset:
+*/
+
+.minimal-reset {
+    /* Example only - use @layer for actual reset */
+}
+
+/*
+   *, *::before, *::after { box-sizing: border-box; }
+   body { margin: 0; }
+   img { max-width: 100%; display: block; }
+   a { color: inherit; text-decoration: none; }
+   button { cursor: pointer; font: inherit; }
+   ul, ol { list-style: none; padding: 0; margin: 0; }
+   h1, h2, h3, h4, h5, h6 { margin: 0; font-weight: normal; }
+   p { margin: 0; }
+*/
+
+/* ============================================================================
+   11. PERFORMANCE TIPS
+   ============================================================================ */
+
+/*
+   RENDER PERFORMANCE:
+   - Only animate transform and opacity (GPU composited)
+   - Use will-change sparingly (creates new layer)
+   - Avoid animating width, height, top, left (triggers layout)
+   - Use contain for isolated components
+
+   SELECTOR PERFORMANCE:
+   - Browsers parse right-to-left
+   - Avoid universal selectors in key positions
+   - Keep selectors short and specific
+   - Class selectors are fast
+
+   LOADING PERFORMANCE:
+   - Minimize CSS file size
+   - Use critical CSS in <head>
+   - Defer non-critical CSS
+   - Use content-visibility: auto for below-fold content
+*/
+
+/* ============================================================================
+   12. ACCESSIBILITY
+   ============================================================================ */
+
+/*
+   VISUAL:
+   - Sufficient color contrast (WCAG AA: 4.5:1 for text)
+   - Don't rely solely on color to convey information
+   - Focus indicators (use :focus-visible)
+   - Respect prefers-reduced-motion
+   - Respect prefers-color-scheme
+
+   SEMANTIC:
+   - Use proper heading hierarchy
+   - Use landmark elements (header, nav, main, footer)
+   - Use aria attributes when needed
+   - Ensure readable font sizes (min 16px for body)
+
+   Screen reader utilities:
+*/
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* ============================================================================
+   13. DEBUGGING TECHNIQUES
+   ============================================================================ */
+
+/* Outline all elements to see layout */
+.debug-layout * {
+    outline: 1px solid red;
+}
+
+/* Highlight specific elements */
+.debug-target {
+    outline: 3px solid red !important;
+    background: rgba(255, 0, 0, 0.1) !important;
+}
+
+/* Check if CSS is loading */
+html::after {
+    content: "CSS loaded";
+    display: none;  /* Check in dev tools */
+}
+
+/* ============================================================================
+   14. COMMON MISTAKES AND SOLUTIONS
+   ============================================================================ */
+
+/*
+   PROBLEM: Styles not applying
+   CHECK:   Specificity, cascade order, selector correctness,
+            syntax errors, file loading
+
+   PROBLEM: Element not visible
+   CHECK:   display: none, visibility: hidden, opacity: 0,
+            z-index, overflow: hidden, position off-screen
+
+   PROBLEM: Layout broken
+   CHECK:   box-sizing, margin collapsing, float clearing,
+            flex/grid container properties, overflow
+
+   PROBLEM: Responsive not working
+   CHECK:   Viewport meta tag, media query syntax,
+            relative units, breakpoint values
+
+   PROBLEM: Animation not working
+   CHECK:   Property animatability, missing @keyframes,
+            display: none (can't animate), initial state
+*/
+
+/* ============================================================================
+   15. CSS SPECIFICATION STATUS
+   ============================================================================ */
+
+/*
+   LEVELS:
+   CSS 1     (1996) - Basic styling, fonts, colors
+   CSS 2.1   (2011) - Positioning, z-index, media types
+   CSS 3     (modular) - Selectors, backgrounds, borders
+   CSS 4     (in development) - :has(), @scope, nesting
+
+   KEY MODULES:
+   Selectors Level 4     - :has(), :is(), :where()
+   CSS Grid Level 2      - subgrid
+   CSS Nesting           - Native nesting (Chrome 120+)
+   @scope                - Scoped styles
+   @layer                - Cascade layers
+   Container Queries     - Container-based responsive
+   CSS Motion Path       - Element movement along paths
+*/
+
+/* ============================================================================
+   END OF CSS REVIEW
+   ============================================================================ */

@@ -1,0 +1,403 @@
+/* ============================================================================
+   ADVANCED SELECTORS
+   File: 13_advanced_selectors.css
+   Covers: Attribute selectors, combinators, modern pseudo-classes,
+           selector lists, specificity tricks
+   ============================================================================ */
+
+/* ============================================================================
+   1. ATTRIBUTE SELECTORS
+   ============================================================================ */
+
+/*
+   Attribute selectors target elements based on their HTML attributes.
+   Very powerful for styling without adding extra classes.
+*/
+
+/* [attr] - element has the attribute */
+[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+[hidden] {
+    display: none;
+}
+
+[required] {
+    border-left: 3px solid red;
+}
+
+/* [attr="value"] - exact attribute value */
+[type="text"] {
+    border: 1px solid #ccc;
+}
+
+[type="submit"] {
+    background: #007bff;
+    color: white;
+    cursor: pointer;
+}
+
+[target="_blank"] {
+    /* External links that open in new tab */
+}
+
+/* [attr^="value"] - starts with */
+a[href^="https"] {
+    /* Secure links */
+    color: green;
+}
+
+a[href^="mailto"] {
+    /* Email links */
+    color: orange;
+}
+
+a[href^="#"] {
+    /* Anchor links */
+    color: purple;
+}
+
+/* [attr$="value"] - ends with */
+a[href$=".pdf"] {
+    /* PDF links */
+    color: red;
+}
+
+a[href$=".org"] {
+    /* Organization domains */
+}
+
+img[src$=".jpg"] {
+    /* JPG images */
+}
+
+img[src$=".png"] {
+    /* PNG images */
+}
+
+/* [attr*="value"] - contains substring anywhere */
+a[href*="example.com"] {
+    /* Links to example.com */
+    color: blue;
+}
+
+a[href*="github"] {
+    /* GitHub links */
+}
+
+/* [attr~="value"] - contains word in space-separated list */
+[class~="featured"] {
+    /* Elements with class="featured" or class="card featured" */
+    border: 2px solid gold;
+}
+
+/* [attr|="value"] - starts with value followed by hyphen */
+[lang|="en"] {
+    /* lang="en", lang="en-US", lang="en-GB" */
+    font-family: sans-serif;
+}
+
+/* Case-insensitive modifier (i) */
+[type="submit" i] {
+    /* Matches submit, SUBMIT, Submit, etc. */
+}
+
+/* ============================================================================
+   2. COMBINING ATTRIBUTE SELECTORS
+   ============================================================================ */
+
+/* Multiple attribute conditions */
+input[type="text"][required] {
+    /* Text inputs that are required */
+    border-color: #dc3545;
+}
+
+input[type="email"][disabled] {
+    /* Disabled email inputs */
+    background: #f0f0f0;
+}
+
+/* Attribute + class combination */
+a.button[href^="https"] {
+    /* Button-styled secure links */
+}
+
+/* ============================================================================
+   3. COMBINATORS (Review and Advanced)
+   ============================================================================ */
+
+/* Descendant combinator (space) - any descendant */
+article p {
+    /* All <p> inside <article>, any depth */
+}
+
+/* Child combinator (>) - direct child only */
+article > p {
+    /* Only <p> that are DIRECT children of <article> */
+}
+
+/* Adjacent sibling (+) - immediately after */
+h2 + p {
+    /* <p> that immediately follows <h2> */
+    margin-top: 0;
+}
+
+/* General sibling (~) - any following sibling */
+h2 ~ p {
+    /* All <p> that follow <h2> (not necessarily immediately) */
+    color: #666;
+}
+
+/* Column combinator (||) - table column (limited browser support) */
+col.selected || td {
+    /* Cells in the selected column */
+    background: #f0f8ff;
+}
+/* Note: The column combinator (||) has limited browser support.
+   Use colgroup and col elements with classes instead. */
+
+/* ============================================================================
+   4. COMPOUND SELECTORS (Chaining)
+   ============================================================================ */
+
+/* Chaining classes and attributes */
+a.external[href^="https"] {
+    /* <a class="external" href="https://..."> */
+    color: green;
+}
+
+/* Chaining classes */
+.button.primary.large {
+    /* Element with all three classes */
+    font-size: 1.2rem;
+    padding: 1rem 2rem;
+}
+
+/* Chaining pseudo-classes */
+a:first-child:last-child {
+    /* Only link that is both first and last child */
+}
+
+input:focus:not(:placeholder-shown) {
+    /* Focused input with text entered */
+    border-color: #28a745;
+}
+
+/* ============================================================================
+   5. MODERN PSEUDO-CLASS SELECTORS
+   ============================================================================ */
+
+/* :is() - matches any selector in the list (takes highest specificity) */
+:is(header, main, footer) p {
+    /* Same as header p, main p, footer p */
+    line-height: 1.6;
+}
+
+:is(h1, h2, h3, h4) .subtitle {
+    /* Targets .subtitle inside any heading */
+    font-size: 0.8em;
+}
+
+/* :where() - same as :is() but with ZERO specificity */
+:where(header, main, footer) p {
+    /* Specificity: 0,0,0,1 (only the p counts) */
+    /* :where() contributes 0 specificity */
+}
+
+/* :has() - parent/ancestor selector (most powerful modern selector) */
+
+/* Parent containing something */
+figure:has(figcaption) {
+    /* <figure> elements that contain a <figcaption> */
+    border: 1px solid #ccc;
+}
+
+/* Parent NOT containing something */
+figure:not(:has(figcaption)) {
+    /* <figure> without a caption */
+    border: none;
+}
+
+/* Previous sibling (impossible before :has()) */
+h2:has(+ p) {
+    /* <h2> that is immediately followed by a <p> */
+    margin-bottom: 0;
+}
+
+/* Form with validation errors */
+form:has(:invalid) {
+    border: 2px solid red;
+    padding: 1rem;
+}
+
+/* Card with image */
+.card:has(img) {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+}
+
+/* Multiple conditions with :has() */
+.card:has(img):has(.title) {
+    /* Cards with both an image and a title */
+    gap: 1rem;
+}
+
+/* :has() with descendant selector */
+section:has(> h2) {
+    /* Section with a DIRECT child h2 */
+    padding-top: 2rem;
+}
+
+/* ============================================================================
+   6. NEGATION WITH :not()
+   ============================================================================ */
+
+/* :not() - excludes elements matching the selector */
+
+/* Exclude one type */
+input:not([type="submit"]) {
+    /* All inputs except submit buttons */
+    border: 1px solid #ccc;
+}
+
+/* Exclude multiple (comma-separated in modern CSS) */
+input:not([type="submit"], [type="reset"], [type="button"]) {
+    /* All inputs except buttons */
+    background: white;
+}
+
+/* Exclude elements with a class */
+div:not(.excluded) {
+    /* All divs except those with class="excluded" */
+}
+
+/* Exclude first and last */
+li:not(:first-child):not(:last-child) {
+    /* All list items except first and last */
+    border-bottom: 1px solid #eee;
+}
+
+/* ============================================================================
+   7. SELECTOR LISTS
+   ============================================================================ */
+
+/* Comma-separated selector list */
+h1, h2, h3, h4, h5, h6 {
+    font-family: Georgia, serif;
+    line-height: 1.2;
+}
+
+/* Modern :is() can simplify long lists */
+:is(h1, h2, h3, h4, h5, h6) {
+    font-family: Georgia, serif;
+}
+
+/* Nested selector lists */
+:is(.card, .panel) :is(.title, .heading) {
+    /* .card .title, .card .heading, .panel .title, .panel .heading */
+    font-weight: bold;
+}
+
+/* ============================================================================
+   8. STRUCTURAL ADVANCED SELECTORS
+   ============================================================================ */
+
+/* :nth-child with formula patterns */
+
+/* Every element starting from the 4th */
+li:nth-child(n+4) {
+    border-top: 1px solid #ccc;
+}
+
+/* First 3 items */
+li:nth-child(-n+3) {
+    font-weight: bold;
+}
+
+/* Items 4 through 6 */
+li:nth-child(n+4):nth-child(-n+6) {
+    background: #f0f0f0;
+}
+
+/* Every 3rd starting from the 2nd */
+li:nth-child(3n+2) {
+    color: blue;
+}
+
+/* :nth-child(an+b of selector) - filter by selector */
+li:nth-child(2n of .highlight) {
+    /* Every 2nd .highlight item */
+    background: yellow;
+}
+
+/* :nth-last-child from end */
+li:nth-last-child(2n+1) {
+    /* Odd items from the end */
+}
+
+/* ============================================================================
+   9. PRACTICAL SELECTOR PATTERNS
+   ============================================================================ */
+
+/* Style all children except last */
+.margin-children > *:not(:last-child) {
+    margin-bottom: 1rem;
+}
+
+/* Style all children except first */
+.margin-children > *:not(:first-child) {
+    margin-top: 1rem;
+}
+
+/* Lobotomized owl selector (adjacent sibling for all children) */
+.stack > * + * {
+    margin-top: 1rem;
+    /* Adds margin between all adjacent children */
+}
+
+/* Empty state */
+.container:empty::after {
+    content: "No items to display";
+    color: #999;
+    font-style: italic;
+}
+
+/* Custom checkbox styling using adjacent sibling */
+input[type="checkbox"] {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+}
+
+input[type="checkbox"]:checked {
+    background: #007bff;
+    border-color: #007bff;
+}
+
+input[type="checkbox"]:checked::after {
+    content: "✓";
+    color: white;
+    display: block;
+    text-align: center;
+    line-height: 16px;
+}
+
+/* ============================================================================
+   BEST PRACTICES
+   ============================================================================
+
+   1. Use attribute selectors to avoid adding unnecessary classes
+   2. Use :has() for parent/previous-sibling selection (modern)
+   3. Use :is() to simplify long selector lists
+   4. Use :where() for zero-specificity base styles
+   5. Use :not() for exclusion patterns
+   6. Use the lobotomized owl (* + *) for consistent spacing
+   7. Use [attr^=], [attr$=], [attr*=] for pattern matching
+   8. Use compound selectors for precise targeting
+   9. Avoid overly complex selectors (hard to override)
+   10. Use chaining for AND logic, commas for OR logic
+*/

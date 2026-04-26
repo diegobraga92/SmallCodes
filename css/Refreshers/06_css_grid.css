@@ -1,0 +1,410 @@
+/* ============================================================================
+   CSS GRID
+   File: 06_css_grid.css
+   Covers: Grid container, tracks, lines, areas, alignment, auto-flow
+   ============================================================================
+
+   CSS Grid is a two-dimensional layout system that handles rows AND columns
+   simultaneously. Best for page-level layouts and complex 2D arrangements.
+*/
+
+/* ============================================================================
+   1. GRID CONTAINER
+   ============================================================================ */
+
+.grid-container {
+    display: grid;        /* Block-level grid container */
+    display: inline-grid; /* Inline-level grid container */
+}
+
+/* ============================================================================
+   2. GRID TRACKS - Defining Columns and Rows
+   ============================================================================ */
+
+/*
+   Grid tracks are the columns and rows of the grid.
+   Use grid-template-columns and grid-template-rows to define them.
+*/
+
+.grid-tracks {
+    display: grid;
+
+    /* Fixed column widths */
+    grid-template-columns: 200px 200px 200px;  /* Three columns, 200px each */
+
+    /* Using fr units (fraction of available space) */
+    grid-template-columns: 1fr 2fr 1fr;  /* Middle column is twice as wide */
+
+    /* Mixed units */
+    grid-template-columns: 200px 1fr 200px;  /* Fixed sidebar, fluid center */
+
+    /* Auto sizing */
+    grid-template-columns: auto 1fr auto;    /* Auto-sized sides, fluid center */
+
+    /* Repeat function */
+    grid-template-columns: repeat(3, 1fr);   /* Three equal columns */
+    grid-template-columns: repeat(4, 200px); /* Four fixed columns */
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    /* Auto-fills with items at least 250px wide */
+
+    /* Rows */
+    grid-template-rows: 100px 1fr 100px;     /* Fixed header/footer, fluid middle */
+    grid-template-rows: repeat(3, auto);     /* Three auto-height rows */
+}
+
+/* ============================================================================
+   3. GAP - Spacing Between Grid Cells
+   ============================================================================ */
+
+.grid-gap {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 20px;              /* 20px gap between rows AND columns */
+    gap: 10px 20px;         /* row-gap: 10px, column-gap: 20px */
+    row-gap: 10px;          /* Gap between rows */
+    column-gap: 20px;       /* Gap between columns */
+}
+
+/* ============================================================================
+   4. GRID LINES - Placing Items by Line Numbers
+   ============================================================================ */
+
+/*
+   Grid lines are numbered starting from 1 at the top-left.
+   Items can be placed using line numbers.
+*/
+
+.grid-lines {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(3, 100px);
+}
+
+/* Place items by line numbers */
+.item-a {
+    grid-column-start: 1;
+    grid-column-end: 3;      /* Spans from line 1 to line 3 (2 columns) */
+    grid-row-start: 1;
+    grid-row-end: 3;         /* Spans from line 1 to line 3 (2 rows) */
+}
+
+/* Shorthand: grid-column and grid-row */
+.item-b {
+    grid-column: 1 / 3;      /* Start line 1, end line 3 */
+    grid-row: 1 / 3;         /* Start line 1, end line 3 */
+}
+
+/* Span keyword */
+.item-c {
+    grid-column: 1 / span 2;  /* Start at line 1, span 2 columns */
+    grid-row: 1 / span 2;     /* Start at line 1, span 2 rows */
+}
+
+/* Using negative lines (counts from end) */
+.item-d {
+    grid-column: -3 / -1;    /* From 3rd from end to last line */
+}
+
+/* grid-area shorthand: row-start / col-start / row-end / col-end */
+.item-e {
+    grid-area: 1 / 1 / 3 / 3;  /* row-start / col-start / row-end / col-end */
+}
+
+/* ============================================================================
+   5. NAMED GRID LINES
+   ============================================================================ */
+
+.named-lines {
+    display: grid;
+    grid-template-columns:
+        [sidebar-start] 200px
+        [sidebar-end content-start] 1fr
+        [content-end];
+    grid-template-rows:
+        [header-start] 80px
+        [header-end main-start] 1fr
+        [main-end footer-start] 80px
+        [footer-end];
+}
+
+.header {
+    grid-column: sidebar-start / content-end;
+    grid-row: header-start / header-end;
+}
+
+.sidebar {
+    grid-column: sidebar-start / sidebar-end;
+    grid-row: header-end / footer-start;
+}
+
+.main {
+    grid-column: content-start / content-end;
+    grid-row: main-start / main-end;
+}
+
+.footer {
+    grid-column: sidebar-start / content-end;
+    grid-row: footer-start / footer-end;
+}
+
+/* ============================================================================
+   6. GRID TEMPLATE AREAS - Named Areas
+   ============================================================================ */
+
+/*
+   Named grid areas provide a visual way to define layouts.
+   Each cell in the string represents a grid cell.
+   Use periods (.) for empty cells.
+   Areas must form a rectangular shape.
+*/
+
+.grid-areas {
+    display: grid;
+    grid-template-columns: 200px 1fr 200px;
+    grid-template-rows: 80px 1fr 80px;
+    grid-template-areas:
+        "header  header  header"
+        "sidebar main    aside"
+        "footer  footer  footer";
+    gap: 10px;
+    min-height: 100vh;
+}
+
+.grid-header {
+    grid-area: header;
+}
+
+.grid-sidebar {
+    grid-area: sidebar;
+}
+
+.grid-main {
+    grid-area: main;
+}
+
+.grid-aside {
+    grid-area: aside;
+}
+
+.grid-footer {
+    grid-area: footer;
+}
+
+/* Responsive grid areas - reorder on smaller screens */
+@media (max-width: 768px) {
+    .grid-areas {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "header"
+            "sidebar"
+            "main"
+            "aside"
+            "footer";
+    }
+}
+
+/* ============================================================================
+   7. JUSTIFY ITEMS / ALIGN ITEMS - Cell Alignment
+   ============================================================================ */
+
+/*
+   justify-items: Horizontal alignment of items within their cells
+   align-items: Vertical alignment of items within their cells
+   Both default to stretch.
+*/
+
+.grid-alignment {
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    grid-template-rows: repeat(3, 100px);
+
+    /* Horizontal alignment within cells */
+    justify-items: stretch;   /* Default - fills cell width */
+    justify-items: start;     /* Aligns to left of cell */
+    justify-items: end;       /* Aligns to right of cell */
+    justify-items: center;    /* Centers horizontally */
+
+    /* Vertical alignment within cells */
+    align-items: stretch;     /* Default - fills cell height */
+    align-items: start;       /* Aligns to top of cell */
+    align-items: end;         /* Aligns to bottom of cell */
+    align-items: center;      /* Centers vertically */
+}
+
+/* Place-items shorthand (align-items + justify-items) */
+.place-items-center {
+    place-items: center;      /* Centers all items both axes */
+    place-items: start end;   /* align-items: start, justify-items: end */
+}
+
+/* ============================================================================
+   8. JUSTIFY CONTENT / ALIGN CONTENT - Grid Alignment
+   ============================================================================ */
+
+/*
+   justify-content: Aligns the entire grid horizontally within container
+   align-content: Aligns the entire grid vertically within container
+   Only works when grid is smaller than container.
+*/
+
+.grid-content-alignment {
+    display: grid;
+    grid-template-columns: 100px 100px 100px;
+    grid-template-rows: 100px 100px;
+    height: 500px;  /* Container larger than grid */
+
+    justify-content: start;       /* Default - grid at left */
+    justify-content: end;         /* Grid at right */
+    justify-content: center;      /* Grid centered horizontally */
+    justify-content: stretch;     /* Items stretch to fill */
+    justify-content: space-between;
+    justify-content: space-around;
+    justify-content: space-evenly;
+
+    align-content: start;         /* Grid at top */
+    align-content: end;           /* Grid at bottom */
+    align-content: center;        /* Grid centered vertically */
+    align-content: stretch;
+    align-content: space-between;
+    align-content: space-around;
+    align-content: space-evenly;
+}
+
+/* ============================================================================
+   9. JUSTIFY SELF / ALIGN SELF - Individual Item Alignment
+   ============================================================================ */
+
+.grid-item-self {
+    justify-self: stretch;   /* Default */
+    justify-self: start;
+    justify-self: end;
+    justify-self: center;
+
+    align-self: stretch;
+    align-self: start;
+    align-self: end;
+    align-self: center;
+
+    place-self: center;      /* Shorthand: align-self justify-self */
+}
+
+/* ============================================================================
+   10. AUTO FLOW - How Items Are Placed Automatically
+   ============================================================================ */
+
+.grid-auto-flow {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+
+    grid-auto-flow: row;         /* Default - fills row by row */
+    grid-auto-flow: column;      /* Fills column by column */
+    grid-auto-flow: dense;       /* Fills gaps with smaller items */
+
+    /* Auto row/column sizes for implicit tracks */
+    grid-auto-rows: 100px;       /* All auto-generated rows are 100px */
+    grid-auto-rows: minmax(100px, auto);  /* Minimum 100px, grows with content */
+    grid-auto-columns: 200px;    /* Auto-generated columns are 200px */
+}
+
+/* ============================================================================
+   11. MINMAX AND AUTO-FILL/AUTO-FIT
+   ============================================================================ */
+
+/*
+   minmax(min, max) - Sets a size range for tracks.
+   auto-fill - Creates as many tracks as possible, even if empty.
+   auto-fit - Creates as many tracks as needed, collapses empty ones.
+*/
+
+.responsive-grid {
+    display: grid;
+    gap: 20px;
+
+    /* Responsive columns without media queries */
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    /* Creates as many 250px+ columns as fit */
+
+    /* auto-fit vs auto-fill: auto-fit collapses empty tracks */
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+/* ============================================================================
+   12. SUBGRID
+   ============================================================================ */
+
+/*
+   subgrid allows a grid item to inherit the grid tracks of its parent.
+   Useful for aligning nested grid items with the parent grid.
+*/
+
+.parent-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.nested-grid {
+    display: grid;
+    grid-column: 1 / -1;  /* Span all columns */
+    grid-template-columns: subgrid;  /* Inherit parent's column tracks */
+    /* Children of .nested-grid align with parent grid columns */
+}
+
+/* ============================================================================
+   13. COMMON GRID PATTERNS
+   ============================================================================ */
+
+/* Full page layout */
+.page-grid {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    grid-template-columns: 250px 1fr;
+    grid-template-areas:
+        "header header"
+        "sidebar main"
+        "footer footer";
+    min-height: 100vh;
+}
+
+/* Card grid */
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+/* Centered single item */
+.center-grid {
+    display: grid;
+    place-items: center;
+    min-height: 100vh;
+}
+
+/* Overlap layout (items stacked on same cells) */
+.overlap-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+}
+
+.overlap-grid > * {
+    grid-column: 1 / -1;
+    grid-row: 1 / -1;
+}
+
+/* ============================================================================
+   BEST PRACTICES
+   ============================================================================
+
+   1. Use grid for 2D layouts, flexbox for 1D layouts
+   2. Use grid-template-areas for semantic, readable layouts
+   3. Use repeat(auto-fill, minmax(250px, 1fr)) for responsive grids
+   4. Use gap instead of margins for grid spacing
+   5. Use minmax() for flexible track sizing
+   6. Use place-items: center for easy centering
+   7. Use subgrid for aligning nested content with parent grid
+   8. Use dense auto-flow to fill gaps (but be careful with tab order)
+   9. Use named grid lines for complex layouts
+   10. Use fr units for proportional sizing, not percentages
+*/

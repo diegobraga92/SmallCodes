@@ -1,0 +1,337 @@
+/* ============================================================================
+   COLORS AND BACKGROUNDS
+   File: 03_colors_backgrounds.css
+   Covers: Color formats, background properties, gradients, opacity
+   ============================================================================ */
+
+/* ============================================================================
+   1. COLOR FORMATS
+   ============================================================================ */
+
+/*
+   CSS supports multiple ways to specify colors.
+   Modern recommendation: use hex for simple colors, hsl/hsla for theming.
+*/
+
+.color-formats {
+    /* Named colors - 140+ standard names */
+    color: red;
+    color: blue;
+    color: transparent;
+    color: currentColor;  /* Inherits color from parent (useful for SVGs) */
+
+    /* Hexadecimal - 6 digits (#RRGGBB) */
+    color: #FF0000;       /* Red */
+    color: #00FF00;       /* Green */
+    color: #0000FF;       /* Blue */
+    color: #FFFFFF;       /* White */
+    color: #000000;       /* Black */
+
+    /* Hexadecimal - 3 digits shorthand (#RGB) */
+    color: #F00;          /* Same as #FF0000 */
+    color: #0F0;          /* Same as #00FF00 */
+    color: #FFF;          /* Same as #FFFFFF */
+
+    /* Hexadecimal with alpha - 8 digits (#RRGGBBAA) */
+    color: #FF000080;     /* Red at 50% opacity */
+
+    /* Hexadecimal with alpha - 4 digits shorthand (#RGBA) */
+    color: #F008;         /* Red at ~53% opacity */
+
+    /* RGB - Red Green Blue (0-255 each) */
+    color: rgb(255, 0, 0);
+    color: rgb(0, 128, 255);
+
+    /* RGBA - RGB with Alpha (0-1) */
+    color: rgba(255, 0, 0, 0.5);    /* 50% opacity */
+    color: rgba(0, 128, 255, 0.75); /* 75% opacity */
+
+    /* HSL - Hue Saturation Lightness */
+    /* Hue: 0-360 (0=red, 120=green, 240=blue) */
+    /* Saturation: 0% (gray) to 100% (full color) */
+    /* Lightness: 0% (black) to 100% (white) */
+    color: hsl(0, 100%, 50%);       /* Red */
+    color: hsl(120, 100%, 50%);     /* Green */
+    color: hsl(240, 100%, 50%);     /* Blue */
+    color: hsl(0, 0%, 50%);         /* Medium gray */
+
+    /* HSLA - HSL with Alpha */
+    color: hsla(0, 100%, 50%, 0.5); /* Red at 50% opacity */
+
+    /* Modern formats (wide gamut displays) */
+    color: color(display-p3 1 0 0);  /* P3 color space - wider than sRGB */
+    color: lab(50% 50 0);            /* CIE Lab */
+    color: lch(50% 50 0);            /* CIE Lch */
+    color: oklch(50% 0.5 0);         /* OKLCH - perceptually uniform */
+}
+
+/* ============================================================================
+   2. OPACITY
+   ============================================================================ */
+
+.opacity-example {
+    opacity: 1;       /* Fully opaque (default) */
+    opacity: 0.5;     /* 50% transparent */
+    opacity: 0;       /* Fully transparent (still takes space) */
+    opacity: 0.25;    /* 75% transparent */
+}
+
+/*
+   Difference between opacity and rgba/hsla:
+   - opacity affects the ENTIRE element (including children)
+   - rgba/hsla affects only the specific property (e.g., background)
+*/
+
+.opacity-vs-rgba {
+    /* This makes the whole element (and its children) semi-transparent */
+    opacity: 0.5;
+    background: red;
+}
+
+.rgba-background {
+    /* This only makes the background semi-transparent, text stays solid */
+    background: rgba(255, 0, 0, 0.5);
+}
+
+/* ============================================================================
+   3. BACKGROUND COLOR
+   ============================================================================ */
+
+.bg-color-examples {
+    background-color: transparent;  /* Default */
+    background-color: #f0f0f0;
+    background-color: rgb(240, 240, 240);
+    background-color: hsl(0, 0%, 94%);
+}
+
+/* ============================================================================
+   4. BACKGROUND IMAGE
+   ============================================================================ */
+
+.bg-image-examples {
+    /* Single background image */
+    background-image: url("image.jpg");
+
+    /* Multiple backgrounds (comma-separated) */
+    background-image:
+        url("overlay.png"),
+        url("background.jpg");
+
+    /* Gradient as background */
+    background-image: linear-gradient(to bottom, #fff, #000);
+}
+
+/* ============================================================================
+   5. BACKGROUND REPEAT
+   ============================================================================ */
+
+.bg-repeat-examples {
+    background-repeat: repeat;      /* Default - tiles both directions */
+    background-repeat: repeat-x;    /* Tiles horizontally only */
+    background-repeat: repeat-y;    /* Tiles vertically only */
+    background-repeat: no-repeat;   /* Single instance */
+    background-repeat: space;       /* Tiles evenly with space between */
+    background-repeat: round;       /* Tiles and scales to fit */
+}
+
+/* ============================================================================
+   6. BACKGROUND POSITION
+   ============================================================================ */
+
+.bg-position-examples {
+    /* Keywords */
+    background-position: center;
+    background-position: top left;
+    background-position: top right;
+    background-position: bottom left;
+    background-position: bottom right;
+    background-position: center center;
+
+    /* Percentage (0% 0% = top-left, 100% 100% = bottom-right) */
+    background-position: 50% 50%;   /* Center */
+    background-position: 25% 75%;
+
+    /* Pixel/unit values */
+    background-position: 20px 30px;  /* 20px from left, 30px from top */
+
+    /* Edge offsets (CSS3) */
+    background-position: right 20px bottom 30px;
+    /* 20px from right edge, 30px from bottom edge */
+}
+
+/* ============================================================================
+   7. BACKGROUND SIZE
+   ============================================================================ */
+
+.bg-size-examples {
+    background-size: auto;           /* Default - original image size */
+    background-size: cover;          /* Scale to cover entire area (may crop) */
+    background-size: contain;        /* Scale to fit entirely (may leave gaps) */
+
+    /* Specific values */
+    background-size: 100% 100%;      /* Stretch to fill */
+    background-size: 200px 150px;    /* Fixed size */
+    background-size: 50% auto;       /* 50% width, auto height */
+}
+
+/* ============================================================================
+   8. BACKGROUND ATTACHMENT
+   ============================================================================ */
+
+.bg-attachment-examples {
+    background-attachment: scroll;   /* Default - scrolls with content */
+    background-attachment: fixed;    /* Fixed relative to viewport (parallax) */
+    background-attachment: local;    /* Scrolls with element's content */
+}
+
+/* ============================================================================
+   9. BACKGROUND SHORTHAND
+   ============================================================================ */
+
+.bg-shorthand {
+    /* background: color image repeat attachment position/size */
+    background: #fff url("image.jpg") no-repeat scroll center/cover;
+
+    /* Common patterns */
+    background: #f0f0f0;                              /* Just color */
+    background: url("bg.png") no-repeat center;        /* Image centered */
+    background: linear-gradient(#fff, #000);           /* Gradient */
+    background: #333 url("texture.png") repeat;        /* Texture overlay */
+}
+
+/* ============================================================================
+   10. GRADIENTS
+   ============================================================================ */
+
+/* Linear Gradient - transitions along a straight line */
+.linear-gradient-examples {
+    /* Direction: to bottom (default), to top, to right, to left */
+    background: linear-gradient(to bottom, #ff0000, #0000ff);
+
+    /* Diagonal */
+    background: linear-gradient(to bottom right, #ff0000, #0000ff);
+
+    /* Angle (0deg = up, 90deg = right) */
+    background: linear-gradient(45deg, #ff0000, #0000ff);
+
+    /* Multiple color stops */
+    background: linear-gradient(to right, red, yellow, green, blue);
+
+    /* Color stop positions */
+    background: linear-gradient(to right,
+        red 0%,
+        yellow 50%,
+        green 100%
+    );
+
+    /* Hard stops (no blending) */
+    background: linear-gradient(to right,
+        red 0%,
+        red 50%,
+        blue 50%,
+        blue 100%
+    );
+
+    /* Repeating linear gradient */
+    background: repeating-linear-gradient(
+        45deg,
+        #fff 0px,
+        #fff 10px,
+        #000 10px,
+        #000 20px
+    );  /* Creates stripes */
+}
+
+/* Radial Gradient - transitions outward from a center point */
+.radial-gradient-examples {
+    /* Default: ellipse, center, farthest-corner */
+    background: radial-gradient(circle, #ff0000, #0000ff);
+
+    /* Shape: circle or ellipse */
+    background: radial-gradient(circle, yellow, green);
+    background: radial-gradient(ellipse, yellow, green);
+
+    /* Position */
+    background: radial-gradient(circle at top left, #fff, #000);
+
+    /* Size keywords */
+    background: radial-gradient(circle closest-side, red, blue);
+    background: radial-gradient(circle farthest-side, red, blue);
+    background: radial-gradient(circle closest-corner, red, blue);
+    background: radial-gradient(circle farthest-corner, red, blue); /* Default */
+
+    /* Multiple color stops */
+    background: radial-gradient(circle at center,
+        red 0%,
+        yellow 30%,
+        green 60%,
+        blue 100%
+    );
+
+    /* Repeating radial gradient */
+    background: repeating-radial-gradient(
+        circle at center,
+        #fff 0px,
+        #fff 10px,
+        #000 10px,
+        #000 20px
+    );
+}
+
+/* Conic Gradient - rotates around a center point (like a color wheel) */
+.conic-gradient-examples {
+    /* Default: starts at top, rotates clockwise */
+    background: conic-gradient(red, yellow, green, blue, red);
+
+    /* From specific angle */
+    background: conic-gradient(from 90deg, red, yellow, green, blue);
+
+    /* At specific position */
+    background: conic-gradient(at 30% 40%, red, yellow, green, blue);
+
+    /* Color wheel */
+    background: conic-gradient(
+        red, orange, yellow, green, blue, indigo, violet, red
+    );
+}
+
+/* ============================================================================
+   11. BACKGROUND CLIP AND ORIGIN
+   ============================================================================ */
+
+.bg-clip-examples {
+    /* background-clip: where the background extends to */
+    background-clip: border-box;   /* Default - extends under border */
+    background-clip: padding-box;  /* Extends to padding edge */
+    background-clip: content-box;  /* Extends only to content area */
+    background-clip: text;         /* Clips to text shape (text color becomes transparent) */
+
+    /* background-origin: where background-position starts from */
+    background-origin: border-box;
+    background-origin: padding-box;  /* Default */
+    background-origin: content-box;
+}
+
+/* Text with gradient fill (background-clip: text) */
+.gradient-text {
+    background: linear-gradient(45deg, #f00, #00f);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+/* ============================================================================
+   BEST PRACTICES
+   ============================================================================
+
+   1. Use hex for simple, static colors
+   2. Use hsl/hsla for programmatic color manipulation
+   3. Use rgba for backgrounds with transparency (not opacity)
+   4. Use background shorthand for cleaner code
+   5. Use cover for full-bleed background images
+   6. Use gradients instead of images for simple patterns
+   7. Use conic-gradient for color wheels and pie charts
+   8. Use background-clip: text for gradient text effects
+   9. Prefer CSS gradients over image files (better performance)
+   10. Use currentColor for SVGs and icons that should match text color
+*/

@@ -1,0 +1,307 @@
+/* ============================================================================
+   TRANSFORMS
+   File: 09_transforms.css
+   Covers: 2D transforms, 3D transforms, transform-origin, perspective
+   ============================================================================ */
+
+/* ============================================================================
+   1. TRANSFORM BASICS
+   ============================================================================ */
+
+/*
+   The transform property modifies the coordinate space of an element.
+   It can rotate, scale, skew, or translate an element.
+   Transforms do NOT affect layout - other elements are not affected.
+   Transforms are GPU-accelerated (performant).
+*/
+
+.transform-basics {
+    transform: none;  /* Default - no transform */
+}
+
+/* ============================================================================
+   2. 2D TRANSFORM FUNCTIONS
+   ============================================================================ */
+
+/* Translate - moves element from its current position */
+.translate-examples {
+    transform: translateX(50px);           /* Move right 50px */
+    transform: translateY(-20px);          /* Move up 20px */
+    transform: translate(50px, -20px);     /* Move right 50px, up 20px */
+
+    /* Percentage values - relative to element's own size */
+    transform: translateX(50%);            /* Move right 50% of own width */
+    transform: translateY(-50%);           /* Move up 50% of own height */
+    transform: translate(50%, -50%);       /* Center trick! */
+}
+
+/* Centering trick using translate */
+.center-absolute {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    /* Centers element regardless of its size */
+}
+
+/* Rotate - rotates element around its center */
+.rotate-examples {
+    transform: rotate(45deg);      /* Clockwise 45 degrees */
+    transform: rotate(-90deg);     /* Counter-clockwise 90 degrees */
+    transform: rotate(180deg);     /* Upside down */
+    transform: rotate(0.5turn);    /* Half turn (180deg) */
+    transform: rotate(1turn);      /* Full turn (360deg) */
+}
+
+/* Scale - makes element bigger or smaller */
+.scale-examples {
+    transform: scaleX(2);          /* Double width */
+    transform: scaleY(0.5);        /* Half height */
+    transform: scale(1.5);         /* 1.5x both width and height */
+    transform: scale(2, 0.5);      /* Double width, half height */
+    transform: scale(0);           /* Invisible (zero size) */
+    transform: scale(-1);          /* Mirrored (flipped) */
+}
+
+/* Skew - skews element along X or Y axis */
+.skew-examples {
+    transform: skewX(10deg);       /* Skew horizontally 10 degrees */
+    transform: skewY(10deg);       /* Skew vertically 10 degrees */
+    transform: skew(10deg, 5deg);  /* Skew both axes */
+    transform: skew(10deg);        /* Same as skewX */
+}
+
+/* ============================================================================
+   3. MULTIPLE TRANSFORMS
+   ============================================================================ */
+
+/*
+   Multiple transforms are applied right to left (last to first).
+   Order matters! translate then rotate is different from rotate then translate.
+*/
+
+.multiple-transforms {
+    /* Apply multiple transforms (space-separated) */
+    transform: translateX(50px) rotate(45deg) scale(1.2);
+
+    /* Order matters! */
+    transform: translateX(100px) rotate(45deg);
+    /* First rotates, then translates along rotated X axis */
+
+    transform: rotate(45deg) translateX(100px);
+    /* First translates, then rotates around new center */
+}
+
+/* ============================================================================
+   4. TRANSFORM ORIGIN
+   ============================================================================ */
+
+/*
+   transform-origin changes the point around which transforms are applied.
+   Default: center (50% 50%).
+*/
+
+.transform-origin-examples {
+    /* Keywords */
+    transform-origin: center;        /* Default - 50% 50% */
+    transform-origin: top left;      /* Top-left corner */
+    transform-origin: top right;     /* Top-right corner */
+    transform-origin: bottom left;   /* Bottom-left corner */
+    transform-origin: bottom right;  /* Bottom-right corner */
+
+    /* Percentage values */
+    transform-origin: 50% 50%;       /* Center (default) */
+    transform-origin: 0% 0%;         /* Top-left */
+    transform-origin: 100% 100%;     /* Bottom-right */
+
+    /* Pixel values */
+    transform-origin: 20px 30px;     /* 20px from left, 30px from top */
+}
+
+/* Rotate from corner */
+.rotate-from-corner {
+    transform-origin: top left;
+    transform: rotate(45deg);
+    /* Rotates around top-left corner instead of center */
+}
+
+/* ============================================================================
+   5. 3D TRANSFORMS
+   ============================================================================ */
+
+/*
+   3D transforms add a Z axis for depth.
+   Requires perspective to see the 3D effect.
+*/
+
+/* Perspective - defines the distance from the viewer to the element */
+.perspective-container {
+    perspective: 800px;       /* Distance from viewer (smaller = more dramatic) */
+    perspective: 1000px;      /* Default-like */
+    perspective: none;        /* No 3D perspective */
+}
+
+/* Perspective on individual element */
+.perspective-element {
+    transform: perspective(800px) rotateY(45deg);
+}
+
+/* 3D translate */
+.translate3d-examples {
+    transform: translateZ(50px);           /* Move toward viewer */
+    transform: translateZ(-50px);          /* Move away from viewer */
+    transform: translate3d(10px, 20px, 30px);  /* X, Y, Z */
+}
+
+/* 3D rotate */
+.rotate3d-examples {
+    transform: rotateX(45deg);     /* Tilt forward/backward */
+    transform: rotateY(45deg);     /* Tilt left/right (like a door) */
+    transform: rotateZ(45deg);     /* Same as 2D rotate */
+    transform: rotate3d(1, 1, 0, 45deg);  /* Rotate around custom axis */
+}
+
+/* 3D scale */
+.scale3d-examples {
+    transform: scaleZ(2);          /* Scale along Z axis (thickness) */
+    transform: scale3d(1.5, 1.5, 2);  /* X, Y, Z scale */
+}
+
+/* ============================================================================
+   6. 3D TRANSFORM PROPERTIES
+   ============================================================================ */
+
+/* perspective-origin - changes the vanishing point */
+.perspective-origin-examples {
+    perspective-origin: center;     /* Default */
+    perspective-origin: top left;
+    perspective-origin: 50% 50%;
+}
+
+/* transform-style - whether children maintain 3D positioning */
+.transform-style-examples {
+    transform-style: flat;          /* Default - children flattened */
+    transform-style: preserve-3d;   /* Children maintain 3D positions */
+}
+
+/* backface-visibility - whether the back of an element is visible */
+.backface-examples {
+    backface-visibility: visible;   /* Default */
+    backface-visibility: hidden;    /* Hide back face (useful for card flip) */
+}
+
+/* ============================================================================
+   7. COMMON TRANSFORM PATTERNS
+   ============================================================================ */
+
+/* Card flip */
+.card-flip-container {
+    perspective: 1000px;
+}
+
+.card-flip-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+}
+
+.card-flip-container:hover .card-flip-inner {
+    transform: rotateY(180deg);
+}
+
+.card-front,
+.card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+}
+
+.card-back {
+    transform: rotateY(180deg);
+}
+
+/* Hover lift effect */
+.lift-on-hover {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.lift-on-hover:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* Image zoom on hover */
+.image-zoom {
+    overflow: hidden;
+}
+
+.image-zoom img {
+    transition: transform 0.3s ease;
+}
+
+.image-zoom:hover img {
+    transform: scale(1.1);
+}
+
+/* Button press effect */
+.button-press {
+    transition: transform 0.1s ease;
+}
+
+.button-press:active {
+    transform: scale(0.95);
+}
+
+/* Entrance animation */
+@keyframes slideInLeft {
+    from {
+        transform: translateX(-100%) scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0) scale(1);
+        opacity: 1;
+    }
+}
+
+.entrance {
+    animation: slideInLeft 0.5s ease-out forwards;
+}
+
+/* ============================================================================
+   8. PERFORMANCE CONSIDERATIONS
+   ============================================================================ */
+
+/*
+   Transform is GPU-accelerated:
+   - Triggers only compositing (no layout, no paint)
+   - Smooth 60fps animations
+   - Use transform instead of top/left for movement
+
+   BAD: animating position
+   .box { top: 0; transition: top 0.3s; }
+   .box.active { top: 100px; }  // Triggers layout
+
+   GOOD: animating transform
+   .box { transform: translateY(0); transition: transform 0.3s; }
+   .box.active { transform: translateY(100px); }  // GPU-accelerated
+*/
+
+/* ============================================================================
+   BEST PRACTICES
+   ============================================================================
+
+   1. Use transform instead of top/left/right/bottom for movement
+   2. Use transform: translate(-50%, -50%) for centering
+   3. Use transform: scale() for hover effects (performant)
+   4. Use transform-origin to control rotation point
+   5. Use perspective for 3D effects
+   6. Use backface-visibility: hidden for card flips
+   7. Use transform-style: preserve-3d for nested 3D
+   8. Remember: order of transforms matters
+   9. Combine transforms in a single declaration (not multiple)
+   10. Use will-change: transform to hint browser (sparingly)
+*/

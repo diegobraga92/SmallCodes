@@ -1,0 +1,380 @@
+/* ============================================================================
+   TRANSITIONS AND ANIMATIONS
+   File: 08_transitions_animations.css
+   Covers: CSS transitions, @keyframes animations, animation properties
+   ============================================================================ */
+
+/* ============================================================================
+   1. CSS TRANSITIONS
+   ============================================================================ */
+
+/*
+   Transitions smoothly change property values over a duration.
+   Triggered by state changes (hover, focus, class toggle, etc.).
+*/
+
+/* Basic transition */
+.basic-transition {
+    background-color: blue;
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+.basic-transition:hover {
+    background-color: red;
+    /* Background smoothly changes over 0.3s */
+}
+
+/* ============================================================================
+   2. TRANSITION PROPERTIES
+   ============================================================================ */
+
+.transition-properties {
+    /* transition-property: which properties to animate */
+    transition-property: all;           /* All animatable properties */
+    transition-property: background-color, transform, opacity;  /* Specific properties */
+    transition-property: none;          /* No transitions */
+
+    /* transition-duration: how long the transition takes */
+    transition-duration: 0.3s;          /* 300 milliseconds */
+    transition-duration: 200ms;         /* 200 milliseconds */
+    transition-duration: 1s;            /* 1 second */
+
+    /* transition-timing-function: speed curve of the transition */
+    transition-timing-function: ease;         /* Default - slow start, fast middle, slow end */
+    transition-timing-function: linear;       /* Constant speed */
+    transition-timing-function: ease-in;      /* Slow start, fast end */
+    transition-timing-function: ease-out;     /* Fast start, slow end */
+    transition-timing-function: ease-in-out;  /* Slow start and end, fast middle */
+    transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);  /* Custom curve */
+    transition-timing-function: steps(4, end);  /* Step-based animation */
+
+    /* transition-delay: wait before starting */
+    transition-delay: 0s;               /* Default - no delay */
+    transition-delay: 0.1s;             /* 100ms delay */
+    transition-delay: 1s;               /* 1 second delay */
+}
+
+/* ============================================================================
+   3. TRANSITION SHORTHAND
+   ============================================================================ */
+
+.transition-shorthand {
+    /* transition: property duration timing-function delay */
+    transition: opacity 0.3s ease 0s;
+
+    /* Multiple transitions (comma-separated) */
+    transition:
+        background-color 0.3s ease,
+        transform 0.5s ease-in-out 0.1s,
+        opacity 0.2s linear;
+
+    /* Common patterns */
+    transition: all 0.3s ease;           /* Animate everything */
+    transition: transform 0.2s;          /* Animate transform only (performant) */
+    transition: opacity 0.3s ease, visibility 0.3s ease;  /* Fade in/out */
+}
+
+/* ============================================================================
+   4. TRANSITION EXAMPLES
+   ============================================================================ */
+
+/* Button hover effect */
+.button {
+    background: #007bff;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition:
+        background-color 0.2s ease,
+        transform 0.15s ease,
+        box-shadow 0.2s ease;
+}
+
+.button:hover {
+    background: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.button:active {
+    transform: translateY(0);
+}
+
+/* Card hover effect */
+.card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+}
+
+/* Fade in/out with visibility (for dropdowns, modals) */
+.fade-element {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.fade-element.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* ============================================================================
+   5. PERFORMANCE AND TRANSITIONS
+   ============================================================================ */
+
+/*
+   For smooth 60fps animations, only animate:
+   - transform (translate, scale, rotate)
+   - opacity
+
+   These properties don't trigger layout or paint.
+   Avoid animating: width, height, margin, padding, top, left (triggers layout).
+*/
+
+/* Performant animation */
+.performant-transition {
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    /* GPU-accelerated - smooth 60fps */
+}
+
+/* Non-performant (avoid) */
+.non-performant {
+    transition: width 0.3s ease, height 0.3s ease, top 0.3s ease;
+    /* Triggers layout recalculation - janky */
+}
+
+/* ============================================================================
+   6. CSS ANIMATIONS (@keyframes)
+   ============================================================================ */
+
+/*
+   Animations are more powerful than transitions:
+   - Can have multiple steps (keyframes)
+   - Can loop infinitely
+   - Can run automatically (no trigger needed)
+   - Can pause, reverse, alternate
+*/
+
+/* Define keyframes */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Apply animation */
+.fade-in-element {
+    animation: fadeIn 0.5s ease forwards;
+}
+
+/* Multi-step keyframes */
+@keyframes slideIn {
+    0% {
+        opacity: 0;
+        transform: translateX(-100%);
+    }
+    50% {
+        opacity: 0.5;
+        transform: translateX(10%);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* ============================================================================
+   7. ANIMATION PROPERTIES
+   ============================================================================ */
+
+.animation-properties {
+    /* animation-name: which @keyframes to use */
+    animation-name: fadeIn;
+
+    /* animation-duration: how long one cycle takes */
+    animation-duration: 0.5s;
+    animation-duration: 1000ms;
+
+    /* animation-timing-function: speed curve */
+    animation-timing-function: ease;
+    animation-timing-function: linear;
+    animation-timing-function: ease-in-out;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* animation-delay: wait before starting */
+    animation-delay: 0s;
+    animation-delay: 0.5s;
+    animation-delay: -0.5s;  /* Starts halfway through */
+
+    /* animation-iteration-count: how many times to run */
+    animation-iteration-count: 1;       /* Default */
+    animation-iteration-count: 3;       /* Run 3 times */
+    animation-iteration-count: infinite; /* Loop forever */
+
+    /* animation-direction: forward, reverse, or alternate */
+    animation-direction: normal;      /* Default - forward */
+    animation-direction: reverse;     /* Backward */
+    animation-direction: alternate;   /* Forward then backward */
+    animation-direction: alternate-reverse; /* Backward then forward */
+
+    /* animation-fill-mode: styles before/after animation */
+    animation-fill-mode: none;     /* Default - no styles applied outside animation */
+    animation-fill-mode: forwards; /* Retains end state after animation ends */
+    animation-fill-mode: backwards; /* Applies start state before animation begins */
+    animation-fill-mode: both;     /* Both forwards and backwards */
+
+    /* animation-play-state: pause or play */
+    animation-play-state: running;  /* Default */
+    animation-play-state: paused;   /* Paused */
+}
+
+/* ============================================================================
+   8. ANIMATION SHORTHAND
+   ============================================================================ */
+
+.animation-shorthand {
+    /* animation: name duration timing-function delay iteration-count direction fill-mode */
+    animation: fadeIn 0.5s ease 0s 1 normal forwards;
+
+    /* Common patterns */
+    animation: fadeIn 0.5s ease forwards;           /* Fade in, keep end state */
+    animation: spin 1s linear infinite;              /* Infinite spinner */
+    animation: bounce 0.5s ease infinite alternate;  /* Bouncing effect */
+    animation: slideIn 0.3s ease-out;                /* Slide in */
+}
+
+/* ============================================================================
+   9. COMMON ANIMATION EXAMPLES
+   ============================================================================ */
+
+/* Spinner */
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f0f0f0;
+    border-top-color: #007bff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+/* Pulse */
+@keyframes pulse {
+    0%   { transform: scale(1); opacity: 1; }
+    50%  { transform: scale(1.1); opacity: 0.7; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.pulse {
+    animation: pulse 2s ease infinite;
+}
+
+/* Shake */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.shake {
+    animation: shake 0.5s ease;
+}
+
+/* Bounce */
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-20px); }
+}
+
+.bounce {
+    animation: bounce 0.5s ease infinite;
+}
+
+/* Slide up with fade */
+@keyframes slideUpFadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.slide-up {
+    animation: slideUpFadeIn 0.4s ease forwards;
+}
+
+/* Staggered animation (delay each item) */
+.stagger-item:nth-child(1) { animation-delay: 0s; }
+.stagger-item:nth-child(2) { animation-delay: 0.1s; }
+.stagger-item:nth-child(3) { animation-delay: 0.2s; }
+.stagger-item:nth-child(4) { animation-delay: 0.3s; }
+.stagger-item:nth-child(5) { animation-delay: 0.4s; }
+
+/* ============================================================================
+   10. ANIMATION EVENTS (JavaScript)
+   ============================================================================ */
+
+/*
+   JavaScript can listen for animation events:
+   - animationstart  : Fired when animation starts
+   - animationend    : Fired when animation completes
+   - animationiteration : Fired when animation repeats
+
+   element.addEventListener('animationend', () => {
+       // Do something after animation
+   });
+*/
+
+/* ============================================================================
+   11. TRANSITION VS ANIMATION - When to Use Which
+   ============================================================================ */
+
+/*
+   Use TRANSITIONS when:
+   - Simple state changes (hover, focus, active)
+   - Two states only (start → end)
+   - Triggered by user interaction
+   - Need a simple, clean effect
+
+   Use ANIMATIONS when:
+   - Multiple states/steps needed
+   - Need to loop or repeat
+   - Should run automatically on page load
+   - Need more control (direction, fill mode)
+   - Complex sequences
+*/
+
+/* ============================================================================
+   BEST PRACTICES
+   ============================================================================
+
+   1. Only animate transform and opacity for 60fps performance
+   2. Use transitions for simple hover/state changes
+   3. Use animations for complex multi-step sequences
+   4. Use cubic-bezier for custom easing curves
+   5. Respect prefers-reduced-motion
+   6. Keep animation durations short (0.2s - 0.5s typically)
+   7. Use animation-fill-mode: forwards to retain end state
+   8. Use will-change to hint browser about animations
+   9. Avoid animating width, height, margin, padding
+   10. Test animations on low-powered devices
+*/

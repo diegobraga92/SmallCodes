@@ -1,8 +1,21 @@
 /*
     C# METHODS AND FUNCTIONS
-    Covering: Method declaration, parameters, return types, overloading, local functions
+    File: 02_methods_functions.cs
     
-    This file demonstrates methods and functions in C# programming.
+    Comprehensive guide to C# methods covering declarations, parameters,
+    return types, overloading, extension methods, local functions, and
+    lambda expressions. Builds from junior-level basics to mid-level
+    understanding of parameter passing semantics and method design.
+    
+    Key Concepts Covered:
+    1. Method Declaration and Signatures
+    2. Parameter Types (value, ref, out, in, params)
+    3. Return Types (void, value, reference, tuple, nullable)
+    4. Method Overloading and Resolution
+    5. Local Functions and Closures
+    6. Extension Methods
+    7. Lambda Expressions
+    8. Parameter Passing Semantics (stack vs heap)
 */
 
 using System;
@@ -606,3 +619,5 @@ namespace CSharpRefresher.Methods
         }
         
         static int QuickAdd(int a, int b) => a + b;
+    }
+}

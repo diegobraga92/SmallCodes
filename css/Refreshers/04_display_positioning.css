@@ -1,0 +1,317 @@
+/* ============================================================================
+   DISPLAY AND POSITIONING
+   File: 04_display_positioning.css
+   Covers: Display values, position, z-index, float, clear, overflow
+   ============================================================================ */
+
+/* ============================================================================
+   1. DISPLAY PROPERTY (Review)
+   ============================================================================ */
+
+/*
+   The display property controls how an element is rendered in the layout.
+   Key values:
+   - none     : Element removed from document flow (not rendered)
+   - block    : Takes full width, starts new line
+   - inline   : Flows inline, no width/height
+   - inline-block : Inline flow but respects box model
+   - flex     : Flexbox container
+   - grid     : Grid container
+   - table    : Behaves like <table>
+   - flow-root : Creates new block formatting context
+   - contents : Element's box is removed, children take its place
+*/
+
+.display-none {
+    display: none;
+    /* Element is NOT rendered - takes no space */
+    /* Compare to visibility: hidden (still takes space) */
+}
+
+.visibility-hidden {
+    visibility: hidden;
+    /* Element is invisible but STILL TAKES SPACE in layout */
+}
+
+.visibility-visible {
+    visibility: visible;  /* Default */
+}
+
+/* ============================================================================
+   2. POSITION PROPERTY
+   ============================================================================ */
+
+/*
+   The position property determines how an element is positioned.
+   Combined with: top, right, bottom, left (offset properties).
+
+   Values:
+   - static   : Default - normal document flow
+   - relative : Offset from normal position (still takes original space)
+   - absolute : Removed from flow, positioned relative to nearest positioned ancestor
+   - fixed    : Removed from flow, positioned relative to viewport
+   - sticky   : Toggles between relative and fixed based on scroll position
+*/
+
+/* Static - default positioning */
+.static-example {
+    position: static;
+    /* top, right, bottom, left have NO effect */
+}
+
+/* Relative - offset from normal position */
+.relative-example {
+    position: relative;
+    top: 10px;       /* Moves DOWN 10px from normal position */
+    left: 20px;      /* Moves RIGHT 20px from normal position */
+    /* Original space is preserved (other elements don't shift) */
+}
+
+/* Absolute - removed from flow, positioned relative to ancestor */
+.absolute-example {
+    position: absolute;
+    top: 0;
+    right: 0;
+    /* Positioned at top-right of nearest positioned ancestor */
+    /* If no positioned ancestor, uses initial containing block (viewport) */
+    /* Removed from normal flow - other elements ignore it */
+}
+
+/* Fixed - positioned relative to viewport */
+.fixed-example {
+    position: fixed;
+    top: 0;
+    left: 0;
+    /* Stays in place even when scrolling */
+    /* Removed from normal flow */
+    /* Common uses: sticky headers, modals, back-to-top buttons */
+}
+
+/* Sticky - hybrid of relative and fixed */
+.sticky-example {
+    position: sticky;
+    top: 0;
+    /* Behaves as relative until scroll reaches top: 0 */
+    /* Then "sticks" as fixed until parent scrolls out of view */
+    /* Requires a top/right/bottom/left threshold */
+}
+
+/* ============================================================================
+   3. POSITIONING CONTEXT
+   ============================================================================ */
+
+/*
+   An element with position: relative, absolute, fixed, or sticky creates
+   a POSITIONING CONTEXT for its absolutely-positioned children.
+
+   The child's top/right/bottom/left offsets are relative to the
+   nearest ANCESTOR with a position value other than static.
+*/
+
+.positioned-parent {
+    position: relative;  /* Creates positioning context */
+    width: 400px;
+    height: 300px;
+}
+
+.positioned-child {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    /* Positioned 20px from top-right of .positioned-parent */
+}
+
+/* Centering an absolutely-positioned element */
+.absolute-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    /* Centers element regardless of its size */
+}
+
+/* Full-cover overlay */
+.absolute-cover {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    /* Stretches to fill the positioned parent */
+}
+
+/* ============================================================================
+   4. Z-INDEX - Stacking Order
+   ============================================================================ */
+
+/*
+   z-index controls the stacking order of positioned elements.
+   Higher values appear on top of lower values.
+   Only works on positioned elements (not static).
+
+   Default: auto (0)
+   Negative values: behind parent
+   Positive values: in front
+*/
+
+.z-index-examples {
+    position: relative;
+    z-index: 1;  /* Stack order */
+}
+
+.z-index-higher {
+    position: relative;
+    z-index: 10;  /* Appears above elements with lower z-index */
+}
+
+.z-index-negative {
+    position: relative;
+    z-index: -1;  /* Appears behind parent background */
+}
+
+/*
+   Stacking Context:
+   A new stacking context is created by:
+   - position + z-index (not auto)
+   - opacity < 1
+   - transform, filter, perspective
+   - mix-blend-mode
+   - isolation: isolate
+   - will-change
+
+   Elements in a stacking context are stacked as a group.
+*/
+
+/* Creates a new stacking context */
+.isolate-stacking {
+    isolation: isolate;
+    /* This element and its children form a new stacking context */
+}
+
+/* ============================================================================
+   5. FLOAT
+   ============================================================================ */
+
+/*
+   Float moves an element to the left or right, allowing text/inline
+   elements to wrap around it. Originally for text wrapping around images.
+   Now largely replaced by flexbox and grid for layouts.
+*/
+
+.float-example {
+    float: left;    /* Float to left, content wraps on right */
+    float: right;   /* Float to right, content wraps on left */
+    float: none;    /* Default - no float */
+}
+
+/* Image with text wrapping */
+.float-image {
+    float: left;
+    margin-right: 15px;
+    margin-bottom: 10px;
+    /* Text wraps around the right and bottom of the image */
+}
+
+/* ============================================================================
+   6. CLEAR
+   ============================================================================ */
+
+/*
+   clear specifies which side(s) of an element should NOT be adjacent
+   to floated elements. Used to "clear" floats.
+*/
+
+.clear-example {
+    clear: none;    /* Default - allows floats on both sides */
+    clear: left;    /* Element moves below left floats */
+    clear: right;   /* Element moves below right floats */
+    clear: both;    /* Element moves below ALL floats */
+}
+
+/* Clearfix hack - forces container to contain its floated children */
+.clearfix::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+/* Modern clearfix using flow-root */
+.modern-clearfix {
+    display: flow-root;
+    /* Creates new block formatting context, contains floats */
+}
+
+/* ============================================================================
+   7. OVERFLOW (Review)
+   ============================================================================ */
+
+.overflow-review {
+    overflow: visible;   /* Default - content overflows */
+    overflow: hidden;    /* Clips overflow */
+    overflow: scroll;    /* Always shows scrollbars */
+    overflow: auto;      /* Scrollbars only when needed */
+    overflow: clip;      /* Like hidden but prevents programmatic scrolling */
+}
+
+/* ============================================================================
+   8. COMMON LAYOUT PATTERNS
+   ============================================================================ */
+
+/* Sticky footer - footer stays at bottom when content is short */
+.page-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.content {
+    flex: 1;  /* Grows to fill available space */
+}
+
+.footer {
+    /* Stays at bottom naturally */
+}
+
+/* Centering a block element horizontally */
+.center-block {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;  /* Must have a width */
+}
+
+/* Centering inline/inline-block content */
+.center-inline {
+    text-align: center;
+}
+
+/* Full-height sidebar layout */
+.sidebar-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 250px;
+    flex-shrink: 0;
+}
+
+.main-content {
+    flex: 1;
+}
+
+/* ============================================================================
+   BEST PRACTICES
+   ============================================================================
+
+   1. Use flexbox/grid for layouts, NOT float
+   2. Use float only for text wrapping around images
+   3. Use position: sticky for sticky headers (not JS)
+   4. Use position: fixed sparingly (modals, tooltips)
+   5. Always set a positioned ancestor for absolute children
+   6. Use transform: translate(-50%, -50%) for centering
+   7. Use isolation: isolate to manage stacking contexts
+   8. Avoid z-index: 9999 - manage stacking contexts properly
+   9. Use visibility: hidden for invisible elements that need space
+   10. Use display: none for elements that should not render at all
+*/

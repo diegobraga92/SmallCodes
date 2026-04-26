@@ -1,8 +1,18 @@
 /*
     C# CONTROL FLOW
-    Covering: Conditional statements, loops, pattern matching, jump statements
+    File: 01_control_flow.cs
     
-    This file demonstrates control flow structures in C# programming.
+    Comprehensive guide to C# control flow structures covering conditionals,
+    loops, pattern matching, and jump statements. Builds from junior-level
+    basics to mid-level understanding of when to use each construct.
+    
+    Key Concepts Covered:
+    1. Conditional Statements (if-else, switch, ternary)
+    2. Loop Types (for, foreach, while, do-while)
+    3. Pattern Matching (type, property, tuple, relational)
+    4. Jump Statements (break, continue, goto, return, throw)
+    5. When to Use Each Construct
+    6. Performance Considerations
 */
 
 using System;
@@ -26,6 +36,25 @@ namespace CSharpRefresher.ControlFlow
         static void DemonstrateConditionals()
         {
             Console.WriteLine("============ CONDITIONAL STATEMENTS ============\n");
+            
+            // ============ WHEN TO USE EACH CONDITIONAL ============
+            Console.WriteLine("=== 0. Choosing the Right Conditional ===");
+            Console.WriteLine("""
+                | Construct        | Best For                                      |
+                |------------------|-----------------------------------------------|
+                | if-else          | Complex conditions, range checks, any type    |
+                | switch (classic) | Single value against many discrete options     |
+                | switch (pattern) | Type matching, property matching, conditions   |
+                | ternary (?:)     | Simple binary choice, inline expressions       |
+                | null-coalescing  | Default value when null                       |
+                
+                Guidelines:
+                • Use if-else for complex boolean logic (AND/OR/NOT combinations)
+                • Use switch for 3+ discrete value comparisons
+                • Use ternary for simple true/false assignments (keep readable)
+                • Avoid nested ternary (hard to read)
+                • Use switch expressions (C# 8+) for concise value mapping
+                """);
             
             int x = 10;
             
@@ -146,6 +175,24 @@ namespace CSharpRefresher.ControlFlow
         static void DemonstrateLoops()
         {
             Console.WriteLine("\n============ LOOPS ============\n");
+            
+            // ============ CHOOSING THE RIGHT LOOP ============
+            Console.WriteLine("=== 0. Choosing the Right Loop ===");
+            Console.WriteLine("""
+                | Loop      | Best For                                        | Example                          |
+                |-----------|-------------------------------------------------|----------------------------------|
+                | for       | Known number of iterations, index needed        | for (int i = 0; i < n; i++)      |
+                | foreach   | Iterating collections, no index needed          | foreach (var item in collection) |
+                | while     | Unknown iterations, condition checked first     | while (condition)                |
+                | do-while  | Must execute at least once                      | do { } while (condition)         |
+                
+                Guidelines:
+                • Prefer foreach for iterating collections (cleaner, no index errors)
+                • Use for when you need the index or complex iteration patterns
+                • Use while for reading streams, waiting for conditions
+                • Use do-while when the body must run at least once
+                • Avoid modifying collections during foreach iteration
+                """);
             
             // for loop
             Console.WriteLine("=== for Loop ===");

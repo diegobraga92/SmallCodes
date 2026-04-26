@@ -1,0 +1,309 @@
+/* ============================================================================
+   TYPOGRAPHY
+   File: 02_typography.css
+   Covers: Font properties, text styling, web fonts, text effects
+   ============================================================================ */
+
+/* ============================================================================
+   1. FONT FAMILY
+   ============================================================================ */
+
+/*
+   font-family specifies the typeface. Always provide fallback fonts.
+   Generic families: serif, sans-serif, monospace, cursive, fantasy
+*/
+
+.font-family-examples {
+    /* Specific font with fallbacks */
+    font-family: "Helvetica Neue", Arial, sans-serif;
+
+    /* Serif (has decorative strokes at ends of characters) */
+    font-family: Georgia, "Times New Roman", Times, serif;
+
+    /* Sans-serif (clean, no strokes) */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+    /* Monospace (fixed-width, good for code) */
+    font-family: "Fira Code", "Courier New", Courier, monospace;
+
+    /* System font stack - uses OS native fonts */
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* ============================================================================
+   2. FONT SIZE
+   ============================================================================ */
+
+.font-size-examples {
+    /* Absolute sizes */
+    font-size: 16px;       /* Pixels - fixed */
+    font-size: 12pt;       /* Points - print */
+
+    /* Relative sizes */
+    font-size: 1em;        /* Equal to parent's font-size */
+    font-size: 1.2rem;     /* Relative to root (html) font-size */
+    font-size: 100%;       /* Percentage of parent */
+
+    /* Keyword sizes */
+    font-size: xx-small;
+    font-size: x-small;
+    font-size: small;
+    font-size: medium;     /* Default (usually 16px) */
+    font-size: large;
+    font-size: x-large;
+    font-size: xx-large;
+
+    /* Viewport-relative (responsive) */
+    font-size: 2vw;        /* 2% of viewport width */
+    font-size: 2vh;        /* 2% of viewport height */
+}
+
+/* Fluid typography using clamp() */
+.fluid-text {
+    font-size: clamp(1rem, 2.5vw, 2rem);
+    /* Minimum: 1rem, Preferred: 2.5vw, Maximum: 2rem */
+}
+
+/* ============================================================================
+   3. FONT WEIGHT
+   ============================================================================ */
+
+.font-weight-examples {
+    font-weight: normal;    /* 400 */
+    font-weight: bold;      /* 700 */
+    font-weight: lighter;   /* Lighter than parent */
+    font-weight: bolder;    /* Bolder than parent */
+
+    /* Numeric (100-900) - requires font support */
+    font-weight: 100;       /* Thin */
+    font-weight: 200;       /* Extra Light */
+    font-weight: 300;       /* Light */
+    font-weight: 400;       /* Normal / Regular */
+    font-weight: 500;       /* Medium */
+    font-weight: 600;       /* Semi Bold */
+    font-weight: 700;       /* Bold */
+    font-weight: 800;       /* Extra Bold */
+    font-weight: 900;       /* Black / Heavy */
+}
+
+/* ============================================================================
+   4. FONT STYLE AND VARIANT
+   ============================================================================ */
+
+.font-style-examples {
+    font-style: normal;     /* Default */
+    font-style: italic;     /* Italic version of font */
+    font-style: oblique;    /* Slanted version (less common) */
+
+    font-variant: normal;       /* Default */
+    font-variant: small-caps;   /* Lowercase letters appear as small capitals */
+}
+
+/* ============================================================================
+   5. LINE HEIGHT
+   ============================================================================ */
+
+.line-height-examples {
+    /* Unitless (recommended) - relative to font-size */
+    line-height: 1.5;       /* 1.5x the font-size */
+
+    /* Fixed values */
+    line-height: 24px;      /* Fixed pixel value */
+    line-height: 150%;      /* Percentage of font-size */
+
+    /* Common values */
+    line-height: 1;         /* Tight - good for headings */
+    line-height: 1.2;       /* Compact */
+    line-height: 1.5;       /* Comfortable reading */
+    line-height: 1.8;       /* Loose - good for accessibility */
+    line-height: 2;         /* Double-spaced */
+}
+
+/* ============================================================================
+   6. TEXT ALIGNMENT
+   ============================================================================ */
+
+.text-align-examples {
+    text-align: left;       /* Default */
+    text-align: right;
+    text-align: center;
+    text-align: justify;    /* Stretches lines to equal width */
+
+    /* Vertical alignment (for inline/inline-block elements) */
+    vertical-align: baseline;    /* Default */
+    vertical-align: top;
+    vertical-align: middle;
+    vertical-align: bottom;
+    vertical-align: sub;         /* Subscript */
+    vertical-align: super;       /* Superscript */
+    vertical-align: text-top;
+    vertical-align: text-bottom;
+}
+
+/* ============================================================================
+   7. TEXT DECORATION
+   ============================================================================ */
+
+.text-decoration-examples {
+    /* Shorthand */
+    text-decoration: underline;
+    text-decoration: underline wavy red;
+    text-decoration: line-through;
+    text-decoration: overline;
+    text-decoration: none;       /* Remove underline from links */
+
+    /* Individual properties */
+    text-decoration-line: underline;      /* underline, overline, line-through */
+    text-decoration-style: wavy;          /* solid, double, dotted, dashed, wavy */
+    text-decoration-color: red;
+    text-decoration-thickness: 2px;       /* Thickness of the line */
+}
+
+/* Remove default link underline */
+a {
+    text-decoration: none;
+}
+
+/* Add underline on hover */
+a:hover {
+    text-decoration: underline;
+}
+
+/* ============================================================================
+   8. TEXT TRANSFORM
+   ============================================================================ */
+
+.text-transform-examples {
+    text-transform: none;           /* Default */
+    text-transform: uppercase;      /* ALL CAPS */
+    text-transform: lowercase;      /* all lowercase */
+    text-transform: capitalize;     /* First Letter Of Each Word */
+}
+
+/* ============================================================================
+   9. LETTER AND WORD SPACING
+   ============================================================================ */
+
+.spacing-examples {
+    letter-spacing: 2px;        /* Space between characters */
+    letter-spacing: -1px;       /* Tighten character spacing */
+    letter-spacing: 0.1em;      /* Relative spacing */
+
+    word-spacing: 5px;          /* Space between words */
+    word-spacing: 0.25em;       /* Relative word spacing */
+}
+
+/* ============================================================================
+   10. TEXT SHADOW
+   ============================================================================ */
+
+.text-shadow-examples {
+    /* offset-x offset-y blur-radius color */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+
+    /* No blur */
+    text-shadow: 2px 2px 0 #000;
+
+    /* Multiple shadows */
+    text-shadow:
+        1px 1px 0 #000,
+        -1px -1px 0 #000,
+        1px -1px 0 #000,
+        -1px 1px 0 #000;  /* Creates outline effect */
+}
+
+/* ============================================================================
+   11. WHITE SPACE AND TEXT OVERFLOW
+   ============================================================================ */
+
+.white-space-examples {
+    white-space: normal;       /* Default - wraps text */
+    white-space: nowrap;       /* No wrapping - all on one line */
+    white-space: pre;          /* Preserves whitespace (like <pre>) */
+    white-space: pre-wrap;     /* Preserves whitespace AND wraps */
+    white-space: pre-line;     /* Collapses whitespace but preserves newlines */
+}
+
+/* Text overflow - show ellipsis for truncated text */
+.text-ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;   /* Shows "..." when text overflows */
+    /* Requires: white-space: nowrap AND overflow: hidden */
+}
+
+/* ============================================================================
+   12. WEB FONTS (@font-face)
+   ============================================================================ */
+
+/*
+   @font-face allows you to use custom fonts not installed on the user's system.
+   Modern formats: woff2 (best), woff, ttf, eot (legacy IE)
+*/
+
+@font-face {
+    font-family: "MyCustomFont";
+    src: url("fonts/myfont.woff2") format("woff2"),
+         url("fonts/myfont.woff") format("woff");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;  /* Show fallback text immediately, swap when font loads */
+}
+
+@font-face {
+    font-family: "MyCustomFont";
+    src: url("fonts/myfont-bold.woff2") format("woff2");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+.using-custom-font {
+    font-family: "MyCustomFont", "Helvetica Neue", Arial, sans-serif;
+    font-weight: 400;
+}
+
+/* ============================================================================
+   13. GOOGLE FONTS (via @import)
+   ============================================================================ */
+
+/*
+   Alternative: Use Google Fonts via @import in CSS or <link> in HTML.
+   @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+*/
+
+/* ============================================================================
+   14. FONT SHORTHAND
+   ============================================================================ */
+
+.font-shorthand {
+    /* font: style variant weight size/line-height family */
+    font: italic small-caps bold 16px/1.5 "Helvetica Neue", Arial, sans-serif;
+
+    /* Minimum required: size and family */
+    font: 16px Arial, sans-serif;
+
+    /* System fonts */
+    font: caption;          /* Caption controls */
+    font: icon;             /* Icon labels */
+    font: menu;             /* Menu items */
+    font: message-box;      /* Dialog boxes */
+    font: small-caption;    /* Small captions */
+    font: status-bar;       /* Status bar text */
+}
+
+/* ============================================================================
+   BEST PRACTICES
+   ============================================================================
+
+   1. Use rem for font-sizes (respects user's browser settings)
+   2. Use unitless line-height (inherits better)
+   3. Always provide fallback fonts
+   4. Use woff2 format for web fonts (best compression)
+   5. Use font-display: swap to prevent invisible text
+   6. Limit number of custom fonts (2-3 max for performance)
+   7. Use system font stack for performance-critical text
+   8. Use clamp() for fluid typography
+   9. Set text-decoration on links only on hover
+   10. Use text-overflow: ellipsis for truncating text
+*/

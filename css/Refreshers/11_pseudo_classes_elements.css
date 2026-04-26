@@ -1,0 +1,439 @@
+/* ============================================================================
+   PSEUDO-CLASSES AND PSEUDO-ELEMENTS
+   File: 11_pseudo_classes_elements.css
+   Covers: Dynamic pseudo-classes, structural pseudo-classes,
+           pseudo-elements, form states
+   ============================================================================ */
+
+/* ============================================================================
+   1. PSEUDO-CLASSES vs PSEUDO-ELEMENTS
+   ============================================================================ */
+
+/*
+   Pseudo-classes (:): Select elements based on STATE or POSITION.
+     - One colon (:)
+     - Examples: :hover, :first-child, :focus
+
+   Pseudo-elements (::): Select a PART of an element.
+     - Two colons (::)
+     - Examples: ::before, ::first-line
+     - Note: Older CSS used single colon for pseudo-elements too
+*/
+
+/* ============================================================================
+   2. DYNAMIC USER ACTION PSEUDO-CLASSES
+   ============================================================================ */
+
+/* :hover - when mouse is over the element */
+.button-hover:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+/* :focus - when element has keyboard focus */
+.input-focus:focus {
+    outline: 2px solid #007bff;
+    outline-offset: 2px;
+    border-color: #007bff;
+}
+
+/* :focus-visible - focus only when using keyboard (not mouse click) */
+.button-focus:focus-visible {
+    outline: 3px solid #007bff;
+    outline-offset: 2px;
+    /* Better accessibility - only shows focus ring for keyboard users */
+}
+
+/* :focus-within - when ANY child has focus */
+.form-group:focus-within {
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+/* :active - when element is being activated (clicked) */
+.button-active:active {
+    transform: scale(0.97);
+}
+
+/* :visited - link that has been visited */
+a:visited {
+    color: #6c757d;
+}
+
+/* :link - unvisited link */
+a:link {
+    color: #007bff;
+}
+
+/* :target - element whose ID matches URL fragment */
+:target {
+    background-color: yellow;
+    border-left: 4px solid #007bff;
+}
+
+/* ============================================================================
+   3. STRUCTURAL PSEUDO-CLASSES
+   ============================================================================ */
+
+/* :first-child - first child of parent */
+li:first-child {
+    font-weight: bold;
+}
+
+/* :last-child - last child of parent */
+li:last-child {
+    border-bottom: none;
+}
+
+/* :first-of-type - first element of its type */
+p:first-of-type {
+    font-size: 1.2em;
+}
+
+/* :last-of-type - last element of its type */
+p:last-of-type {
+    margin-bottom: 0;
+}
+
+/* :only-child - element that is the only child of its parent */
+.only-child:only-child {
+    margin: 0;
+}
+
+/* :only-of-type - only element of its type within parent */
+img:only-of-type {
+    display: block;
+    margin: 0 auto;
+}
+
+/* :nth-child(n) - nth child (1-based) */
+li:nth-child(2) {
+    /* Selects the 2nd <li> */
+    color: red;
+}
+
+/* :nth-child(an+b) - formula-based selection */
+li:nth-child(2n) {
+    /* Even items (2, 4, 6...) */
+    background: #f0f0f0;
+}
+
+li:nth-child(2n+1) {
+    /* Odd items (1, 3, 5...) */
+    background: #ffffff;
+}
+
+li:nth-child(3n) {
+    /* Every 3rd item (3, 6, 9...) */
+}
+
+li:nth-child(n+4) {
+    /* From the 4th item onward */
+}
+
+li:nth-child(-n+3) {
+    /* First 3 items */
+}
+
+/* :nth-last-child(n) - counts from end */
+li:nth-last-child(1) {
+    /* Last item (same as :last-child) */
+}
+
+li:nth-last-child(2) {
+    /* Second to last */
+}
+
+/* :nth-of-type(n) - nth element of its type */
+p:nth-of-type(2) {
+    /* 2nd <p> element */
+}
+
+/* :nth-last-of-type(n) - nth of type from end */
+p:nth-last-of-type(1) {
+    /* Last <p> element */
+}
+
+/* :empty - element with no children (including text) */
+div:empty {
+    display: none;
+}
+
+/* :not(selector) - negates a selector */
+input:not([type="submit"]) {
+    /* All inputs except submit buttons */
+    border: 1px solid #ccc;
+}
+
+:not(:last-child) {
+    /* All elements except the last child */
+    margin-bottom: 10px;
+}
+
+/* :where() - zero specificity selector */
+:where(.card, .panel) {
+    /* Same as .card, .panel but with 0 specificity */
+    padding: 20px;
+}
+
+/* :is() - matches any of the selectors (takes highest specificity) */
+:is(h1, h2, h3) {
+    /* Same as h1, h2, h3 */
+    font-family: Georgia, serif;
+}
+
+/* :has() - parent selector (modern CSS) */
+/* Selects <figure> that contains an <img> */
+figure:has(img) {
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+/* Selects <form> that has a required input */
+form:has(input:required) {
+    border-left: 3px solid red;
+}
+
+/* Selects <li> that contains a <ul> (nested lists) */
+li:has(ul) {
+    list-style-type: disc;
+}
+
+/* ============================================================================
+   4. FORM-RELATED PSEUDO-CLASSES
+   ============================================================================ */
+
+/* :enabled / :disabled */
+input:enabled {
+    background: white;
+}
+
+input:disabled {
+    background: #f0f0f0;
+    color: #999;
+    cursor: not-allowed;
+}
+
+/* :checked - checkbox/radio that is checked */
+input:checked {
+    accent-color: #007bff;
+}
+
+input:checked + label {
+    font-weight: bold;
+}
+
+/* :indeterminate - checkbox in indeterminate state */
+input:indeterminate {
+    outline: 2px solid orange;
+}
+
+/* :required / :optional */
+input:required {
+    border-left: 3px solid red;
+}
+
+input:optional {
+    border-left: 3px solid #ccc;
+}
+
+/* :valid / :invalid */
+input:valid {
+    border-color: #28a745;
+}
+
+input:invalid {
+    border-color: #dc3545;
+}
+
+/* :in-range / :out-of-range */
+input:in-range {
+    background: #d4edda;
+}
+
+input:out-of-range {
+    background: #f8d7da;
+}
+
+/* :placeholder-shown - input showing placeholder text */
+input:placeholder-shown {
+    border-color: #ccc;
+}
+
+/* :read-only / :read-write */
+input:read-only {
+    background: #f8f9fa;
+}
+
+input:read-write {
+    background: white;
+}
+
+/* :autofill - browser autofilled input */
+input:-webkit-autofill {
+    box-shadow: 0 0 0 30px #e8f0fe inset;
+}
+
+/* ============================================================================
+   5. PSEUDO-ELEMENTS
+   ============================================================================ */
+
+/* ::before - inserts content BEFORE element content */
+.element-with-before::before {
+    content: "→ ";
+    color: #007bff;
+    font-weight: bold;
+}
+
+/* ::after - inserts content AFTER element content */
+.element-with-after::after {
+    content: " ←";
+    color: #007bff;
+}
+
+/* Common ::before/::after uses */
+
+/* Clearfix */
+.clearfix::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+/* Tooltip */
+.tooltip {
+    position: relative;
+}
+
+.tooltip::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+}
+
+.tooltip:hover::after {
+    opacity: 1;
+}
+
+/* Icon using ::before */
+.icon-star::before {
+    content: "★";
+    color: gold;
+    margin-right: 4px;
+}
+
+/* Decorative quote */
+blockquote::before {
+    content: "\201C";  /* Left double quote */
+    font-size: 3em;
+    color: #ccc;
+    line-height: 0;
+    vertical-align: -0.4em;
+}
+
+/* Required field indicator */
+.required::after {
+    content: " *";
+    color: red;
+}
+
+/* External link icon */
+a[href^="http"]::after {
+    content: " ↗";
+    font-size: 0.8em;
+}
+
+/* ::first-line - first line of a block element */
+p::first-line {
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+/* ::first-letter - first letter of a block element */
+p::first-letter {
+    font-size: 2em;
+    font-weight: bold;
+    float: left;
+    margin-right: 4px;
+    color: #007bff;
+}
+
+/* ::selection - portion selected by user */
+::selection {
+    background: #007bff;
+    color: white;
+}
+
+/* ::placeholder - placeholder text in inputs */
+input::placeholder {
+    color: #999;
+    font-style: italic;
+    opacity: 1;  /* Firefox fix */
+}
+
+/* ::marker - list marker (bullet/number) */
+li::marker {
+    color: #007bff;
+    font-weight: bold;
+}
+
+/* ::backdrop - full-screen element backdrop */
+dialog::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+/* ::file-selector-button - file input button */
+input[type="file"]::file-selector-button {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* ============================================================================
+   6. COMBINING PSEUDO-CLASSES AND PSEUDO-ELEMENTS
+   ============================================================================ */
+
+/* Can be combined for powerful selectors */
+li:first-child::first-letter {
+    font-size: 1.5em;
+}
+
+a:hover::after {
+    content: " (click me)";
+    font-size: 0.8em;
+    color: #999;
+}
+
+input:focus::placeholder {
+    color: transparent;
+}
+
+/* ============================================================================
+   BEST PRACTICES
+   ============================================================================
+
+   1. Use :: for pseudo-elements, : for pseudo-classes (modern convention)
+   2. Use :focus-visible instead of :focus for keyboard accessibility
+   3. Use :has() for parent selection (modern, powerful)
+   4. Use :where() for zero-specificity resets
+   5. Use ::before/::after for decorative content only
+   6. Always set content: "" on ::before/::after (required to render)
+   7. Use :nth-child(an+b) for complex alternating patterns
+   8. Use form pseudo-classes for validation styling
+   9. Use ::selection for branded text selection
+   10. Combine pseudo-classes/elements for precise targeting
+*/

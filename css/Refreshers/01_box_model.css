@@ -1,0 +1,261 @@
+/* ============================================================================
+   BOX MODEL
+   File: 01_box_model.css
+   Covers: Content, padding, border, margin, box-sizing, display types
+   ============================================================================
+
+   Every element in CSS is a rectangular box. The box model describes how
+   the size of each element is calculated.
+*/
+
+/* ============================================================================
+   1. BOX MODEL COMPONENTS (Inside → Outside)
+   ============================================================================
+
+   ┌─────────────────────────────────────┐
+   │            MARGIN (transparent)     │
+   │  ┌───────────────────────────────┐  │
+   │  │          BORDER               │  │
+   │  │  ┌─────────────────────────┐  │  │
+   │  │  │        PADDING          │  │  │
+   │  │  │  ┌───────────────────┐  │  │  │
+   │  │  │  │     CONTENT       │  │  │  │
+   │  │  │  └───────────────────┘  │  │  │
+   │  │  └─────────────────────────┘  │  │
+   │  └───────────────────────────────┘  │
+   └─────────────────────────────────────┘
+
+   - Content: The actual content (text, images)
+   - Padding: Space between content and border (inside)
+   - Border: Line around padding
+   - Margin: Space outside border (between elements)
+*/
+
+/* ============================================================================
+   2. CONTENT AREA
+   ============================================================================ */
+
+.content-area {
+    width: 300px;            /* Width of content area */
+    height: 200px;           /* Height of content area */
+    min-width: 100px;        /* Minimum width */
+    max-width: 500px;        /* Maximum width */
+    min-height: 50px;        /* Minimum height */
+    max-height: 400px;       /* Maximum height */
+}
+
+/* ============================================================================
+   3. PADDING - Space INSIDE the element
+   ============================================================================ */
+
+.padding-example {
+    /* Individual sides */
+    padding-top: 10px;
+    padding-right: 20px;
+    padding-bottom: 10px;
+    padding-left: 20px;
+
+    /* Shorthand variations */
+    padding: 10px;                 /* All sides */
+    padding: 10px 20px;            /* top/bottom  left/right */
+    padding: 10px 20px 30px;       /* top  left/right  bottom */
+    padding: 10px 20px 30px 40px;  /* top  right  bottom  left (clockwise) */
+}
+
+/* ============================================================================
+   4. BORDER
+   ============================================================================ */
+
+.border-example {
+    /* Individual sides */
+    border-top: 2px solid black;
+    border-right: 2px dashed blue;
+    border-bottom: 2px dotted green;
+    border-left: 2px double red;
+
+    /* Shorthand */
+    border: 1px solid #ccc;  /* width style color */
+
+    /* Individual properties */
+    border-width: 2px;
+    border-style: solid;     /* solid, dashed, dotted, double, groove, ridge, inset, outset, none */
+    border-color: #333;
+
+    /* Border radius (rounded corners) */
+    border-radius: 5px;                  /* All corners */
+    border-radius: 5px 10px;             /* top-left/bottom-right  top-right/bottom-left */
+    border-radius: 5px 10px 15px 20px;   /* TL  TR  BR  BL (clockwise) */
+    border-radius: 50%;                  /* Circle (if width == height) */
+
+    /* Individual corner radius */
+    border-top-left-radius: 5px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 15px;
+    border-bottom-left-radius: 20px;
+}
+
+/* ============================================================================
+   5. MARGIN - Space OUTSIDE the element
+   ============================================================================ */
+
+.margin-example {
+    /* Individual sides */
+    margin-top: 10px;
+    margin-right: 20px;
+    margin-bottom: 10px;
+    margin-left: 20px;
+
+    /* Shorthand (same as padding) */
+    margin: 10px;                 /* All sides */
+    margin: 10px 20px;            /* top/bottom  left/right */
+    margin: 10px 20px 30px;       /* top  left/right  bottom */
+    margin: 10px 20px 30px 40px;  /* top  right  bottom  left */
+
+    /* Auto margin - centers block elements horizontally */
+    margin: 0 auto;               /* Centers element in its container */
+}
+
+/* ============================================================================
+   6. MARGIN COLLAPSING
+   ============================================================================
+
+   Vertical margins of adjacent block elements COLLAPSE into a single margin
+   equal to the larger of the two margins. Horizontal margins do NOT collapse.
+
+   Example:
+   <div style="margin-bottom: 30px;">A</div>
+   <div style="margin-top: 20px;">B</div>
+   Result: gap between A and B is 30px (not 50px)
+
+   Margin collapsing also happens between parent and first/last child.
+   Ways to prevent:
+   - Add padding or border to parent
+   - Set overflow: hidden on parent
+   - Use display: flow-root on parent
+*/
+
+/* ============================================================================
+   7. BOX-SIZING - The Most Important Property
+   ============================================================================ */
+
+/*
+   box-sizing changes how width/height is calculated:
+
+   content-box (DEFAULT):
+   - width = content width ONLY
+   - Total width = width + padding + border
+   - If width: 300px, padding: 20px, border: 1px → total = 342px
+
+   border-box (RECOMMENDED):
+   - width = content + padding + border
+   - Total width = width (as declared)
+   - If width: 300px, padding: 20px, border: 1px → content = 258px, total = 300px
+*/
+
+/* Global reset - most common approach */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/* Visual comparison */
+.content-box {
+    box-sizing: content-box;
+    width: 300px;
+    padding: 20px;
+    border: 1px solid black;
+    /* Total width = 300 + 40 + 2 = 342px */
+}
+
+.border-box {
+    box-sizing: border-box;
+    width: 300px;
+    padding: 20px;
+    border: 1px solid black;
+    /* Total width = 300px (content = 258px) */
+}
+
+/* ============================================================================
+   8. DISPLAY TYPES AND THE BOX MODEL
+   ============================================================================ */
+
+/*
+   display: block
+   - Takes full width available
+   - Respects width, height, margin, padding
+   - Starts on new line
+   - Examples: <div>, <p>, <h1>-<h6>, <section>
+
+   display: inline
+   - Takes only content width
+   - Does NOT respect width/height
+   - Respects horizontal margin/padding only
+   - Flows inline with text
+   - Examples: <span>, <a>, <strong>, <em>
+
+   display: inline-block
+   - Like inline but respects width/height and all margins/padding
+   - Flows inline with text
+   - Best of both worlds
+
+   display: none
+   - Element removed from document flow (not rendered)
+*/
+
+.block-element {
+    display: block;
+    width: 100%;
+    margin: 10px 0;
+    padding: 20px;
+}
+
+.inline-element {
+    display: inline;
+    /* width and height are IGNORED */
+    margin: 0 10px;   /* Only horizontal margins work */
+    padding: 0 5px;   /* Only horizontal padding works visually */
+}
+
+.inline-block-element {
+    display: inline-block;
+    width: 150px;      /* Works! */
+    height: 50px;      /* Works! */
+    margin: 10px;      /* All sides work */
+    padding: 10px;     /* All sides work */
+    vertical-align: middle;
+}
+
+/* ============================================================================
+   9. OVERFLOW BEHAVIOR
+   ============================================================================ */
+
+.overflow-example {
+    width: 200px;
+    height: 100px;
+
+    overflow: visible;   /* Default - content overflows box */
+    overflow: hidden;    /* Clips overflowing content */
+    overflow: scroll;    /* Always shows scrollbars */
+    overflow: auto;      /* Shows scrollbars only when needed */
+
+    /* Individual axes */
+    overflow-x: hidden;  /* Horizontal overflow */
+    overflow-y: auto;    /* Vertical overflow */
+}
+
+/* ============================================================================
+   BEST PRACTICES
+   ============================================================================
+
+   1. ALWAYS set box-sizing: border-box globally
+   2. Use margin for spacing BETWEEN elements
+   3. Use padding for spacing WITHIN elements
+   4. Be aware of margin collapsing
+   5. Use min-height/max-height for flexible layouts
+   6. Use overflow: hidden to clear floats (legacy)
+   7. Use display: flow-root for modern clearfix
+   8. Prefer inline-block over float for layouts
+   9. Use rem/em for padding and margins in responsive design
+   10. Remember: border-box makes sizing predictable
+*/

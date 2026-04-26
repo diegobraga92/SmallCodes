@@ -1,0 +1,216 @@
+/* ============================================================================
+   CSS BASICS - Syntax, Selectors, Properties, Values, Units
+   File: 00_css_basics.css
+   Covers: CSS syntax, basic selectors, properties, values, units
+   ============================================================================
+
+   CSS (Cascading Style Sheets) controls the presentation of HTML documents.
+   A CSS rule consists of a selector and a declaration block.
+*/
+
+/* ============================================================================
+   1. CSS SYNTAX
+   ============================================================================
+
+   selector {
+       property: value;
+   }
+
+   - Selector: Targets HTML element(s)
+   - Declaration block: { } contains property:value pairs
+   - Property: What to style (e.g., color, font-size)
+   - Value: How to style it (e.g., red, 16px)
+*/
+
+/* Element selector - targets all <p> elements */
+p {
+    color: #333;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+/* Multiple selectors - comma separated */
+h1, h2, h3 {
+    font-family: Arial, sans-serif;
+    margin-bottom: 0.5em;
+}
+
+/* ============================================================================
+   2. BASIC SELECTORS
+   ============================================================================ */
+
+/* Universal selector - targets EVERY element (use sparingly) */
+* {
+    box-sizing: border-box;
+}
+
+/* Class selector - targets elements with class="highlight" */
+.highlight {
+    background-color: yellow;
+    font-weight: bold;
+}
+
+/* ID selector - targets element with id="header" (use sparingly) */
+#header {
+    background-color: #f0f0f0;
+    padding: 20px;
+}
+
+/* Descendant selector - targets <span> inside any <div> */
+div span {
+    color: blue;
+}
+
+/* Child selector - targets direct <li> children of <ul> */
+ul > li {
+    list-style-type: square;
+}
+
+/* Adjacent sibling - targets <p> immediately after <h2> */
+h2 + p {
+    font-style: italic;
+}
+
+/* General sibling - targets all <p> after <h2> */
+h2 ~ p {
+    margin-left: 20px;
+}
+
+/* ============================================================================
+   3. PROPERTIES AND VALUES
+   ============================================================================ */
+
+/* Color values */
+.element {
+    color: red;              /* Named color */
+    color: #FF0000;          /* Hex */
+    color: #F00;             /* Shorthand hex */
+    color: rgb(255, 0, 0);   /* RGB */
+    color: rgba(255, 0, 0, 0.5); /* RGB with alpha */
+    color: hsl(0, 100%, 50%);    /* HSL */
+    color: hsla(0, 100%, 50%, 0.5); /* HSL with alpha */
+}
+
+/* Numeric values */
+.sizing {
+    width: 100px;            /* Pixels - absolute */
+    width: 50%;              /* Percentage - relative to parent */
+    font-size: 1.2em;        /* Relative to parent font-size */
+    font-size: 1.2rem;       /* Relative to root font-size */
+    width: 50vw;             /* 50% of viewport width */
+    height: 50vh;            /* 50% of viewport height */
+    font-size: 100%;         /* 100% of parent font-size */
+    line-height: 1.5;        /* Unitless - relative to font-size */
+}
+
+/* ============================================================================
+   4. CSS UNITS REFERENCE
+   ============================================================================
+
+   Absolute units (fixed size):
+   - px  : pixels (1px = 1/96th of 1 inch)
+   - pt  : points (1pt = 1/72nd of 1 inch) - print only
+   - cm  : centimeters
+   - mm  : millimeters
+   - in  : inches
+
+   Relative units (recommended for responsive design):
+   - %   : percentage of parent element
+   - em  : relative to parent's font-size
+   - rem : relative to root (html) font-size
+   - vw  : 1% of viewport width
+   - vh  : 1% of viewport height
+   - vmin: smaller of vw or vh
+   - vmax: larger of vw or vh
+   - ch  : width of "0" character in current font
+   - ex  : height of "x" character in current font
+*/
+
+/* ============================================================================
+   5. COMMON PROPERTIES
+   ============================================================================ */
+
+.text-styling {
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 400;        /* 100-900, or normal/bold */
+    font-style: normal;      /* normal, italic, oblique */
+    line-height: 1.6;
+    text-align: left;        /* left, center, right, justify */
+    text-decoration: none;   /* none, underline, line-through */
+    text-transform: none;    /* none, uppercase, lowercase, capitalize */
+    letter-spacing: 1px;     /* Space between characters */
+    word-spacing: 2px;       /* Space between words */
+    color: #333;
+}
+
+.box-properties {
+    width: 300px;
+    height: 200px;
+    margin: 10px;            /* Space outside element */
+    padding: 20px;           /* Space inside element */
+    border: 1px solid #ccc;  /* Shorthand: width style color */
+    background-color: #fff;
+    border-radius: 4px;      /* Rounded corners */
+    overflow: hidden;        /* visible, hidden, scroll, auto */
+}
+
+/* ============================================================================
+   6. SHORTHAND PROPERTIES
+   ============================================================================ */
+
+/* Margin/Padding shorthand: top right bottom left (clockwise) */
+.shorthand-margin {
+    margin: 10px;                 /* All sides */
+    margin: 10px 20px;            /* top/bottom  left/right */
+    margin: 10px 20px 30px;       /* top  left/right  bottom */
+    margin: 10px 20px 30px 40px;  /* top  right  bottom  left */
+}
+
+/* Border shorthand */
+.shorthand-border {
+    border: 2px solid #000;       /* width style color */
+    border-top: 1px dashed red;   /* Specific side */
+}
+
+/* Background shorthand */
+.shorthand-bg {
+    background: #fff url("image.jpg") no-repeat center/cover;
+    /* color image repeat position/size */
+}
+
+/* Font shorthand */
+.shorthand-font {
+    font: italic bold 16px/1.5 "Arial", sans-serif;
+    /* style weight size/line-height family */
+}
+
+/* ============================================================================
+   7. COMMENTS AND ORGANIZATION
+   ============================================================================ */
+
+/*
+   CSS comments use /* ... *​/
+   Best practices:
+   - Group related styles together
+   - Use section comments to organize
+   - Avoid inline styles in HTML
+   - Use meaningful class names
+   - Keep specificity low
+*/
+
+/* ============================================================================
+   BEST PRACTICES
+   ============================================================================
+
+   1. Use classes over IDs for styling
+   2. Keep selectors as simple as possible
+   3. Use rem for font-sizes, % for widths
+   4. Group related properties together
+   5. Use shorthand where appropriate
+   6. Avoid !important (covered later)
+   7. Use a consistent naming convention
+   8. Comment complex or non-obvious styles
+   9. Reset or normalize browser defaults
+   10. Validate CSS with W3C validator
+*/

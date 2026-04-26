@@ -1,8 +1,20 @@
 /*
     C# BASICS - Fundamental Concepts
-    Covering: Data types, variables, operators, basic syntax
+    File: 00_basics.cs
     
-    This file demonstrates the fundamental building blocks of C# programming.
+    Comprehensive guide to C# fundamentals covering data types, variables,
+    operators, and type conversion. This file builds from junior-level basics
+    to mid-level understanding of memory, performance, and type system nuances.
+    
+    Key Concepts Covered:
+    1. Value Types vs Reference Types (stack vs heap allocation)
+    2. Integer, Floating-point, and Special Types
+    3. Variable Declaration and Scope
+    4. Operators (arithmetic, comparison, logical, bitwise)
+    5. Type Conversion (implicit, explicit, boxing/unboxing)
+    6. Nullable Types and Null Safety
+    7. Type Inference with var
+    8. Constants and Readonly Fields
 */
 
 using System;
@@ -27,6 +39,49 @@ namespace CSharpRefresher.Basics
         {
             Console.WriteLine("============ DATA TYPES ============\n");
             
+            // ============ VALUE TYPES VS REFERENCE TYPES ============
+            Console.WriteLine("=== 1. Value Types vs Reference Types ===");
+            Console.WriteLine("""
+                C# types are divided into two categories:
+                
+                Value Types (stored on stack):
+                • int, long, float, double, decimal, bool, char, struct, enum
+                • Each variable has its own copy of the data
+                • Assigned by value (copying the data)
+                • Cannot be null (unless nullable)
+                • More efficient for small data
+                
+                Reference Types (stored on heap):
+                • string, class, interface, delegate, array, object
+                • Variables hold a reference (pointer) to the data
+                • Assigned by reference (copying the pointer)
+                • Can be null
+                • Subject to garbage collection
+                """);
+            
+            // ============ INTEGER TYPES ============
+            Console.WriteLine("\n=== 2. Integer Types ===");
+            Console.WriteLine("""
+                C# provides signed and unsigned integer types of varying sizes:
+                
+                | Type    | Size   | Range                                    | Use Case              |
+                |---------|--------|------------------------------------------|-----------------------|
+                | byte    | 8-bit  | 0 to 255                                | Small counters, bytes |
+                | sbyte   | 8-bit  | -128 to 127                             | Small signed values   |
+                | short   | 16-bit | -32,768 to 32,767                       | Memory-sensitive      |
+                | ushort  | 16-bit | 0 to 65,535                             | Unsigned small values |
+                | int     | 32-bit | -2.1B to 2.1B                           | Default integer type  |
+                | uint    | 32-bit | 0 to 4.29B                              | Positive-only counts  |
+                | long    | 64-bit | -9.2E18 to 9.2E18                       | Large values          |
+                | ulong   | 64-bit | 0 to 1.84E19                            | Very large unsigned   |
+                
+                Key points:
+                • Prefer 'int' for general-purpose integers (best performance on 32/64-bit CPUs)
+                • Use 'long' when values exceed int range (~2.1 billion)
+                • Use 'byte' for raw byte data or memory-constrained scenarios
+                • Signed types cover negative values, unsigned only positive
+                """);
+            
             // Integer types
             byte myByte = 255;                 // 0 to 255 (8-bit)
             sbyte mySByte = -128;              // -128 to 127 (8-bit signed)
@@ -37,10 +92,48 @@ namespace CSharpRefresher.Basics
             long myLong = 9223372036854775807; // 64-bit
             ulong myULong = 18446744073709551615; // 64-bit unsigned
             
+            // ============ FLOATING POINT TYPES ============
+            Console.WriteLine("\n=== 3. Floating Point Types ===");
+            Console.WriteLine("""
+                C# provides three floating-point types with different precision:
+                
+                | Type    | Size   | Precision | Suffix | Use Case                          |
+                |---------|--------|-----------|--------|-----------------------------------|
+                | float   | 32-bit | ~7 digits | f      | Graphics, 3D, game development    |
+                | double  | 64-bit | ~15 digits| (none) | General-purpose math, science     |
+                | decimal | 128-bit| ~28 digits| m      | Financial, monetary calculations  |
+                
+                Key points:
+                • double is the default for floating-point literals (3.14 is double)
+                • float requires 'f' suffix: 3.14f
+                • decimal requires 'm' suffix: 3.14m
+                • decimal avoids floating-point rounding errors (base-10)
+                • float/double use base-2 and can have small rounding errors
+                • Never use float/double for money - use decimal
+                """);
+            
             // Floating point types
             float myFloat = 3.14159f;          // 7 digits precision (32-bit) - 'f' suffix required
             double myDouble = 3.14159265358979; // 15-16 digits precision (64-bit)
             decimal myDecimal = 3.14159265358979323846m; // 28-29 digits precision (128-bit) - 'm' suffix required
+            
+            // ============ OTHER BASIC TYPES ============
+            Console.WriteLine("\n=== 4. Other Basic Types ===");
+            Console.WriteLine("""
+                | Type    | Size   | Description                          |
+                |---------|--------|--------------------------------------|
+                | char    | 16-bit | Single Unicode character (UTF-16)    |
+                | bool    | 8-bit  | true or false                        |
+                | string  | Ref    | Immutable sequence of characters     |
+                | object  | Ref    | Ultimate base class for all types    |
+                | dynamic | Ref    | Type resolved at runtime             |
+                
+                Key points:
+                • char is numeric (can cast to int for ASCII/Unicode value)
+                • string is a reference type but behaves like value type (immutable, == compares content)
+                • object is the root of the type hierarchy
+                • dynamic bypasses compile-time type checking (use sparingly)
+                """);
             
             // Other types
             char myChar = 'A';                 // 16-bit Unicode character
@@ -66,8 +159,21 @@ namespace CSharpRefresher.Basics
             Console.WriteLine($"  bool: {myBool}");
             Console.WriteLine($"  string: \"{myString}\" (length: {myString.Length})");
             
-            // Default values
-            Console.WriteLine($"\nDefault values:");
+            // ============ DEFAULT VALUES ============
+            Console.WriteLine("\n=== 5. Default Values ===");
+            Console.WriteLine("""
+                Every type has a default value:
+                • Numeric types: 0 (or 0.0 for floating-point)
+                • bool: false
+                • char: '\\0' (null character)
+                • Reference types: null
+                • Nullable value types: null
+                
+                Use 'default' keyword to get the default value of any type:
+                    int defaultInt = default;    // 0
+                    string defaultStr = default; // null
+                """);
+            
             int defaultInt = default;          // 0
             bool defaultBool = default;        // false
             string defaultString = default;    // null

@@ -29,7 +29,7 @@ console.log("\n=== Basic tsconfig.json Structure ===");
  *     "rootDir": "./src",
  *     "strict": true
  *   },
- *   "include": ["src/**/*"],
+ *   "include": ["src/**\/*"],
  *   "exclude": ["node_modules", "dist"]
  * }
  */
