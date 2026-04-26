@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<!--
+    EMBEDDING & IFRAMES
+    File: 10_embedding_iframes.html
+
+    Comprehensive guide to embedding external content in HTML pages.
+    Covers iframes, embeds, object, and embed elements with security,
+    performance, and accessibility considerations. Builds from junior-level
+    basics to mid-level understanding of cross-origin embedding patterns.
+
+    Key Concepts Covered:
+    1. Iframe Basics (src, name, attributes)
+    2. Iframe Security (sandbox, allow, referrerpolicy)
+    3. Cross-Origin Communication (postMessage)
+    4. Responsive Iframes
+    5. Object and Embed Elements
+    6. Third-Party Embeds (YouTube, Maps, Social)
+    7. Iframe Performance and Lazy Loading
+    8. Accessibility for Embedded Content
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Embedding & Iframes</title>
+    <style>
+        body { font-family: system-ui, sans-serif; line-height: 1.6; max-width: 900px; margin: 0 auto; padding: 20px; }
+        h1 { color: #e44d26; }
+        h2 { color: #333; border-bottom: 2px solid #e44d26; padding-bottom: 5px; }
+        pre { background: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto; }
+        code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; }
+        .note { background: #fff3cd; border-left: 4px solid #ffc107; padding: 10px 15px; margin: 15px 0; }
+        .warning { background: #f8d7da; border-left: 4px solid #dc3545; padding: 10px 15px; margin: 15px 0; }
+        .tip { background: #d4edda; border-left: 4px solid #28a745; padding: 10px 15px; margin: 15px 0; }
+        table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+        th { background: #e44d26; color: white; }
+        .demo-box { border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin: 15px 0; background: #fafafa; }
+        .iframe-container { position: relative; overflow: hidden; width: 100%; padding-top: 56.25%; }
+        .iframe-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+    </style>
+</head>
+<body>
+
+<h1>Embedding & Iframes</h1>
+
+<!-- ============================================================================
+     1. IFRAME BASICS
+     ============================================================================ -->
+
+<h2>1. Iframe Basics</h2>
+
+<!--
+    An iframe (inline frame) embeds another HTML document within the current page.
+    It creates a nested browsing context with its own session history and
+    JavaScript environment.
+-->
+
+<pre><code><!-- Basic iframe -->
+<iframe src="https://example.com/widget"
+        title="Example widget"
+        width="600"
+        height="400">
+    <p>Your browser doesn't support iframes.</p>
+</iframe>
+
+<!-- Iframe with name (for form targets) -->
+<iframe name="result-frame" title="Form results"></iframe>
+<form action="/submit" target="result-frame">
+    <!-- form fields -->
+</form>
+
+<!-- Iframe with srcdoc (inline HTML content) -->
+<iframe srcdoc="<p>Hello, world!</p>"
+        title="Inline content"></iframe></code></pre>
+
+<table>
+    <tr>
+        <th>Attribute</th>
+        <th>Description</th>
+    </tr>
+    <tr><td><code>src</code></td><td>URL of the page to embed</td></tr>
+    <tr><td><code>srcdoc</code></td><td>Inline HTML content (overrides src)</td></tr>
+    <tr><td><code>name</code></td><td>Target name for links and forms</td></tr>
+    <tr><td><code>sandbox</code></td><td>Security restrictions (see section 2)</td></tr>
+    <tr><td><code>allow</code></td><td>Feature policy (camera, microphone, etc.)</td></tr>
+    <tr><td><code>loading</code></td><td>Lazy loading: eager (default) or lazy</td></tr>
+    <tr><td><code>referrerpolicy</code></td><td>Referrer information to send</td></tr>
+    <tr><td><code>allowfullscreen</code></td><td>Allow fullscreen mode</td></tr>
+    <tr><td><code>title</code></td><td>Accessible name (required for accessibility)</td></tr>
+</table>
+
+<div class="warning">
+    <strong>Title is required!</strong> Every <code><iframe></code> must
+    have a <code>title</code> attribute that describes its content for screen
+    reader users. Without it, screen readers announce "frame" with no context.
+</div>
+
+<!-- ============================================================================
+     2. IFRAME SECURITY
+     ============================================================================ -->
+
+<h2>2. Iframe Security (sandbox, allow, referrerpolicy)</h2>
+
+<h3>Sandbox Attribute</h3>
+<!--
+    The sandbox attribute applies restrictions to the iframe content.
+    With no value, all restrictions are applied. Add specific permissions
+    as space-separated values.
+-->
+
+<pre><code><!-- Maximum security: no permissions -->
+<iframe src="widget.html" sandbox="" title="Sandboxed widget"></iframe>
+
+<!-- Allow scripts but not popups -->
+<iframe src="widget.html"
+        sandbox="allow-scripts allow-same-origin"
+        title="Widget with scripts"></iframe>
+
+<!-- Allow forms, scripts, and same-origin -->
+<iframe src="app.html"
+        sandbox="allow-forms allow-scripts allow-same-origin"
+        title="Application"></iframe>
+
+<!-- Common sandbox values -->
+<!-- allow-forms: Allow form submission -->
+<!-- allow-scripts: Allow JavaScript -->
+<!-- allow-same-origin: Allow access to parent origin -->
+<!-- allow-popups: Allow popup windows -->
+<!-- allow-modals: Allow alert/confirm/prompt -->
+<!-- allow-orientation-lock: Allow screen orientation lock -->
+<!-- allow-pointer-lock: Allow pointer lock API -->
+<!-- allow-presentation: Allow presentation mode -->
+<!-- allow-top-navigation: Allow navigation of top-level window --></code></pre>
+
+<h3>Feature Policy (allow attribute)</h3>
+<pre><code><!-- Control which browser features the iframe can use -->
+<iframe src="camera-app.html"
+        allow="camera 'none'; microphone 'none'"
+        title="Camera app"></iframe>
+
+<!-- Allow specific features -->
+<iframe src="video-chat.html"
+        allow="camera; microphone; fullscreen"
+        title="Video chat"></iframe>
+
+<!-- Allow with specific origins -->
+<iframe src="payment.html"
+        allow="geolocation 'src'; clipboard-write 'src'"
+        title="Payment form"></iframe></code></pre>
+
+<h3>Referrer Policy</h3>
+<pre><code><!-- Control what referrer information is sent -->
+<iframe src="https://analytics.example.com"
+        referrerpolicy="no-referrer"
+        title="Analytics"></iframe>
+
+<!-- Common referrerpolicy values -->
+<!-- no-referrer: Never send referrer -->
+<!-- origin: Send only origin (https://example.com) -->
+<!-- same-origin: Send referrer for same-origin only -->
+<!-- strict-origin-when-cross-origin: Default, send full for same-origin, origin for cross-origin --></code></pre>
+
+<!-- ============================================================================
+     3. CROSS-ORIGIN COMMUNICATION
+     ============================================================================ -->
+
+<h2>3. Cross-Origin Communication (postMessage)</h2>
+
+<!--
+    postMessage allows secure cross-origin communication between a page
+    and its iframes. This is the only safe way to communicate across origins.
+-->
+
+<pre><code><!-- Parent page -->
+<iframe id="child-frame" src="https://widget.example.com" title="Widget"></iframe>
+
+<script>
+    // Send message to iframe
+    const iframe = document.getElementById('child-frame');
+    iframe.contentWindow.postMessage(
+        { type: 'SET_THEME', theme: 'dark' },
+        'https://widget.example.com'  // Target origin (required for security)
+    );
+
+    // Receive message from iframe
+    window.addEventListener('message', (event) => {
+        // ALWAYS verify the origin
+        if (event.origin !== 'https://widget.example.com') return;
+
+        console.log('Received from iframe:', event.data);
+    });
+</script>
+
+<!-- Inside iframe (widget.example.com) -->
+<script>
+    // Receive message from parent
+    window.addEventListener('message', (event) => {
+        // ALWAYS verify the origin
+        if (event.origin !== 'https://parent.example.com') return;
+
+        const { type, theme } = event.data;
+        if (type === 'SET_THEME') {
+            document.body.className = theme;
+        }
+    });
+
+    // Send message to parent
+    window.parent.postMessage(
+        { type: 'WIDGET_READY' },
+        'https://parent.example.com'
+    );
+</script></code></pre>
+
+<div class="warning">
+    <strong>Always verify origin!</strong> Never use <code>postMessage</code>
+    without checking <code>event.origin</code>. An attacker could send
+    malicious messages from a different origin. Always specify the target
+    origin in <code>postMessage</code> — never use <code>*</code>.
+</div>
+
+<!-- ============================================================================
+     4. RESPONSIVE IFRAMES
+     ============================================================================ -->
+
+<h2>4. Responsive Iframes</h2>
+
+<!--
+    Iframes don't scale naturally. Use the padding-bottom technique
+    to maintain aspect ratio.
+-->
+
+<h3>Technique 1: Aspect Ratio Container (CSS)</h3>
+<pre><code><!-- HTML -->
+<div class="iframe-container">
+    <iframe src="https://www.youtube.com/embed/VIDEO_ID"
+            title="YouTube video"
+            allowfullscreen></iframe>
+</div>
+
+<!-- CSS -->
+.iframe-container {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    padding-top: 56.25%;  /* 16:9 aspect ratio (9/16 = 0.5625) */
+}
+
+.iframe-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+/* Different aspect ratios */
+/* 16:9 → padding-top: 56.25% */
+/* 4:3  → padding-top: 75% */
+/* 1:1  → padding-top: 100% */
+/* 21:9 → padding-top: 42.86% */</code></pre>
+
+<h3>Technique 2: aspect-ratio CSS Property (Modern)</h3>
+<pre><code><!-- Modern browsers support aspect-ratio -->
+<style>
+    iframe.responsive {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 16 / 9;
+        border: 0;
+    }
+</style>
+
+<iframe class="responsive" src="video.html" title="Video"></iframe></code></pre>
+
+<!-- ============================================================================
+     5. OBJECT AND EMBED
+     ============================================================================ -->
+
+<h2>5. Object and Embed Elements</h2>
+
+<!--
+    <object> and <embed> are older elements for embedding external content.
+    <object> is more versatile (can include fallback content).
+    <embed> is simpler but has no fallback.
+-->
+
+<pre><code><!-- Embed a PDF -->
+<object data="document.pdf"
+        type="application/pdf"
+        width="800"
+        height="600">
+    <p>PDF cannot be displayed.
+       <a href="document.pdf">Download the PDF</a> instead.</p>
+</object>
+
+<!-- Embed with fallback chain -->
+<object data="animation.swf"
+        type="application/x-shockwave-flash"
+        width="400"
+        height="300">
+    <object data="animation.mp4"
+            type="video/mp4"
+            width="400"
+            height="300">
+        <p>Animation cannot be displayed.</p>
+    </object>
+</object>
+
+<!-- Embed element (simpler, no fallback) -->
+<embed src="file.pdf"
+       type="application/pdf"
+       width="800"
+       height="600">
+
+<!-- Object with parameters -->
+<object data="game.swf" type="application/x-shockwave-flash">
+    <param name="quality" value="high">
+    <param name="bgcolor" value="#ffffff">
+    <p>Game requires Flash plugin.</p>
+</object></code></pre>
+
+<div class="note">
+    <strong>Object vs Iframe:</strong> Use <code><iframe></code> for
+    embedding HTML pages. Use <code><object></code> for plugins and
+    non-HTML content (PDFs, SVG, etc.). <code><embed></code> is a
+    simpler alternative but lacks fallback content support.
+</div>
+
+<!-- ============================================================================
+     6. THIRD-PARTY EMBEDS
+     ============================================================================ -->
+
+<h2>6. Third-Party Embeds</h2>
+
+<h3>YouTube</h3>
+<pre><code><!-- YouTube video embed -->
+<div class="iframe-container">
+    <iframe src="https://www.youtube.com/embed/VIDEO_ID"
+            title="YouTube video: Video Title"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen></iframe>
+</div>
+
+<!-- YouTube with privacy-enhanced mode -->
+<iframe src="https://www.youtube-nocookie.com/embed/VIDEO_ID"
+        title="YouTube video"
+        allowfullscreen></iframe></code></pre>
+
+<h3>Google Maps</h3>
+<pre><code><!-- Google Maps embed -->
+<iframe src="https://www.google.com/maps/embed?pb=!1m18!..."
+        width="600"
+        height="450"
+        style="border:0;"
+        allowfullscreen=""
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        title="Google Maps location"></iframe></code></pre>
+
+<h3>Social Media Embeds</h3>
+<pre><code><!-- Twitter/X embed (use platform's generated code) -->
+<blockquote class="twitter-tweet">
+    <p lang="en" dir="ltr">Tweet content here</p>
+    &mdash; User (@username) <a href="https://twitter.com/username/status/123">Date</a>
+</blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script></code></pre>
+
+<div class="tip">
+    <strong>Third-party embed best practices:</strong>
+    <ul>
+        <li>Use <code>loading="lazy"</code> for below-the-fold embeds</li>
+        <li>Use <code>sandbox</code> to restrict capabilities</li>
+        <li>Use <code>referrerpolicy="no-referrer"</code> for privacy</li>
+        <li>Provide a fallback message if the embed fails to load</li>
+        <li>Consider privacy implications (YouTube-nocookie, etc.)</li>
+    </ul>
+</div>
+
+<!-- ============================================================================
+     7. IFRAME PERFORMANCE
+     ============================================================================ -->
+
+<h2>7. Iframe Performance and Lazy Loading</h2>
+
+<pre><code><!-- Lazy load iframes (native browser support) -->
+<iframe src="widget.html"
+        loading="lazy"
+        title="Widget"></iframe>
+
+<!-- Eager loading (default, load immediately) -->
+<iframe src="critical-widget.html"
+        loading="eager"
+        title="Critical widget"></iframe>
+
+<!-- Performance considerations -->
+<!-- 1. Each iframe creates a new browsing context (memory overhead) -->
+<!-- 2. Each iframe loads its own resources (CSS, JS, images) -->
+<!-- 3. Iframes block the parent page's load event -->
+<!-- 4. Use loading="lazy" for non-critical iframes -->
+<!-- 5. Consider using the Intersection Observer API for custom lazy loading -->
+
+<!-- Custom lazy loading with Intersection Observer -->
+<iframe class="lazy-iframe"
+        data-src="https://example.com/widget"
+        title="Lazy widget"></iframe>
+
+<script>
+    const lazyIframes = document.querySelectorAll('.lazy-iframe');
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const iframe = entry.target;
+                iframe.src = iframe.dataset.src;
+                observer.unobserve(iframe);
+            }
+        });
+    });
+
+    lazyIframes.forEach(iframe => observer.observe(iframe));
+</script></code></pre>
+
+<!-- ============================================================================
+     8. ACCESSIBILITY
+     ============================================================================ -->
+
+<h2>8. Accessibility for Embedded Content</h2>
+
+<pre><code><!-- 1. Always provide a title -->
+<iframe src="widget.html" title="Weather widget"></iframe>
+
+<!-- 2. Provide fallback content -->
+<iframe src="map.html" title="Store locator map">
+    <p>Map not available. <a href="/stores">View store list</a> instead.</p>
+</iframe>
+
+<!-- 3. Hide decorative iframes from screen readers -->
+<iframe src="decorative.html"
+        title="Decorative content"
+        aria-hidden="true"
+        tabindex="-1"></iframe>
+
+<!-- 4. Ensure keyboard navigation works within iframes -->
+<!-- Tab order flows through iframes naturally -->
+<!-- Use tabindex="0" for focusable iframes -->
+
+<!-- 5. Announce iframe loading status -->
+<div aria-live="polite" id="iframe-status"></div>
+<iframe src="slow-widget.html"
+        title="Slow loading widget"
+        onload="document.getElementById('iframe-status').textContent = 'Widget loaded'"></iframe></code></pre>
+
+<div class="tip">
+    <strong>Embedding checklist:</strong>
+    <ul>
+        <li>Always include a descriptive <code>title</code> attribute</li>
+        <li>Use <code>sandbox</code> to restrict untrusted content</li>
+        <li>Use <code>loading="lazy"</code> for non-critical embeds</li>
+        <li>Make iframes responsive with aspect-ratio containers</li>
+        <li>Verify origins when using <code>postMessage</code></li>
+        <li>Provide fallback content for accessibility</li>
+        <li>Consider privacy implications of third-party embeds</li>
+        <li>Test keyboard navigation through embedded content</li>
+    </ul>
+</div>
+
+</body>
+</html>

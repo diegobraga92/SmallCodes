@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<!--
+    SEO & METADATA
+    File: 09_seo_metadata.html
+
+    Comprehensive guide to HTML metadata, SEO best practices, and social
+    media integration. Covers meta tags, Open Graph, Twitter Cards,
+    structured data, and search engine optimization techniques.
+    Builds from junior-level basics to mid-level understanding of
+    technical SEO and semantic markup for search engines.
+
+    Key Concepts Covered:
+    1. Document Head and Meta Tags
+    2. Title and Description Best Practices
+    3. Open Graph Protocol (Facebook, LinkedIn)
+    4. Twitter Cards
+    5. Canonical URLs and Hreflang
+    6. Structured Data (JSON-LD, Schema.org)
+    7. Robots, Sitemaps, and Indexing
+    8. Performance SEO (Core Web Vitals)
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEO & Metadata - HTML Refresher</title>
+    <meta name="description" content="Comprehensive guide to HTML metadata, SEO best practices, Open Graph, Twitter Cards, and structured data for web developers.">
+    <meta name="keywords" content="HTML, SEO, metadata, Open Graph, Twitter Cards, structured data, Schema.org">
+    <meta name="author" content="HTML Refresher">
+    <style>
+        body { font-family: system-ui, sans-serif; line-height: 1.6; max-width: 900px; margin: 0 auto; padding: 20px; }
+        h1 { color: #e44d26; }
+        h2 { color: #333; border-bottom: 2px solid #e44d26; padding-bottom: 5px; }
+        pre { background: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto; }
+        code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; }
+        .note { background: #fff3cd; border-left: 4px solid #ffc107; padding: 10px 15px; margin: 15px 0; }
+        .warning { background: #f8d7da; border-left: 4px solid #dc3545; padding: 10px 15px; margin: 15px 0; }
+        .tip { background: #d4edda; border-left: 4px solid #28a745; padding: 10px 15px; margin: 15px 0; }
+        table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+        th { background: #e44d26; color: white; }
+    </style>
+</head>
+<body>
+
+<h1>SEO & Metadata</h1>
+
+<!-- ============================================================================
+     1. DOCUMENT HEAD AND META TAGS
+     ============================================================================ -->
+
+<h2>1. Document Head and Meta Tags</h2>
+
+<!--
+    The <head> element contains metadata about the document. This data
+    is not displayed but is critical for SEO, social sharing, and browser behavior.
+-->
+
+<pre><code><!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Character encoding (must be first) -->
+    <meta charset="UTF-8">
+
+    <!-- Viewport for responsive design -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Title (most important SEO element) -->
+    <title>Page Title - Site Name</title>
+
+    <!-- Meta description (shown in search results) -->
+    <meta name="description" content="A brief description of the page content.">
+
+    <!-- Canonical URL (prevents duplicate content issues) -->
+    <link rel="canonical" href="https://example.com/page">
+
+    <!-- Language alternatives -->
+    <link rel="alternate" hreflang="es" href="https://example.com/es/page">
+    <link rel="alternate" hreflang="fr" href="https://example.com/fr/page">
+    <link rel="alternate" hreflang="x-default" href="https://example.com/page">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
+    <!-- Preconnect to external origins (performance) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://analytics.example.com">
+
+    <!-- Preload critical resources -->
+    <link rel="preload" href="/fonts/main.woff2" as="font" crossorigin>
+    <link rel="preload" href="/hero.webp" as="image">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="/styles.css">
+
+    <!-- RSS/Atom feed -->
+    <link rel="alternate" type="application/rss+xml" title="Blog RSS" href="/feed.xml">
+</head></code></pre>
+
+<div class="note">
+    <strong>Meta tag order:</strong> While order isn't strictly enforced,
+    convention is: charset first, then viewport, then title, then description,
+    then other meta tags, then links.
+</div>
+
+<!-- ============================================================================
+     2. TITLE AND DESCRIPTION
+     ============================================================================ -->
+
+<h2>2. Title and Description Best Practices</h2>
+
+<table>
+    <tr>
+        <th>Element</th>
+        <th>Best Practice</th>
+        <th>Example</th>
+    </tr>
+    <tr>
+        <td><code><title></code></td>
+        <td>50-60 characters, unique per page, primary keyword first</td>
+        <td><code>How to Write Semantic HTML | Web Dev Guide</code></td>
+    </tr>
+    <tr>
+        <td><code>meta description</code></td>
+        <td>150-160 characters, compelling, includes call-to-action</td>
+        <td><code>Learn semantic HTML best practices with code examples. Improve your website's accessibility, SEO, and maintainability with proper HTML structure.</code></td>
+    </tr>
+</table>
+
+<pre><code><!-- Good title patterns -->
+<title>Primary Keyword - Secondary Keyword | Brand Name</title>
+<title>How to Learn HTML: A Complete Guide for Beginners</title>
+<title>Product Name | Category | Store Name</title>
+
+<!-- Good description patterns -->
+<meta name="description" content="Learn how to build responsive websites with HTML5. This comprehensive guide covers semantic elements, forms, multimedia, and best practices for modern web development.">
+
+<!-- Avoid -->
+<title>Home</title>  <!-- Too vague -->
+<meta name="description" content="Welcome to my website">  <!-- Not compelling --></code></pre>
+
+<!-- ============================================================================
+     3. OPEN GRAPH PROTOCOL
+     ============================================================================ -->
+
+<h2>3. Open Graph Protocol (Facebook, LinkedIn)</h2>
+
+<!--
+    Open Graph (OG) meta tags control how content appears when shared on
+    social media platforms like Facebook, LinkedIn, Pinterest, and others.
+-->
+
+<pre><code><!-- Required OG tags -->
+<meta property="og:title" content="How to Write Semantic HTML">
+<meta property="og:description" content="A comprehensive guide to writing meaningful HTML markup.">
+<meta property="og:image" content="https://example.com/images/semantic-html.png">
+<meta property="og:url" content="https://example.com/blog/semantic-html">
+<meta property="og:type" content="article">
+
+<!-- Optional OG tags -->
+<meta property="og:site_name" content="Web Dev Guide">
+<meta property="og:locale" content="en_US">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Diagram showing semantic HTML elements">
+
+<!-- Article-specific OG tags -->
+<meta property="article:published_time" content="2024-01-15T10:00:00Z">
+<meta property="article:modified_time" content="2024-02-20T14:30:00Z">
+<meta property="article:author" content="https://facebook.com/janedoe">
+<meta property="article:section" content="Web Development">
+<meta property="article:tag" content="HTML">
+<meta property="article:tag" content="Accessibility">
+
+<!-- Product-specific OG tags -->
+<meta property="product:price:amount" content="29.99">
+<meta property="product:price:currency" content="USD">
+
+<!-- Video-specific OG tags -->
+<meta property="og:video" content="https://example.com/video.mp4">
+<meta property="og:video:type" content="video/mp4">
+<meta property="og:video:width" content="1920">
+<meta property="og:video:height" content="1080"></code></pre>
+
+<div class="tip">
+    <strong>OG image best practices:</strong>
+    <ul>
+        <li>Size: 1200×630px (1.91:1 aspect ratio)</li>
+        <li>Keep text within the safe zone (center 600×600px)</li>
+        <li>Use high contrast for readability</li>
+        <li>Include your logo and page title</li>
+        <li>Test with the Facebook Sharing Debugger</li>
+    </ul>
+</div>
+
+<!-- ============================================================================
+     4. TWITTER CARDS
+     ============================================================================ -->
+
+<h2>4. Twitter Cards</h2>
+
+<!--
+    Twitter Cards control how content appears when shared on Twitter/X.
+    Four types: summary, summary_large_image, app, player.
+-->
+
+<pre><code><!-- Required: specify card type -->
+<meta name="twitter:card" content="summary_large_image">
+
+<!-- Required: site's @username -->
+<meta name="twitter:site" content="@webdevguide">
+
+<!-- Required: content creator's @username -->
+<meta name="twitter:creator" content="@janedoe">
+
+<!-- Title (should match og:title) -->
+<meta name="twitter:title" content="How to Write Semantic HTML">
+
+<!-- Description (should match og:description) -->
+<meta name="twitter:description" content="A comprehensive guide to writing meaningful HTML markup.">
+
+<!-- Image (should match og:image) -->
+<meta name="twitter:image" content="https://example.com/images/semantic-html.png">
+<meta name="twitter:image:alt" content="Diagram showing semantic HTML elements">
+
+<!-- Card types -->
+<!-- summary: Small thumbnail (120x120), title, description -->
+<!-- summary_large_image: Large image (1200x630), title, description -->
+<!-- app: App download card -->
+<!-- player: Video/audio player card --></code></pre>
+
+<div class="note">
+    <strong>OG + Twitter:</strong> Twitter falls back to OG tags if Twitter
+    tags are missing. For consistency, duplicate the key values (title,
+    description, image) in both formats.
+</div>
+
+<!-- ============================================================================
+     5. CANONICAL URLS AND HREFLANG
+     ============================================================================ -->
+
+<h2>5. Canonical URLs and Hreflang</h2>
+
+<h3>Canonical URLs</h3>
+<pre><code><!-- Prevent duplicate content issues -->
+<link rel="canonical" href="https://example.com/blog/semantic-html">
+
+<!-- Use when: -->
+<!-- - Same content at multiple URLs (www vs non-www, http vs https) -->
+<!-- - Print versions of pages -->
+<!-- - Paginated content (page 2 should point to page 1) -->
+<!-- - Session IDs or tracking parameters in URLs -->
+
+<!-- Self-referencing canonical is recommended -->
+<link rel="canonical" href="https://example.com/current-page"></code></pre>
+
+<h3>Hreflang (Language/Region Alternatives)</h3>
+<pre><code><!-- Language targeting for multi-language sites -->
+<link rel="alternate" hreflang="en" href="https://example.com/page">
+<link rel="alternate" hreflang="es" href="https://example.com/es/page">
+<link rel="alternate" hreflang="fr" href="https://example.com/fr/page">
+<link rel="alternate" hreflang="de" href="https://example.com/de/page">
+
+<!-- x-default for language selection page -->
+<link rel="alternate" hreflang="x-default" href="https://example.com/choose-language">
+
+<!-- Region-specific (en-US vs en-GB) -->
+<link rel="alternate" hreflang="en-US" href="https://example.com/us/page">
+<link rel="alternate" hreflang="en-GB" href="https://example.com/uk/page"></code></pre>
+
+<div class="warning">
+    <strong>Hreflang rules:</strong>
+    <ul>
+        <li>Each language variant must link back to all others (bidirectional)</li>
+        <li>Include a self-referencing hreflang tag</li>
+        <li>Use ISO 639-1 language codes (en, es, fr)</li>
+        <li>Use ISO 3166-1 alpha-2 region codes (US, GB, DE)</li>
+    </ul>
+</div>
+
+<!-- ============================================================================
+     6. STRUCTURED DATA
+     ============================================================================ -->
+
+<h2>6. Structured Data (JSON-LD, Schema.org)</h2>
+
+<!--
+    Structured data helps search engines understand content and enables
+    rich snippets in search results (star ratings, prices, recipes, etc.).
+    JSON-LD is Google's recommended format.
+-->
+
+<h3>Article</h3>
+<pre><code><script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "How to Write Semantic HTML",
+    "description": "A comprehensive guide to writing meaningful HTML markup.",
+    "author": {
+        "@type": "Person",
+        "name": "Jane Doe",
+        "url": "https://example.com/authors/jane"
+    },
+    "datePublished": "2024-01-15T10:00:00Z",
+    "dateModified": "2024-02-20T14:30:00Z",
+    "image": "https://example.com/images/semantic-html.png",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Web Dev Guide",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://example.com/logo.png"
+        }
+    },
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://example.com/blog/semantic-html"
+    }
+}
+</script></code></pre>
+
+<h3>Product</h3>
+<pre><code><script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "Wireless Headphones",
+    "description": "High-quality wireless headphones with noise cancellation.",
+    "sku": "WH-1000XM5",
+    "brand": {
+        "@type": "Brand",
+        "name": "AudioTech"
+    },
+    "offers": {
+        "@type": "Offer",
+        "price": "349.99",
+        "priceCurrency": "USD",
+        "availability": "https://schema.org/InStock",
+        "url": "https://example.com/products/headphones"
+    },
+    "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.5",
+        "reviewCount": "128"
+    }
+}
+</script></code></pre>
+
+<h3>FAQ</h3>
+<pre><code><script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [{
+        "@type": "Question",
+        "name": "What is semantic HTML?",
+        "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Semantic HTML uses elements according to their meaning, not their appearance."
+        }
+    }, {
+        "@type": "Question",
+        "name": "Why is semantic HTML important?",
+        "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "It improves accessibility, SEO, and code maintainability."
+        }
+    }]
+}
+</script></code></pre>
+
+<h3>Breadcrumb</h3>
+<pre><code><script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://example.com"
+    }, {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Blog",
+        "item": "https://example.com/blog"
+    }, {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Semantic HTML",
+        "item": "https://example.com/blog/semantic-html"
+    }]
+}
+</script></code></pre>
+
+<div class="tip">
+    <strong>Structured data tools:</strong>
+    <ul>
+        <li>Google Rich Results Test (search.google.com/test/rich-results)</li>
+        <li>Schema.org validator</li>
+        <li>Google Search Console (reports structured data errors)</li>
+    </ul>
+</div>
+
+<!-- ============================================================================
+     7. ROBOTS, SITEMAPS, AND INDEXING
+     ============================================================================ -->
+
+<h2>7. Robots, Sitemaps, and Indexing</h2>
+
+<h3>Robots Meta Tag</h3>
+<pre><code><!-- Allow indexing and following links (default) -->
+<meta name="robots" content="index, follow">
+
+<!-- Prevent indexing -->
+<meta name="robots" content="noindex">
+
+<!-- Prevent following links -->
+<meta name="robots" content="nofollow">
+
+<!-- Prevent indexing and following -->
+<meta name="robots" content="noindex, nofollow">
+
+<!-- Prevent caching -->
+<meta name="robots" content="noarchive">
+
+<!-- Prevent showing cached snippet in search results -->
+<meta name="robots" content="nosnippet">
+
+<!-- Per search engine directives -->
+<meta name="googlebot" content="noindex">
+<meta name="bingbot" content="noindex">
+
+<!-- X-Robots-Tag HTTP header (for non-HTML files like PDFs) -->
+<!-- HTTP/1.1 200 OK -->
+<!-- X-Robots-Tag: noindex, nofollow --></code></pre>
+
+<h3>Sitemap</h3>
+<pre><code><!-- Reference sitemap in robots.txt -->
+<!-- robots.txt -->
+User-agent: *
+Allow: /
+Sitemap: https://example.com/sitemap.xml
+
+<!-- sitemap.xml -->
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>https://example.com/</loc>
+        <lastmod>2024-01-15</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>1.0</priority>
+    </url>
+    <url>
+        <loc>https://example.com/blog</loc>
+        <lastmod>2024-01-14</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.8</priority>
+    </url>
+</urlset></code></pre>
+
+<!-- ============================================================================
+     8. PERFORMANCE SEO
+     ============================================================================ -->
+
+<h2>8. Performance SEO (Core Web Vitals)</h2>
+
+<!--
+    Google uses Core Web Vitals as ranking signals:
+    - LCP (Largest Contentful Paint): ≤ 2.5s
+    - FID (First Input Delay): ≤ 100ms
+    - CLS (Cumulative Layout Shift): ≤ 0.1
+-->
+
+<pre><code><!-- 1. Preload critical resources -->
+<link rel="preload" href="/fonts/main.woff2" as="font" crossorigin>
+<link rel="preload" href="/hero.webp" as="image">
+<link rel="preload" href="/critical.css" as="style">
+
+<!-- 2. Preconnect to third-party origins -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://www.googletagmanager.com">
+
+<!-- 3. Defer non-critical CSS -->
+<link rel="preload" href="/styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="/styles.css"></noscript>
+
+<!-- 4. Defer non-critical JavaScript -->
+<script src="/analytics.js" defer></script>
+<script src="/app.js" type="module"></script>
+
+<!-- 5. Set image dimensions to prevent CLS -->
+<img src="photo.jpg" alt="Description" width="800" height="600" loading="lazy">
+
+<!-- 6. Use fetchpriority for LCP images -->
+<img src="hero.jpg" alt="Hero" fetchpriority="high" width="1200" height="600">
+
+<!-- 7. Specify aspect ratio for responsive images -->
+<div style="aspect-ratio: 16/9">
+    <iframe src="video.html"></iframe>
+</div>
+
+<!-- 8. Use resource hints -->
+<link rel="prefetch" href="/next-page.html">  <!-- For likely next navigation -->
+<link rel="prerender" href="/next-page.html"> <!-- Render in background --></code></pre>
+
+<div class="note">
+    <strong>Complete head template:</strong>
+</div>
+
+<pre><code><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Title - Site Name</title>
+    <meta name="description" content="Page description for search results.">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://example.com/page">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Page Title">
+    <meta property="og:description" content="Page description">
+    <meta property="og:image" content="https://example.com/image.png">
+    <meta property="og:url" content="https://example.com/page">
+    <meta property="og:type" content="website">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Page Title">
+    <meta name="twitter:description" content="Page description">
+    <meta name="twitter:image" content="https://example.com/image.png">
+
+    <!-- Icons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+    <!-- Performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preload" href="/critical.css" as="style">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="/styles.css">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "Page Title",
+        "description": "Page description"
+    }
+    </script>
+</head></code></pre>
+
+</body>
+</html>

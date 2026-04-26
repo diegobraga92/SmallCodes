@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<!--
+    HTML5 APIs & FEATURES
+    File: 07_html5_apis.html
+
+    Comprehensive guide to HTML5 browser APIs and modern features.
+    Covers native APIs that enhance web applications without external
+    libraries. Builds from junior-level basics to mid-level understanding
+    of browser capabilities and progressive enhancement.
+
+    Key Concepts Covered:
+    1. Geolocation API
+    2. Web Storage (localStorage, sessionStorage)
+    3. History API (pushState, popState)
+    4. Drag and Drop API
+    5. Clipboard API
+    6. Fullscreen API
+    7. Page Visibility API
+    8. Web Workers and Service Workers
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML5 APIs & Features</title>
+    <style>
+        body { font-family: system-ui, sans-serif; line-height: 1.6; max-width: 900px; margin: 0 auto; padding: 20px; }
+        h1 { color: #e44d26; }
+        h2 { color: #333; border-bottom: 2px solid #e44d26; padding-bottom: 5px; }
+        pre { background: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto; }
+        code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; }
+        .note { background: #fff3cd; border-left: 4px solid #ffc107; padding: 10px 15px; margin: 15px 0; }
+        .warning { background: #f8d7da; border-left: 4px solid #dc3545; padding: 10px 15px; margin: 15px 0; }
+        .tip { background: #d4edda; border-left: 4px solid #28a745; padding: 10px 15px; margin: 15px 0; }
+        table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+        th { background: #e44d26; color: white; }
+        .demo-box { border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin: 15px 0; background: #fafafa; }
+    </style>
+</head>
+<body>
+
+<h1>HTML5 APIs & Features</h1>
+
+<!-- ============================================================================
+     1. GEOLOCATION API
+     ============================================================================ -->
+
+<h2>1. Geolocation API</h2>
+
+<!--
+    The Geolocation API provides access to the user's geographical location.
+    Requires user permission (browser prompts). Works on HTTPS only.
+-->
+
+<pre><code>// Check if geolocation is supported
+if ('geolocation' in navigator) {
+    // Get current position (one-time)
+    navigator.geolocation.getCurrentPosition(
+        (position) => {
+            console.log('Latitude:', position.coords.latitude);
+            console.log('Longitude:', position.coords.longitude);
+            console.log('Accuracy:', position.coords.accuracy, 'meters');
+        },
+        (error) => {
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    console.log('User denied the request');
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    console.log('Location unavailable');
+                    break;
+                case error.TIMEOUT:
+                    console.log('Request timed out');
+                    break;
+            }
+        },
+        {
+            enableHighAccuracy: true,  // Use GPS if available
+            timeout: 10000,            // 10 seconds
+            maximumAge: 300000         // Cache for 5 minutes
+        }
+    );
+
+    // Watch position (continuous updates)
+    const watchId = navigator.geolocation.watchPosition(
+        (position) => {
+            updateMap(position.coords.latitude, position.coords.longitude);
+        },
+        handleError
+    );
+
+    // Stop watching
+    navigator.geolocation.clearWatch(watchId);
+} else {
+    console.log('Geolocation not supported');
+}</code></pre>
+
+<div class="warning">
+    <strong>HTTPS required:</strong> The Geolocation API only works on secure
+    contexts (HTTPS) or localhost. Always handle the case where the user
+    denies permission gracefully.
+</div>
+
+<!-- ============================================================================
+     2. WEB STORAGE
+     ============================================================================ -->
+
+<h2>2. Web Storage (localStorage, sessionStorage)</h2>
+
+<!--
+    Web Storage provides key-value storage in the browser.
+    - localStorage: Persists until explicitly cleared (no expiration)
+    - sessionStorage: Cleared when the tab/browser is closed
+
+    Storage limit: ~5-10MB per origin (much more than cookies' 4KB)
+    Data is never sent to the server (unlike cookies)
+-->
+
+<table>
+    <tr>
+        <th>Feature</th>
+        <th>localStorage</th>
+        <th>sessionStorage</th>
+        <th>Cookies</th>
+    </tr>
+    <tr>
+        <td>Lifetime</td>
+        <td>Until cleared</td>
+        <td>Until tab closes</td>
+        <td>Set by expires/max-age</td>
+    </tr>
+    <tr>
+        <td>Capacity</td>
+        <td>~5-10MB</td>
+        <td>~5-10MB</td>
+        <td>~4KB</td>
+    </tr>
+    <tr>
+        <td>Sent to server</td>
+        <td>No</td>
+        <td>No</td>
+        <td>Yes (every request)</td>
+    </tr>
+    <tr>
+        <td>Accessible from</td>
+        <td>Same origin</td>
+        <td>Same tab</td>
+        <td>Same origin</td>
+    </tr>
+</table>
+
+<pre><code>// localStorage (persistent)
+localStorage.setItem('theme', 'dark');
+const theme = localStorage.getItem('theme');  // 'dark'
+localStorage.removeItem('theme');
+localStorage.clear();  // Remove all items
+
+// sessionStorage (tab-scoped)
+sessionStorage.setItem('cart', JSON.stringify({ items: 3 }));
+const cart = JSON.parse(sessionStorage.getItem('cart'));
+
+// Storage event (fires when storage changes in another tab)
+window.addEventListener('storage', (event) => {
+    console.log('Key changed:', event.key);
+    console.log('Old value:', event.oldValue);
+    console.log('New value:', event.newValue);
+    console.log('Origin:', event.url);
+});
+
+// Best practice: wrap in try/catch (private browsing may throw)
+function safeSetItem(key, value) {
+    try {
+        localStorage.setItem(key, value);
+    } catch (e) {
+        console.warn('Storage full or unavailable:', e);
+    }
+}</code></pre>
+
+<div class="tip">
+    <strong>When to use each:</strong>
+    <ul>
+        <li><strong>localStorage:</strong> User preferences, cached data, themes</li>
+        <li><strong>sessionStorage:</strong> Form data (prevent loss on refresh), multi-step wizards</li>
+        <li><strong>Cookies:</strong> Authentication tokens, server-side session IDs (HTTP-only)</li>
+    </ul>
+</div>
+
+<!-- ============================================================================
+     3. HISTORY API
+     ============================================================================ -->
+
+<h2>3. History API</h2>
+
+<!--
+    The History API allows manipulation of the browser's session history.
+    Essential for single-page applications (SPAs) to manage URL state
+    without page reloads.
+-->
+
+<pre><code>// Navigate through history
+history.back();       // Go back one page
+history.forward();    // Go forward one page
+history.go(-2);       // Go back two pages
+history.go(1);        // Go forward one page
+
+// Get history length
+console.log(history.length);  // Number of entries
+
+// Push a new state (adds to history, changes URL)
+history.pushState(
+    { page: 'home' },           // State object (serializable)
+    '',                         // Title (ignored by most browsers)
+    '/home'                     // New URL (must be same origin)
+);
+
+// Replace current state (doesn't add to history)
+history.replaceState(
+    { page: 'about' },
+    '',
+    '/about'
+);
+
+// Listen for popstate (back/forward navigation)
+window.addEventListener('popstate', (event) => {
+    console.log('State:', event.state);  // The state object
+    // Update page content based on state
+    loadPage(event.state?.page || 'home');
+});
+
+// Listen for hash changes (older approach)
+window.addEventListener('hashchange', () => {
+    console.log('Hash:', location.hash);
+});</code></pre>
+
+<div class="note">
+    <strong>pushState vs hash:</strong> Use <code>pushState</code> for clean URLs
+    in SPAs. Use hash-based routing (<code>#/page</code>) for simpler apps or
+    when you can't configure server-side URL rewriting.
+</div>
+
+<!-- ============================================================================
+     4. DRAG AND DROP API
+     ============================================================================ -->
+
+<h2>4. Drag and Drop API</h2>
+
+<pre><code><!-- Draggable element -->
+<div id="drag-item" draggable="true">Drag me</div>
+
+<!-- Drop zone -->
+<div id="drop-zone">Drop here</div>
+
+<script>
+    const dragItem = document.getElementById('drag-item');
+    const dropZone = document.getElementById('drop-zone');
+
+    // Drag source events
+    dragItem.addEventListener('dragstart', (e) => {
+        e.dataTransfer.setData('text/plain', 'Dragged item');
+        e.dataTransfer.effectAllowed = 'move';
+        e.target.classList.add('dragging');
+    });
+
+    dragItem.addEventListener('dragend', (e) => {
+        e.target.classList.remove('dragging');
+    });
+
+    // Drop target events
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();  // Required to allow drop
+        e.dataTransfer.dropEffect = 'move';
+    });
+
+    dropZone.addEventListener('dragenter', (e) => {
+        e.target.classList.add('drag-over');
+    });
+
+    dropZone.addEventListener('dragleave', (e) => {
+        e.target.classList.remove('drag-over');
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        e.target.classList.remove('drag-over');
+        const data = e.dataTransfer.getData('text/plain');
+        e.target.textContent = 'Dropped: ' + data;
+    });
+</script></code></pre>
+
+<div class="tip">
+    <strong>Drag and Drop data types:</strong>
+    <ul>
+        <li><code>text/plain</code> — Plain text</li>
+        <li><code>text/html</code> — HTML content</li>
+        <li><code>text/uri-list</code> — URLs</li>
+        <li><code>Files</code> — File objects (from file system)</li>
+    </ul>
+</div>
+
+<!-- ============================================================================
+     5. CLIPBOARD API
+     ============================================================================ -->
+
+<h2>5. Clipboard API</h2>
+
+<pre><code>// Write to clipboard (async, requires user gesture)
+async function copyToClipboard(text) {
+    try {
+        await navigator.clipboard.writeText(text);
+        console.log('Copied to clipboard');
+    } catch (err) {
+        console.error('Failed to copy:', err);
+    }
+}
+
+// Read from clipboard (requires permission)
+async function readFromClipboard() {
+    try {
+        const text = await navigator.clipboard.readText();
+        console.log('Clipboard content:', text);
+    } catch (err) {
+        console.error('Failed to read clipboard:', err);
+    }
+}
+
+// Copy rich content (HTML, images)
+async function copyRichContent() {
+    try {
+        const blob = new Blob(['<b>Bold text</b>'], { type: 'text/html' });
+        const item = new ClipboardItem({ 'text/html': blob });
+        await navigator.clipboard.write([item]);
+    } catch (err) {
+        console.error('Failed to copy rich content:', err);
+    }
+}
+
+// Fallback for older browsers
+function fallbackCopy(text) {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+}</code></pre>
+
+<div class="warning">
+    <strong>Clipboard permissions:</strong> The Clipboard API requires user
+    interaction (click, touch) for write operations. Reading requires the
+    <code>clipboard-read</code> permission. Always provide a fallback for
+    older browsers using <code>document.execCommand('copy')</code>.
+</div>
+
+<!-- ============================================================================
+     6. FULLSCREEN API
+     ============================================================================ -->
+
+<h2>6. Fullscreen API</h2>
+
+<pre><code>// Request fullscreen on an element
+function enterFullscreen(element) {
+    if (element.requestFullscreen) {
+        element.requestFullscreen();
+    } else if (element.webkitRequestFullscreen) {  // Safari
+        element.webkitRequestFullscreen();
+    } else if (element.msRequestFullscreen) {      // IE/Edge
+        element.msRequestFullscreen();
+    }
+}
+
+// Exit fullscreen
+function exitFullscreen() {
+    if (document.exitFullscreen) {
+        document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+    }
+}
+
+// Check if in fullscreen
+function isFullscreen() {
+    return document.fullscreenElement ||
+           document.webkitFullscreenElement ||
+           document.msFullscreenElement;
+}
+
+// Listen for fullscreen changes
+document.addEventListener('fullscreenchange', () => {
+    console.log('Fullscreen:', !!document.fullscreenElement);
+});
+
+// Fullscreen CSS pseudo-class
+/* Style element differently when in fullscreen */
+#player:fullscreen {
+    width: 100vw;
+    height: 100vh;
+    background: black;
+}
+
+/* Vendor prefixes */
+#player:-webkit-full-screen { }
+#player:-moz-full-screen { }
+#player:-ms-fullscreen { }</code></pre>
+
+<!-- ============================================================================
+     7. PAGE VISIBILITY API
+     ============================================================================ -->
+
+<h2>7. Page Visibility API</h2>
+
+<!--
+    The Page Visibility API lets you detect when a user switches tabs,
+    minimizes the window, or locks their screen. Essential for:
+    - Pausing video/audio playback
+    - Stopping animations or API polls
+    - Reducing resource usage
+-->
+
+<pre><code>// Check current visibility state
+console.log('Visibility:', document.visibilityState);
+// 'visible' | 'hidden' | 'prerender'
+
+// Listen for visibility changes
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+        console.log('Page hidden - pause activities');
+        pauseVideo();
+        stopAnimations();
+        clearInterval(pollInterval);
+    } else {
+        console.log('Page visible - resume activities');
+        resumeVideo();
+        startAnimations();
+        startPolling();
+    }
+});
+
+// Practical example: pause video when tab is hidden
+const video = document.getElementById('myVideo');
+
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+        video.pause();
+    } else {
+        video.play();
+    }
+});
+
+// Check if page is visible (shorthand)
+if (!document.hidden) {
+    // Page is currently visible
+}</code></pre>
+
+<div class="tip">
+    <strong>Use cases:</strong>
+    <ul>
+        <li>Pause carousel/slider auto-rotation</li>
+        <li>Stop WebSocket/SSE connections when hidden</li>
+        <li>Reduce animation frame rate</li>
+        <li>Pause game loops</li>
+        <li>Stop analytics tracking when user is away</li>
+    </ul>
+</div>
+
+<!-- ============================================================================
+     8. WEB WORKERS AND SERVICE WORKERS
+     ============================================================================ -->
+
+<h2>8. Web Workers and Service Workers</h2>
+
+<h3>Web Workers (Background Threads)</h3>
+<!--
+    Web Workers run JavaScript in a separate thread, allowing CPU-intensive
+    tasks without blocking the UI. They cannot access the DOM.
+-->
+
+<pre><code>// main.js - Create a worker
+const worker = new Worker('worker.js');
+
+// Send data to worker
+worker.postMessage({ type: 'calculate', data: [1, 2, 3, 4, 5] });
+
+// Receive results from worker
+worker.onmessage = (event) => {
+    console.log('Result from worker:', event.data);
+};
+
+// Handle errors
+worker.onerror = (error) => {
+    console.error('Worker error:', error);
+};
+
+// Terminate worker
+worker.terminate();
+
+// worker.js - The worker script
+self.onmessage = (event) => {
+    const { type, data } = event.data;
+
+    if (type === 'calculate') {
+        // CPU-intensive work
+        const result = data.map(n => fibonacci(n));
+        self.postMessage(result);
+    }
+};
+
+function fibonacci(n) {
+    if (n <= 1) return n;
+    return fibonacci(n - 1) + fibonacci(n - 2);
+}</code></pre>
+
+<h3>Service Workers (Network Proxy)</h3>
+<!--
+    Service Workers act as a programmable network proxy between the browser
+    and the network. They enable offline support, caching, and push notifications.
+    They run in a separate thread and cannot access the DOM.
+-->
+
+<pre><code>// Register a service worker
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js')
+        .then((registration) => {
+            console.log('SW registered:', registration.scope);
+        })
+        .catch((error) => {
+            console.error('SW registration failed:', error);
+        });
+
+    // Check for updates
+    navigator.serviceWorker.ready.then((registration) => {
+        registration.update();
+    });
+
+    // Listen for updates
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+        console.log('New service worker activated');
+        window.location.reload();
+    });
+}
+
+// sw.js - Service Worker script
+const CACHE_NAME = 'my-cache-v1';
+const urlsToCache = [
+    '/',
+    '/styles.css',
+    '/script.js',
+    '/offline.html'
+];
+
+// Install: cache static assets
+self.addEventListener('install', (event) => {
+    event.waitUntil(
+        caches.open(CACHE_NAME)
+            .then((cache) => cache.addAll(urlsToCache))
+    );
+});
+
+// Activate: clean old caches
+self.addEventListener('activate', (event) => {
+    event.waitUntil(
+        caches.keys().then((cacheNames) => {
+            return Promise.all(
+                cacheNames
+                    .filter((name) => name !== CACHE_NAME)
+                    .map((name) => caches.delete(name))
+            );
+        })
+    );
+});
+
+// Fetch: serve from cache, fall back to network
+self.addEventListener('fetch', (event) => {
+    event.respondWith(
+        caches.match(event.request)
+            .then((response) => {
+                // Return cached response or fetch from network
+                return response || fetch(event.request);
+            })
+            .catch(() => {
+                // Offline fallback
+                return caches.match('/offline.html');
+            })
+    );
+});</code></pre>
+
+<div class="note">
+    <strong>Service Worker lifecycle:</strong>
+    <ol>
+        <li><strong>Install:</strong> First time, cache static assets</li>
+        <li><strong>Waiting:</strong> New SW waits until all tabs close</li>
+        <li><strong>Activate:</strong> Old caches are cleaned up</li>
+        <li><strong>Fetch:</strong> Intercept network requests</li>
+    </ol>
+    Service Workers require HTTPS (except localhost).
+</div>
+
+</body>
+</html>

@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<!--
+    HTML FORMS & INPUT
+    File: 05_forms_input.html
+
+    Comprehensive guide to HTML forms and input elements. Covers form
+    structure, input types, validation, styling, and accessibility.
+    Builds from junior-level basics to mid-level understanding of
+    form design patterns, security, and user experience.
+
+    Key Concepts Covered:
+    1. Form Element (action, method, enctype)
+    2. Input Types (text, email, number, date, file, etc.)
+    3. Select, Textarea, and Button Elements
+    4. Labels and Fieldset Grouping
+    5. HTML5 Form Validation
+    6. Custom Validation with JavaScript
+    7. Form Accessibility
+    8. Form Security and Best Practices
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Forms & Input</title>
+    <style>
+        body { font-family: system-ui, sans-serif; line-height: 1.6; max-width: 900px; margin: 0 auto; padding: 20px; }
+        h1 { color: #e44d26; }
+        h2 { color: #333; border-bottom: 2px solid #e44d26; padding-bottom: 5px; }
+        pre { background: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto; }
+        code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; }
+        .note { background: #fff3cd; border-left: 4px solid #ffc107; padding: 10px 15px; margin: 15px 0; }
+        .warning { background: #f8d7da; border-left: 4px solid #dc3545; padding: 10px 15px; margin: 15px 0; }
+        .tip { background: #d4edda; border-left: 4px solid #28a745; padding: 10px 15px; margin: 15px 0; }
+        table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+        th { background: #e44d26; color: white; }
+        .demo-box { border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin: 15px 0; background: #fafafa; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: #e44d26; outline: none; box-shadow: 0 0 3px rgba(228,77,38,0.3);
+        }
+        .error { color: #dc3545; font-size: 0.875rem; margin-top: 5px; }
+        input:invalid { border-color: #dc3545; }
+        input:valid { border-color: #28a745; }
+    </style>
+</head>
+<body>
+
+<h1>HTML Forms & Input</h1>
+
+<!-- ============================================================================
+     1. FORM ELEMENT
+     ============================================================================ -->
+
+<h2>1. Form Element</h2>
+
+<!--
+    The <form> element wraps input fields and handles submission.
+    Key attributes:
+    - action: URL where form data is sent
+    - method: HTTP method (GET or POST)
+    - enctype: Encoding type for file uploads
+    - novalidate: Disable browser validation
+    - autocomplete: Enable/disable autofill
+-->
+
+<table>
+    <tr>
+        <th>Attribute</th>
+        <th>Values</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td><code>action</code></td>
+        <td>URL</td>
+        <td>Where to send the form data</td>
+    </tr>
+    <tr>
+        <td><code>method</code></td>
+        <td>GET, POST</td>
+        <td>HTTP method for submission</td>
+    </tr>
+    <tr>
+        <td><code>enctype</code></td>
+        <td>application/x-www-form-urlencoded (default), multipart/form-data (files), text/plain</td>
+        <td>How to encode the data</td>
+    </tr>
+    <tr>
+        <td><code>novalidate</code></td>
+        <td>Boolean</td>
+        <td>Disable HTML5 validation</td>
+    </tr>
+    <tr>
+        <td><code>autocomplete</code></td>
+        <td>on, off</td>
+        <td>Enable/disable autofill</td>
+    </tr>
+    <tr>
+        <td><code>target</code></td>
+        <td>_self, _blank, _parent, _top</td>
+        <td>Where to display the response</td>
+    </tr>
+</table>
+
+<pre><code><!-- Basic form -->
+<form action="/submit" method="POST">
+    <!-- form fields -->
+    <button type="submit">Submit</button>
+</form>
+
+<!-- File upload form (needs multipart/form-data) -->
+<form action="/upload" method="POST" enctype="multipart/form-data">
+    <input type="file" name="document">
+    <button type="submit">Upload</button>
+</form>
+
+<!-- Search form (GET method, query in URL) -->
+<form action="/search" method="GET" role="search">
+    <input type="search" name="q" placeholder="Search...">
+    <button type="submit">Search</button>
+</form></code></pre>
+
+<div class="note">
+    <strong>GET vs POST:</strong>
+    <ul>
+        <li><strong>GET:</strong> Data in URL (visible, bookmarkable, cached). Use for searches, filters.</li>
+        <li><strong>POST:</strong> Data in request body (not cached, no size limit). Use for mutations, logins, file uploads.</li>
+    </ul>
+</div>
+
+<!-- ============================================================================
+     2. INPUT TYPES
+     ============================================================================ -->
+
+<h2>2. Input Types</h2>
+
+<!--
+    HTML5 introduced many specialized input types that provide:
+    - Native validation (email, url, number)
+    - Custom keyboards on mobile (tel, email, url)
+    - Date/time pickers (date, time, datetime-local)
+    - Range sliders, color pickers, etc.
+-->
+
+<table>
+    <tr>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Common Attributes</th>
+    </tr>
+    <tr><td><code>text</code></td><td>Single-line text (default)</td><td>maxlength, pattern, placeholder</td></tr>
+    <tr><td><code>email</code></td><td>Email address (validates @)</td><td>multiple (comma-separated)</td></tr>
+    <tr><td><code>password</code></td><td>Masked text input</td><td>minlength, autocomplete="new-password"</td></tr>
+    <tr><td><code>number</code></td><td>Numeric input</td><td>min, max, step</td></tr>
+    <tr><td><code>tel</code></td><td>Telephone number</td><td>pattern (for format validation)</td></tr>
+    <tr><td><code>url</code></td><td>URL input (validates http://)</td><td>placeholder</td></tr>
+    <tr><td><code>search</code></td><td>Search field (clearable)</td><td>aria-label</td></tr>
+    <tr><td><code>date</code></td><td>Date picker (YYYY-MM-DD)</td><td>min, max</td></tr>
+    <tr><td><code>time</code></td><td>Time picker (HH:MM)</td><td>min, max, step</td></tr>
+    <tr><td><code>datetime-local</code></td><td>Date + time picker</td><td>min, max</td></tr>
+    <tr><td><code>month</code></td><td>Month picker (YYYY-MM)</td><td>min, max</td></tr>
+    <tr><td><code>week</code></td><td>Week picker</td><td>min, max</td></tr>
+    <tr><td><code>color</code></td><td>Color picker</td><td>value (hex color)</td></tr>
+    <tr><td><code>range</code></td><td>Slider control</td><td>min, max, step</td></tr>
+    <tr><td><code>file</code></td><td>File picker</td><td>accept, multiple</td></tr>
+    <tr><td><code>checkbox</code></td><td>Boolean toggle (multiple allowed)</td><td>checked, value</td></tr>
+    <tr><td><code>radio</code></td><td>Single selection from group</td><td>checked, value, name (same for group)</td></tr>
+    <tr><td><code>hidden</code></td><td>Not visible, submitted with form</td><td>value (often CSRF tokens)</td></tr>
+</table>
+
+<h3>Input Type Examples</h3>
+<div class="demo-box">
+    <form onsubmit="event.preventDefault()">
+        <div class="form-group">
+            <label for="text-input">Text:</label>
+            <input type="text" id="text-input" placeholder="Enter text" maxlength="50">
+        </div>
+        <div class="form-group">
+            <label for="email-input">Email:</label>
+            <input type="email" id="email-input" placeholder="user@example.com">
+        </div>
+        <div class="form-group">
+            <label for="number-input">Number:</label>
+            <input type="number" id="number-input" min="0" max="100" step="5">
+        </div>
+        <div class="form-group">
+            <label for="date-input">Date:</label>
+            <input type="date" id="date-input">
+        </div>
+        <div class="form-group">
+            <label for="color-input">Color:</label>
+            <input type="color" id="color-input" value="#e44d26">
+        </div>
+        <div class="form-group">
+            <label for="range-input">Range:</label>
+            <input type="range" id="range-input" min="0" max="100" value="50">
+        </div>
+    </form>
+</div>
+
+<pre><code><input type="text" placeholder="Enter text" maxlength="50">
+<input type="email" placeholder="user@example.com">
+<input type="number" min="0" max="100" step="5">
+<input type="date" min="2024-01-01" max="2024-12-31">
+<input type="color" value="#e44d26">
+<input type="range" min="0" max="100" value="50">
+<input type="file" accept=".pdf,.doc" multiple>
+<input type="search" placeholder="Search..."></code></pre>
+
+<!-- ============================================================================
+     3. SELECT, TEXTAREA, AND BUTTON
+     ============================================================================ -->
+
+<h2>3. Select, Textarea, and Button</h2>
+
+<h3>Select (Dropdown)</h3>
+<pre><code><!-- Basic select -->
+<select name="country">
+    <option value="">Select a country...</option>
+    <option value="us">United States</option>
+    <option value="ca">Canada</option>
+    <option value="mx">Mexico</option>
+</select>
+
+<!-- Select with optgroup -->
+<select name="product">
+    <optgroup label="Electronics">
+        <option value="phone">Phone</option>
+        <option value="laptop">Laptop</option>
+    </optgroup>
+    <optgroup label="Clothing">
+        <option value="shirt">Shirt</option>
+        <option value="pants">Pants</option>
+    </optgroup>
+</select>
+
+<!-- Multi-select (hold Ctrl/Cmd to select multiple) -->
+<select name="tags" multiple size="4">
+    <option value="html">HTML</option>
+    <option value="css">CSS</option>
+    <option value="js">JavaScript</option>
+    <option value="react">React</option>
+</select>
+
+<!-- Datalist (combobox with suggestions) -->
+<label for="browser">Choose a browser:</label>
+<input list="browsers" id="browser" name="browser">
+<datalist id="browsers">
+    <option value="Chrome">
+    <option value="Firefox">
+    <option value="Safari">
+    <option value="Edge">
+</datalist></code></pre>
+
+<h3>Textarea</h3>
+<pre><code><!-- Multi-line text input -->
+<textarea name="message" rows="5" cols="40"
+          placeholder="Enter your message..."
+          maxlength="1000"></textarea>
+
+<!-- Textarea with wrap -->
+<textarea name="code" rows="10" cols="80"
+          wrap="off" spellcheck="false"></textarea></code></pre>
+
+<h3>Button Types</h3>
+<table>
+    <tr>
+        <th>Type</th>
+        <th>Behavior</th>
+    </tr>
+    <tr><td><code>submit</code></td><td>Submits the form (default for <button>)</td></tr>
+    <tr><td><code>reset</code></td><td>Resets all form fields to their initial values</td></tr>
+    <tr><td><code>button</code></td><td>Does nothing by default (for JavaScript)</td></tr>
+</table>
+
+<pre><code><!-- Button element (more flexible, can contain HTML) -->
+<button type="submit">
+    <span>Submit Form</span>
+</button>
+
+<!-- Input button (text only) -->
+<input type="submit" value="Submit">
+<input type="reset" value="Reset">
+<input type="button" value="Click Me" onclick="alert('Clicked!')"></code></pre>
+
+<div class="tip">
+    <strong>Button vs input:</strong> Use <code><button></code> over
+    <code><input type="submit"></code> because it can contain HTML
+    (icons, spans, etc.) and is easier to style consistently across browsers.
+</div>
+
+<!-- ============================================================================
+     4. LABELS AND FIELDSET GROUPING
+     ============================================================================ -->
+
+<h2>4. Labels and Fieldset Grouping</h2>
+
+<h3>Label</h3>
+<!--
+    <label> associates text with an input. Two methods:
+    1. Wrap the input inside the label
+    2. Use for attribute matching input's id
+-->
+
+<pre><code><!-- Method 1: Wrap input in label -->
+<label>
+    Name:
+    <input type="text" name="name">
+</label>
+
+<!-- Method 2: for + id (preferred for complex layouts) -->
+<label for="email">Email:</label>
+<input type="email" id="email" name="email">
+
+<!-- Hidden label (for screen readers only) -->
+<label for="search" class="sr-only">Search</label>
+<input type="search" id="search" placeholder="Search...">
+
+<!-- CSS for screen-reader-only labels -->
+.sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}</code></pre>
+
+<h3>Fieldset and Legend</h3>
+<!--
+    <fieldset> groups related form fields.
+    <legend> provides a caption for the group.
+-->
+
+<div class="demo-box">
+    <form onsubmit="event.preventDefault()">
+        <fieldset>
+            <legend>Personal Information</legend>
+            <div class="form-group">
+                <label for="fullname">Full Name:</label>
+                <input type="text" id="fullname" name="fullname">
+            </div>
+            <div class="form-group">
+                <label for="dob">Date of Birth:</label>
+                <input type="date" id="dob" name="dob">
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>Contact Preferences</legend>
+            <div>
+                <label><input type="checkbox" name="contact" value="email"> Email</label><br>
+                <label><input type="checkbox" name="contact" value="phone"> Phone</label><br>
+                <label><input type="checkbox" name="contact" value="mail"> Mail</label>
+            </div>
+        </fieldset>
+    </form>
+</div>
+
+<pre><code><fieldset>
+    <legend>Personal Information</legend>
+    <label for="name">Name:</label>
+    <input type="text" id="name">
+
+    <label for="dob">Date of Birth:</label>
+    <input type="date" id="dob">
+</fieldset>
+
+<fieldset>
+    <legend>Contact Preferences</legend>
+    <label><input type="checkbox" name="contact" value="email"> Email</label>
+    <label><input type="checkbox" name="contact" value="phone"> Phone</label>
+</fieldset></code></pre>
+
+<div class="note">
+    <strong>When to use fieldset:</strong> Use <code><fieldset></code> for
+    radio button groups, checkbox groups, address sections, payment details,
+    or any logical grouping of form controls. Screen readers announce the
+    legend when entering the group.
+</div>
+
+<!-- ============================================================================
+     5. HTML5 FORM VALIDATION
+     ============================================================================ -->
+
+<h2>5. HTML5 Form Validation</h2>
+
+<!--
+    HTML5 provides built-in validation without JavaScript.
+    Validation attributes:
+    - required: Field must have a value
+    - minlength / maxlength: Text length limits
+    - min / max: Numeric/date range limits
+    - step: Increment steps for numbers
+    - pattern: Regex pattern for validation
+    - type: Built-in validation (email, url, etc.)
+-->
+
+<pre><code><!-- Required field -->
+<input type="text" required>
+
+<!-- Length constraints -->
+<input type="password" minlength="8" maxlength="128">
+
+<!-- Numeric range -->
+<input type="number" min="18" max="120" step="1">
+
+<!-- Pattern validation (regex) -->
+<!-- US ZIP code: 5 digits or 5+4 -->
+<input type="text" pattern="[0-9]{5}(-[0-9]{4})?" title="Enter a valid ZIP code">
+
+<!-- Phone number pattern -->
+<input type="tel" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+       placeholder="555-123-4567"
+       title="Format: 555-123-4567">
+
+<!-- Custom validation message via JavaScript -->
+<input type="text" id="username" required
+       oninvalid="this.setCustomValidity('Please enter a username')"
+       oninput="this.setCustomValidity('')"></code></pre>
+
+<h3>CSS Pseudo-classes for Validation</h3>
+<pre><code>/* Style valid/invalid fields */
+input:valid { border-color: #28a745; }
+input:invalid { border-color: #dc3545; }
+
+/* Style required fields */
+input:required { border-left: 3px solid #e44d26; }
+input:optional { border-left: 3px solid #ccc; }
+
+/* Style placeholder */
+input::placeholder { color: #999; font-style: italic; }
+
+/* Style when user has interacted (dirty state) */
+input:focus:invalid { box-shadow: 0 0 3px rgba(220,53,69,0.5); }</code></pre>
+
+<!-- ============================================================================
+     6. CUSTOM VALIDATION WITH JAVASCRIPT
+     ============================================================================ -->
+
+<h2>6. Custom Validation with JavaScript</h2>
+
+<pre><code><form id="signup-form" novalidate>
+    <label for="password">Password:</label>
+    <input type="password" id="password" required minlength="8">
+    <span class="error" id="password-error"></span>
+
+    <label for="confirm">Confirm Password:</label>
+    <input type="password" id="confirm" required>
+    <span class="error" id="confirm-error"></span>
+
+    <button type="submit">Sign Up</button>
+</form>
+
+<script>
+    const form = document.getElementById('signup-form');
+
+    form.addEventListener('submit', function(event) {
+        const password = document.getElementById('password');
+        const confirm = document.getElementById('confirm');
+        const passwordError = document.getElementById('password-error');
+        const confirmError = document.getElementById('confirm-error');
+
+        // Clear previous errors
+        passwordError.textContent = '';
+        confirmError.textContent = '';
+
+        let isValid = true;
+
+        // Check password length
+        if (password.value.length < 8) {
+            passwordError.textContent = 'Password must be at least 8 characters';
+            isValid = false;
+        }
+
+        // Check passwords match
+        if (password.value !== confirm.value) {
+            confirmError.textContent = 'Passwords do not match';
+            isValid = false;
+        }
+
+        if (!isValid) {
+            event.preventDefault(); // Prevent form submission
+        }
+    });
+
+    // Real-time validation on input
+    document.getElementById('password').addEventListener('input', function() {
+        if (this.value.length >= 8) {
+            this.setCustomValidity('');
+        }
+    });
+</script></code></pre>
+
+<div class="tip">
+    <strong>Validation strategy:</strong>
+    <ul>
+        <li>Use HTML5 validation for simple rules (required, type, pattern)</li>
+        <li>Use JavaScript for complex rules (password match, API checks)</li>
+        <li>Always validate on the server too — client validation is convenience, not security</li>
+        <li>Show errors inline near the field, not in alerts</li>
+        <li>Validate on blur (when leaving a field) and on submit</li>
+    </ul>
+</div>
+
+<!-- ============================================================================
+     7. FORM ACCESSIBILITY
+     ============================================================================ -->
+
+<h2>7. Form Accessibility</h2>
+
+<pre><code><!-- 1. Every input needs a label -->
+<label for="name">Full Name:</label>
+<input type="text" id="name">
+
+<!-- 2. Group related fields -->
+<fieldset>
+    <legend>Shipping Address</legend>
+    <!-- address fields -->
+</fieldset>
+
+<!-- 3. Error messages with aria-describedby -->
+<label for="email">Email:</label>
+<input type="email" id="email" aria-describedby="email-hint email-error">
+<span id="email-hint" class="hint">We'll never share your email.</span>
+<span id="email-error" class="error" role="alert">Please enter a valid email.</span>
+
+<!-- 4. Required fields with aria-required -->
+<label for="username">Username <span aria-hidden="true">*</span></label>
+<input type="text" id="username" required aria-required="true">
+
+<!-- 5. Live region for dynamic updates -->
+<div aria-live="polite" id="form-status"></div>
+
+<!-- 6. Disabled and readonly -->
+<input type="text" disabled>  <!-- Not submitted, not focusable -->
+<input type="text" readonly>  <!-- Submitted, focusable, not editable --></code></pre>
+
+<div class="warning">
+    <strong>Accessibility checklist:</strong>
+    <ul>
+        <li>Every input must have a label (visible or screen-reader-only)</li>
+        <li>Use <code>aria-describedby</code> to associate hints and errors</li>
+        <li>Use <code>role="alert"</code> on error messages</li>
+        <li>Use <code>aria-live="polite"</code> for status updates</li>
+        <li>Don't remove focus outlines on form fields</li>
+        <li>Ensure tab order follows visual order</li>
+        <li>Test forms with keyboard-only navigation</li>
+    </ul>
+</div>
+
+<!-- ============================================================================
+     8. FORM SECURITY AND BEST PRACTICES
+     ============================================================================ -->
+
+<h2>8. Form Security and Best Practices</h2>
+
+<h3>Security Measures</h3>
+<pre><code><!-- 1. CSRF token (server-generated, hidden field) -->
+<input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+<!-- 2. Prevent autofill on sensitive fields -->
+<input type="password" name="password" autocomplete="new-password">
+
+<!-- 3. Limit input length to prevent buffer overflow -->
+<input type="text" name="username" maxlength="50">
+
+<!-- 4. Use POST for mutations -->
+<form action="/api/user" method="POST">
+
+<!-- 5. Validate file uploads -->
+<input type="file" accept=".jpg,.png,.pdf"></code></pre>
+
+<h3>Best Practices Checklist</h3>
+<ul>
+    <li><strong>Use appropriate input types</strong> — email, tel, number, etc.</li>
+    <li><strong>Set maxlength</strong> on all text inputs</li>
+    <li><strong>Use placeholder text</strong> as examples, not as labels</li>
+    <li><strong>Disable the submit button</strong> after submission to prevent double-submit</li>
+    <li><strong>Show clear error messages</strong> near the relevant field</li>
+    <li><strong>Preserve form values</strong> on validation failure (don't clear the form)</li>
+    <li><strong>Use autocomplete attributes</strong> for better UX (name, email, address)</li>
+    <li><strong>Always validate server-side</strong> — client validation is for UX, not security</li>
+    <li><strong>Use HTTPS</strong> — forms send data over the network</li>
+    <li><strong>Add a honeypot field</strong> to catch spam bots</li>
+</ul>
+
+<h3>Honeypot Technique (Anti-spam)</h3>
+<pre><code><!-- Hidden from users, visible to bots -->
+<div style="position: absolute; left: -9999px;" aria-hidden="true">
+    <label for="website">Website (leave empty):</label>
+    <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+</div>
+
+<!-- Server-side: reject if honeypot field has a value --></code></pre>
+
+<!-- ============================================================================
+     COMPLETE FORM EXAMPLE
+     ============================================================================ -->
+
+<h2>Complete Example: Registration Form</h2>
+
+<div class="demo-box">
+    <form action="/register" method="POST" novalidate>
+        <fieldset>
+            <legend>Account Information</legend>
+
+            <div class="form-group">
+                <label for="reg-username">Username <span aria-hidden="true">*</span></label>
+                <input type="text" id="reg-username" name="username" required minlength="3" maxlength="20" pattern="[a-zA-Z0-9_]+" placeholder="e.g., john_doe" aria-describedby="username-hint">
+                <span id="username-hint" class="hint" style="font-size: 0.875rem; color: #666;">3-20 characters, letters, numbers, and underscores only.</span>
+            </div>
+
+            <div class="form-group">
+                <label for="reg-email">Email <span aria-hidden="true">*</span></label>
+                <input type="email" id="reg-email" name="email" required placeholder="user@example.com">
+            </div>
+
+            <div class="form-group">
+                <label for="reg-password">Password <span aria-hidden="true">*</span></label>
+                <input type="password" id="reg-password" name="password" required minlength="8" autocomplete="new-password">
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>Preferences</legend>
+
+            <div class="form-group">
+                <label for="reg-country">Country:</label>
+                <select id="reg-country" name="country">
+                    <option value="">Select a country...</option>
+                    <option value="us">United States</option>
+                    <option value="ca">Canada</option>
+                    <option value="uk">United Kingdom</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Newsletter:</label>
+                <label><input type="checkbox" name="newsletter" value="weekly" checked> Weekly updates</label><br>
+                <label><input type="checkbox" name="newsletter" value="product"> Product announcements</label>
+            </div>
+        </fieldset>
+
+        <div style="margin-top: 15px;">
+            <button type="submit" style="background: #e44d26; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer;">Create Account</button>
+            <button type="reset" style="background: #ccc; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin-left: 10px;">Reset</button>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<!--
+    HTML LINKS & NAVIGATION
+    File: 02_links_navigation.html
+
+    Comprehensive guide to HTML hyperlinks and navigation patterns.
+    Covers anchor elements, URL types, navigation structures, and
+    best practices for linking. Builds from junior-level basics to
+    mid-level understanding of link behavior, accessibility, and SEO.
+
+    Key Concepts Covered:
+    1. Anchor Element Basics (href, target, rel)
+    2. URL Types (absolute, relative, root-relative, protocol-relative)
+    3. Fragment Identifiers and Internal Links
+    4. Download Links and File Types
+    5. Email and Telephone Links
+    6. Navigation Patterns and Accessibility
+    7. Link States and Styling
+    8. SEO and rel Attributes
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Links & Navigation</title>
+    <style>
+        body { font-family: system-ui, sans-serif; line-height: 1.6; max-width: 900px; margin: 0 auto; padding: 20px; }
+        h1 { color: #e44d26; }
+        h2 { color: #333; border-bottom: 2px solid #e44d26; padding-bottom: 5px; }
+        pre { background: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto; }
+        code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; }
+        .note { background: #fff3cd; border-left: 4px solid #ffc107; padding: 10px 15px; margin: 15px 0; }
+        .warning { background: #f8d7da; border-left: 4px solid #dc3545; padding: 10px 15px; margin: 15px 0; }
+        .tip { background: #d4edda; border-left: 4px solid #28a745; padding: 10px 15px; margin: 15px 0; }
+        table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+        th { background: #e44d26; color: white; }
+        .demo-box { border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin: 15px 0; background: #fafafa; }
+        nav a { margin-right: 15px; }
+    </style>
+</head>
+<body>
+
+<h1>HTML Links & Navigation</h1>
+
+<!-- ============================================================================
+     1. ANCHOR ELEMENT BASICS
+     ============================================================================ -->
+
+<h2>1. Anchor Element Basics</h2>
+
+<!--
+    The <a> (anchor) element creates a hyperlink. It's an inline element
+    that can wrap text, images, or other content.
+
+    Key attributes:
+    - href: The URL the link points to (required for a functional link)
+    - target: Where to open the link (_self, _blank, _parent, _top)
+    - rel: Relationship between current page and linked page
+    - download: Prompts download instead of navigating
+-->
+
+<div class="demo-box">
+    <p><a href="https://www.example.com">Basic text link</a></p>
+    <p><a href="https://www.example.com"><img src="https://via.placeholder.com/150x50?text=Image+Link" alt="Example link"></a></p>
+    <p><a href="#section-2">Link to a section on this page</a></p>
+</div>
+
+<pre><code><!-- Basic text link -->
+<a href="https://www.example.com">Visit Example</a>
+
+<!-- Image as link -->
+<a href="https://www.example.com">
+    <img src="logo.png" alt="Home">
+</a>
+
+<!-- Link to page section -->
+<a href="#section-2">Go to Section 2</a></code></pre>
+
+<h3>Target Attribute</h3>
+<table>
+    <tr>
+        <th>Value</th>
+        <th>Behavior</th>
+        <th>Use Case</th>
+    </tr>
+    <tr>
+        <td><code>_self</code></td>
+        <td>Open in same tab (default)</td>
+        <td>Internal navigation</td>
+    </tr>
+    <tr>
+        <td><code>_blank</code></td>
+        <td>Open in new tab/window</td>
+        <td>External links, documents</td>
+    </tr>
+    <tr>
+        <td><code>_parent</code></td>
+        <td>Open in parent frame</td>
+        <td>Frames/iframes (rare)</td>
+    </tr>
+    <tr>
+        <td><code>_top</code></td>
+        <td>Open in full body of window</td>
+        <td>Breaking out of frames</td>
+    </tr>
+</table>
+
+<div class="warning">
+    <strong>Security warning for target="_blank":</strong> Always add
+    <code>rel="noopener noreferrer"</code> when using <code>target="_blank"</code>.
+    Without it, the new page can access <code>window.opener</code> and potentially
+    redirect the original page (tabnabbing vulnerability).
+</div>
+
+<pre><code><!-- Safe external link -->
+<a href="https://external-site.com" target="_blank" rel="noopener noreferrer">
+    External Link
+</a></code></pre>
+
+<!-- ============================================================================
+     2. URL TYPES
+     ============================================================================ -->
+
+<h2>2. URL Types</h2>
+
+<table>
+    <tr>
+        <th>Type</th>
+        <th>Example</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>Absolute URL</td>
+        <td><code>https://example.com/page.html</code></td>
+        <td>Full URL including protocol and domain</td>
+    </tr>
+    <tr>
+        <td>Relative URL</td>
+        <td><code>page.html</code> or <code>./page.html</code></td>
+        <td>Relative to current page's directory</td>
+    </tr>
+    <tr>
+        <td>Root-relative URL</td>
+        <td><code>/page.html</code></td>
+        <td>Relative to site root (starts with /)</td>
+    </tr>
+    <tr>
+        <td>Protocol-relative URL</td>
+        <td><code>//example.com/page.html</code></td>
+        <td>Uses current page's protocol (http/https)</td>
+    </tr>
+</table>
+
+<h3>Relative Path Examples</h3>
+<pre><code><!-- Same directory -->
+<a href="about.html">About</a>
+
+<!-- Subdirectory -->
+<a href="products/item.html">Product</a>
+
+<!-- Parent directory -->
+<a href="../index.html">Home</a>
+
+<!-- Root-relative (always from site root) -->
+<a href="/about/team.html">Our Team</a>
+
+<!-- Protocol-relative (matches current protocol) -->
+<a href="//fonts.googleapis.com/css?family=Open+Sans">Font CSS</a></code></pre>
+
+<div class="tip">
+    <strong>Relative vs Absolute:</strong> Use relative URLs for internal links
+    (they work on any domain and in local development). Use absolute URLs for
+    external links and in <code><link rel="canonical"></code>.
+</div>
+
+<!-- ============================================================================
+     3. FRAGMENT IDENTIFIERS AND INTERNAL LINKS
+     ============================================================================ -->
+
+<h2 id="section-2">3. Fragment Identifiers and Internal Links</h2>
+
+<!--
+    Fragment identifiers link to specific parts of a page using the # symbol
+    followed by an element's id attribute. The browser scrolls to the target.
+-->
+
+<div class="demo-box">
+    <p><a href="#top">Back to top</a></p>
+    <p><a href="#section-2">Jump to Section 2 (this section)</a></p>
+    <p><a href="01_text_elements.html#lists">Jump to lists in file 01</a></p>
+</div>
+
+<pre><code><!-- Link to an element with id="features" -->
+<a href="#features">View Features</a>
+
+<!-- Target element -->
+<h2 id="features">Features</h2>
+
+<!-- Link to a specific section on another page -->
+<a href="about.html#team">Meet the Team</a>
+
+<!-- Smooth scrolling (CSS) -->
+<style>
+    html { scroll-behavior: smooth; }
+</style></code></pre>
+
+<div class="note">
+    <strong>Fragment behavior:</strong> The browser will scroll to the element
+    with the matching <code>id</code>. Add <code>scroll-behavior: smooth</code>
+    in CSS for smooth scrolling. For older browsers, use JavaScript.
+</div>
+
+<!-- ============================================================================
+     4. DOWNLOAD LINKS
+     ============================================================================ -->
+
+<h2>4. Download Links</h2>
+
+<!--
+    The download attribute tells the browser to download the linked resource
+    instead of navigating to it. You can optionally specify a filename.
+-->
+
+<div class="demo-box">
+    <p><a href="document.pdf" download>Download PDF (default name)</a></p>
+    <p><a href="document.pdf" download="report-2024.pdf">Download as "report-2024.pdf"</a></p>
+    <p><a href="image.jpg" download>Download Image</a></p>
+</div>
+
+<pre><code><!-- Download with original filename -->
+<a href="document.pdf" download>Download PDF</a>
+
+<!-- Download with custom filename -->
+<a href="document.pdf" download="report-2024.pdf">Download Report</a>
+
+<!-- Note: download attribute only works for same-origin URLs -->
+<!-- For cross-origin downloads, the server must set CORS headers --></code></pre>
+
+<div class="warning">
+    <strong>Cross-origin limitation:</strong> The <code>download</code> attribute
+    only works for same-origin URLs. For cross-origin downloads, the server must
+    include <code>Access-Control-Allow-Origin</code> headers.
+</div>
+
+<!-- ============================================================================
+     5. EMAIL AND TELEPHONE LINKS
+     ============================================================================ -->
+
+<h2>5. Email and Telephone Links</h2>
+
+<!--
+    Special URL schemes enable linking to email clients and phone dialers.
+-->
+
+<div class="demo-box">
+    <p><a href="mailto:user@example.com">Send Email</a></p>
+    <p><a href="mailto:user@example.com?subject=Hello&body=I%20have%20a%20question">Email with subject and body</a></p>
+    <p><a href="tel:+1234567890">Call (123) 456-7890</a></p>
+    <p><a href="sms:+1234567890">Send SMS</a></p>
+</div>
+
+<pre><code><!-- Basic email link -->
+<a href="mailto:user@example.com">Email Us</a>
+
+<!-- Email with pre-filled fields -->
+<a href="mailto:user@example.com?subject=Hello&body=I%20have%20a%20question">
+    Email with Subject
+</a>
+
+<!-- Telephone link (mobile devices will open dialer) -->
+<a href="tel:+1234567890">Call (123) 456-7890</a>
+
+<!-- SMS link -->
+<a href="sms:+1234567890">Send Text Message</a></code></pre>
+
+<div class="tip">
+    <strong>Email obfuscation:</strong> To prevent spam bots from harvesting email
+    addresses, consider using JavaScript encoding or a contact form instead of
+    <code>mailto:</code> links.
+</div>
+
+<!-- ============================================================================
+     6. NAVIGATION PATTERNS AND ACCESSIBILITY
+     ============================================================================ -->
+
+<h2>6. Navigation Patterns and Accessibility</h2>
+
+<!--
+    Navigation is one of the most important accessibility features on a website.
+    Use semantic HTML and ARIA attributes to make navigation usable for everyone.
+-->
+
+<h3>Basic Navigation Structure</h3>
+<div class="demo-box">
+    <nav aria-label="Main navigation">
+        <ul>
+            <li><a href="/" aria-current="page">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/services">Services</a></li>
+            <li><a href="/contact">Contact</a></li>
+        </ul>
+    </nav>
+</div>
+
+<pre><code><!-- Semantic navigation with accessibility -->
+<nav aria-label="Main navigation">
+    <ul>
+        <li><a href="/" aria-current="page">Home</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/services">Services</a></li>
+        <li><a href="/contact">Contact</a></li>
+    </ul>
+</nav></code></pre>
+
+<h3>Skip Navigation Link</h3>
+<!--
+    Skip links allow keyboard users to bypass repetitive navigation.
+    They're hidden by default and become visible on focus.
+-->
+<div class="demo-box">
+    <a href="#main-content" class="skip-link" style="position: absolute; left: -9999px; top: 0;">Skip to main content</a>
+    <p><em>Skip link is hidden until focused via Tab key.</em></p>
+</div>
+
+<pre><code><!-- Skip link (place as first focusable element) -->
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<!-- Target -->
+<main id="main-content">
+    <h1>Main Content</h1>
+</main>
+
+<!-- CSS to show skip link on focus -->
+<style>
+    .skip-link {
+        position: absolute;
+        left: -9999px;
+        top: 0;
+        z-index: 999;
+        background: #000;
+        color: #fff;
+        padding: 10px;
+    }
+    .skip-link:focus {
+        left: 0;
+    }
+</style></code></pre>
+
+<h3>Breadcrumb Navigation</h3>
+<div class="demo-box">
+    <nav aria-label="Breadcrumb">
+        <ol>
+            <li><a href="/">Home</a></li>
+            <li><a href="/products">Products</a></li>
+            <li aria-current="page">Widgets</li>
+        </ol>
+    </nav>
+</div>
+
+<pre><code><!-- Breadcrumb with structured data -->
+<nav aria-label="Breadcrumb">
+    <ol>
+        <li><a href="/">Home</a></li>
+        <li><a href="/products">Products</a></li>
+        <li aria-current="page">Widgets</li>
+    </ol>
+</nav></code></pre>
+
+<div class="note">
+    <strong>Navigation accessibility checklist:</strong>
+    <ul>
+        <li>Use <code><nav></code> for primary navigation blocks</li>
+        <li>Add <code>aria-label</code> to distinguish multiple nav elements</li>
+        <li>Use <code>aria-current="page"</code> on the current page link</li>
+        <li>Use <code><ol></code> for breadcrumbs (order matters)</li>
+        <li>Include a skip link as the first focusable element</li>
+        <li>Ensure links have visible focus indicators</li>
+        <li>Make link text descriptive (avoid "click here")</li>
+    </ul>
+</div>
+
+<!-- ============================================================================
+     7. LINK STATES AND STYLING
+     ============================================================================ -->
+
+<h2>7. Link States and Styling</h2>
+
+<!--
+    Links have four states that can be styled with CSS pseudo-classes.
+    The order matters: LVHA (Link, Visited, Hover, Active).
+-->
+
+<pre><code>/* Link states - LVHA order */
+a:link { color: blue; }           /* Unvisited link */
+a:visited { color: purple; }      /* Visited link */
+a:hover { color: red; }           /* Mouse hover */
+a:active { color: orange; }       /* While being clicked */
+
+/* Focus state (keyboard navigation) */
+a:focus {
+    outline: 2px solid blue;
+    outline-offset: 2px;
+}
+
+/* Remove underline on nav links, keep for content */
+nav a { text-decoration: none; }
+nav a:hover { text-decoration: underline; }
+
+/* Style external links with an icon */
+a[href^="http"]::after {
+    content: " ↗";
+    font-size: 0.8em;
+}</code></pre>
+
+<div class="tip">
+    <strong>Don't remove focus outlines!</strong> The <code>:focus</code> outline
+    is essential for keyboard users. If you remove the default outline, replace
+    it with a custom focus style that has sufficient contrast.
+</div>
+
+<!-- ============================================================================
+     8. SEO AND REL ATTRIBUTES
+     ============================================================================ -->
+
+<h2>8. SEO and rel Attributes</h2>
+
+<!--
+    The rel attribute describes the relationship between the current page
+    and the linked page. It's important for SEO, security, and semantics.
+-->
+
+<table>
+    <tr>
+        <th>rel Value</th>
+        <th>Purpose</th>
+        <th>Example</th>
+    </tr>
+    <tr>
+        <td><code>noopener</code></td>
+        <td>Prevents new page from accessing window.opener</td>
+        <td><code>target="_blank" rel="noopener"</code></td>
+    </tr>
+    <tr>
+        <td><code>noreferrer</code></td>
+        <td>Hides referrer information from the target</td>
+        <td><code>rel="noreferrer"</code></td>
+    </tr>
+    <tr>
+        <td><code>nofollow</code></td>
+        <td>Tells search engines not to follow the link</td>
+        <td><code>rel="nofollow"</code> (user-generated content)</td>
+    </tr>
+    <tr>
+        <td><code>noindex</code></td>
+        <td>Tells search engines not to index the target</td>
+        <td><code>rel="noindex"</code></td>
+    </tr>
+    <tr>
+        <td><code>external</code></td>
+        <td>Indicates link is to an external site</td>
+        <td><code>rel="external"</code></td>
+    </tr>
+    <tr>
+        <td><code>prev</code> / <code>next</code></td>
+        <td>Pagination (previous/next page)</td>
+        <td><code>rel="prev"</code> / <code>rel="next"</code></td>
+    </tr>
+    <tr>
+        <td><code>canonical</code></td>
+        <td>Specifies the preferred URL (in <link>)</td>
+        <td><code><link rel="canonical" href="..."></code></td>
+    </tr>
+    <tr>
+        <td><code>alternate</code></td>
+        <td>Alternate version (different language, format)</td>
+        <td><code>rel="alternate" hreflang="es"</code></td>
+    </tr>
+    <tr>
+        <td><code>author</code></td>
+        <td>Link to author page</td>
+        <td><code>rel="author"</code></td>
+    </tr>
+    <tr>
+        <td><code>help</code></td>
+        <td>Link to help/documentation</td>
+        <td><code>rel="help"</code></td>
+    </tr>
+    <tr>
+        <td><code>license</code></td>
+        <td>Link to license information</td>
+        <td><code>rel="license"</code></td>
+    </tr>
+    <tr>
+        <td><code>tag</code></td>
+        <td>Link to a tag/category page</td>
+        <td><code>rel="tag"</code></td>
+    </tr>
+</table>
+
+<h3>Common rel Combinations</h3>
+<pre><code><!-- External link (new tab, secure) -->
+<a href="https://partner-site.com" target="_blank"
+   rel="noopener noreferrer external">
+    Partner Site
+</a>
+
+<!-- User-generated content (SEO safe) -->
+<a href="https://spam-site.com" rel="nofollow noopener">
+    User Submitted Link
+</a>
+
+<!-- Pagination -->
+<a href="/page/2" rel="next">Next Page</a>
+<a href="/page/1" rel="prev">Previous Page</a></code></pre>
+
+<div class="note">
+    <strong>When to use nofollow:</strong>
+    <ul>
+        <li>User-generated content (comments, forum posts)</li>
+        <li>Paid/sponsored links (also use <code>rel="sponsored"</code>)</li>
+        <li>Untrusted content</li>
+        <li>Login/registration pages (to prevent wasted crawl budget)</li>
+    </ul>
+</div>
+
+<!-- ============================================================================
+     COMPLETE NAVIGATION EXAMPLE
+     ============================================================================ -->
+
+<h2>Complete Example: Site Navigation System</h2>
+
+<div class="demo-box">
+    <!-- Skip link -->
+    <a href="#main" style="position: absolute; left: -9999px;">Skip to main content</a>
+
+    <!-- Main navigation -->
+    <header>
+        <nav aria-label="Main">
+            <a href="/" aria-current="page">Home</a>
+            <a href="/blog">Blog</a>
+            <a href="/projects">Projects</a>
+            <a href="/about">About</a>
+            <a href="/contact">Contact</a>
+        </nav>
+    </header>
+
+    <!-- Breadcrumb -->
+    <nav aria-label="Breadcrumb">
+        <ol style="list-style: none; padding: 0;">
+            <li style="display: inline;"><a href="/">Home</a> /</li>
+            <li style="display: inline;"><a href="/blog">Blog</a> /</li>
+            <li style="display: inline;" aria-current="page">Article Title</li>
+        </ol>
+    </nav>
+
+    <!-- Main content -->
+    <main id="main">
+        <h1>Article Title</h1>
+        <p>Article content with <a href="https://external-resource.com" target="_blank" rel="noopener noreferrer">external reference</a>.</p>
+        <p><a href="#top">Back to top</a></p>
+    </main>
+
+    <!-- Footer links -->
+    <footer>
+        <nav aria-label="Footer">
+            <a href="/privacy">Privacy Policy</a>
+            <a href="/terms">Terms of Service</a>
+            <a href="mailto:contact@example.com">Contact Us</a>
+        </nav>
+    </footer>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<!--
+    HTML PERFORMANCE OPTIMIZATION
+    File: 11_performance_optimization.html
+
+    Comprehensive guide to HTML performance optimization techniques.
+    Covers critical rendering path, resource loading strategies, Core Web
+    Vitals, and best practices for fast-loading web pages. Builds from
+    junior-level basics to mid-level understanding of web performance.
+
+    Key Concepts Covered:
+    1. Critical Rendering Path
+    2. Resource Loading Strategies (async, defer, preload, prefetch)
+    3. Core Web Vitals (LCP, FID, CLS)
+    4. Image Optimization
+    5. Font Loading Optimization
+    6. HTML Structure for Performance
+    7. Measuring Performance (Lighthouse, Web Vitals)
+    8. Performance Budgets and Monitoring
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Performance Optimization</title>
+    <style>
+        body { font-family: system-ui, sans-serif; line-height: 1.6; max-width: 900px; margin: 0 auto; padding: 20px; }
+        h1 { color: #e44d26; }
+        h2 { color: #333; border-bottom: 2px solid #e44d26; padding-bottom: 5px; }
+        pre { background: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto; }
+        code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; }
+        .note { background: #fff3cd; border-left: 4px solid #ffc107; padding: 10px 15px; margin: 15px 0; }
+        .warning { background: #f8d7da; border-left: 4px solid #dc3545; padding: 10px 15px; margin: 15px 0; }
+        .tip { background: #d4edda; border-left: 4px solid #28a745; padding: 10px 15px; margin: 15px 0; }
+        table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+        th { background: #e44d26; color: white; }
+    </style>
+</head>
+<body>
+
+<h1>HTML Performance Optimization</h1>
+
+<!-- ============================================================================
+     1. CRITICAL RENDERING PATH
+     ============================================================================ -->
+
+<h2>1. Critical Rendering Path</h2>
+
+<!--
+    The Critical Rendering Path is the sequence of steps the browser takes
+    to convert HTML, CSS, and JavaScript into pixels on the screen.
+
+    1. HTML → DOM (Document Object Model)
+    2. CSS → CSSOM (CSS Object Model)
+    3. DOM + CSSOM → Render Tree
+    4. Layout (calculates geometry)
+    5. Paint (fills pixels)
+    6. Composite (layers are combined)
+
+    Optimizing the CRP means minimizing the time to first render.
+-->
+
+<pre><code><!-- 1. Minimize critical CSS (inline above-the-fold styles) -->
+<head>
+    <style>
+        /* Critical CSS - styles needed for above-the-fold content */
+        body { font-family: system-ui, sans-serif; margin: 0; }
+        header { background: #333; color: white; padding: 1rem; }
+        .hero { min-height: 50vh; }
+    </style>
+
+    <!-- Defer non-critical CSS -->
+    <link rel="preload" href="/styles.css" as="style"
+          onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/styles.css"></noscript>
+</head>
+
+<!-- 2. Defer non-critical JavaScript -->
+<script src="/analytics.js" defer></script>
+<script src="/app.js" type="module"></script>
+
+<!-- 3. Minimize render-blocking resources -->
+<!-- Only critical CSS should be render-blocking -->
+<!-- All JavaScript should be async or deferred --></code></pre>
+
+<div class="note">
+    <strong>CRP optimization goals:</strong>
+    <ul>
+        <li>First Paint (FP): ≤ 1.0s</li>
+        <li>First Contentful Paint (FCP): ≤ 1.8s</li>
+        <li>Largest Contentful Paint (LCP): ≤ 2.5s</li>
+        <li>Time to Interactive (TTI): ≤ 3.8s</li>
+    </ul>
+</div>
+
+<!-- ============================================================================
+     2. RESOURCE LOADING STRATEGIES
+     ============================================================================ -->
+
+<h2>2. Resource Loading Strategies</h2>
+
+<table>
+    <tr>
+        <th>Strategy</th>
+        <th>Syntax</th>
+        <th>Use Case</th>
+    </tr>
+    <tr>
+        <td><strong>Blocking</strong></td>
+        <td><code><script src="app.js"></code></td>
+        <td>Critical scripts that must run before render</td>
+    </tr>
+    <tr>
+        <td><strong>Async</strong></td>
+        <td><code><script src="app.js" async></code></td>
+        <td>Independent scripts (analytics, ads)</td>
+    </tr>
+    <tr>
+        <td><strong>Defer</strong></td>
+        <td><code><script src="app.js" defer></code></td>
+        <td>Scripts that need DOM (executed in order after HTML parsed)</td>
+    </tr>
+    <tr>
+        <td><strong>Module</strong></td>
+        <td><code><script type="module"></code></td>
+        <td>ES modules (deferred by default)</td>
+    </tr>
+    <tr>
+        <td><strong>Preload</strong></td>
+        <td><code><link rel="preload"></code></td>
+        <td>Critical resources discovered late (fonts, hero images)</td>
+    </tr>
+    <tr>
+        <td><strong>Prefetch</strong></td>
+        <td><code><link rel="prefetch"></code></td>
+        <td>Resources for next navigation (low priority)</td>
+    </tr>
+    <tr>
+        <td><strong>Preconnect</strong></td>
+        <td><code><link rel="preconnect"></code></td>
+        <td>Early connection to third-party origins</td>
+    </tr>
+    <tr>
+        <td><strong>DNS-Prefetch</strong></td>
+        <td><code><link rel="dns-prefetch"></code></td>
+        <td>DNS resolution for third-party origins</td>
+    </tr>
+    <tr>
+        <td><strong>Prerender</strong></td>
+        <td><code><link rel="prerender"></code></td>
+        <td>Full page render in background (use sparingly)</td>
+    </tr>
+</table>
+
+<pre><code><!-- Script loading strategies -->
+<!-- Blocking (default): pauses HTML parsing -->
+<script src="critical.js"></script>
+
+<!-- Async: downloads in parallel, executes as soon as downloaded -->
+<script src="analytics.js" async></script>
+
+<!-- Defer: downloads in parallel, executes after HTML parsing (in order) -->
+<script src="app.js" defer></script>
+<script src="utils.js" defer></script>  <!-- Executes after app.js -->
+
+<!-- Module: deferred by default, supports imports -->
+<script type="module" src="main.js"></script>
+
+<!-- Resource hints -->
+<link rel="preload" href="/fonts/main.woff2" as="font" crossorigin>
+<link rel="preload" href="/hero.webp" as="image">
+<link rel="preload" href="/critical.css" as="style">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="dns-prefetch" href="https://analytics.example.com">
+<link rel="prefetch" href="/next-page.html">
+<link rel="prerender" href="/most-likely-next.html"></code></pre>
+
+<div class="tip">
+    <strong>Async vs Defer:</strong>
+    <ul>
+        <li><strong>Async:</strong> Download in parallel, execute immediately when ready. Order not guaranteed. Use for independent scripts.</li>
+        <li><strong>Defer:</strong> Download in parallel, execute after HTML parsing in document order. Use for scripts that depend on DOM or other scripts.</li>
+        <li><strong>Module:</strong> Deferred by default. Use for modern ES module scripts.</li>
+    </ul>
+</div>
+
+<!-- ============================================================================
+     3. CORE WEB VITALS
+     ============================================================================ -->
+
+<h2>3. Core Web Vitals</h2>
+
+<!--
+    Google's Core Web Vitals are metrics that measure user experience:
+    - LCP (Largest Contentful Paint): Loading performance
+    - FID (First Input Delay): Interactivity
+    - CLS (Cumulative Layout Shift): Visual stability
+-->
+
+<h3>LCP (Largest Contentful Paint) — Target: ≤ 2.5s</h3>
+<pre><code><!-- Optimize LCP -->
+<!-- 1. Preload the LCP image -->
+<link rel="preload" href="/hero.webp" as="image">
+
+<!-- 2. Use fetchpriority="high" on LCP image -->
+<img src="/hero.webp" alt="Hero" fetchpriority="high" width="1200" height="600">
+
+<!-- 3. Serve images in modern formats -->
+<picture>
+    <source srcset="/hero.avif" type="image/avif">
+    <source srcset="/hero.webp" type="image/webp">
+    <img src="/hero.jpg" alt="Hero" fetchpriority="high" width="1200" height="600">
+</picture>
+
+<!-- 4. Minimize render-blocking resources -->
+<!-- 5. Use a CDN for static assets -->
+<!-- 6. Optimize server response time (TTFB) --></code></pre>
+
+<h3>FID (First Input Delay) — Target: ≤ 100ms</h3>
+<pre><code><!-- Optimize FID -->
+<!-- 1. Defer non-critical JavaScript -->
+<script src="app.js" defer></script>
+
+<!-- 2. Break up long tasks (use requestIdleCallback or setTimeout) -->
+<script>
+    // Break up long tasks
+    function processItems(items) {
+        let i = 0;
+
+        function processChunk() {
+            const end = Math.min(i + 50, items.length);
+            while (i < end) {
+                // Process item
+                i++;
+            }
+            if (i < items.length) {
+                setTimeout(processChunk, 0);  // Yield to main thread
+            }
+        }
+
+        processChunk();
+    }
+</script>
+
+<!-- 3. Use web workers for CPU-intensive tasks -->
+<!-- 4. Minimize main thread work --></code></pre>
+
+<h3>CLS (Cumulative Layout Shift) — Target: ≤ 0.1</h3>
+<pre><code><!-- Optimize CLS -->
+<!-- 1. Always set width and height on images -->
+<img src="photo.jpg" alt="Description" width="800" height="600">
+
+<!-- 2. Use aspect-ratio for responsive images -->
+<img src="photo.jpg" alt="Description"
+     style="width: 100%; height: auto; aspect-ratio: 4/3;">
+
+<!-- 3. Reserve space for dynamic content -->
+<div style="min-height: 200px;">
+    <!-- Content loaded dynamically -->
+</div>
+
+<!-- 4. Set explicit sizes for ads and embeds -->
+<div class="ad-container" style="width: 300px; height: 250px;">
+    <!-- Ad content -->
+</div>
+
+<!-- 5. Use font-display: optional to prevent layout shift from fonts -->
+@font-face {
+    font-family: 'CustomFont';
+    src: url('/fonts/custom.woff2') format('woff2');
+    font-display: optional;  /* No layout shift, but font may not load */
+}
+
+<!-- 6. Avoid inserting content above existing content -->
+<!-- 7. Use transform animations instead of layout-triggering properties --></code></pre>
+
+<!-- ============================================================================
+     4. IMAGE OPTIMIZATION
+     ============================================================================ -->
+
+<h2>4. Image Optimization</h2>
+
+<pre><code><!-- 1. Use modern formats -->
+<picture>
+    <source srcset="photo.avif" type="image/avif">
+    <source srcset="photo.webp" type="image/webp">
+    <img src="photo.jpg" alt="Description" width="800" height="600">
+</picture>
+
+<!-- 2. Responsive images with srcset -->
+<img src="photo-800.jpg"
+     srcset="photo-400.jpg 400w,
+             photo-800.jpg 800w,
+             photo-1200.jpg 1200w"
+     sizes="(max-width: 600px) 100vw,
+            (max-width: 1200px) 50vw,
+            33vw"
+     alt="Description"
+     width="800"
+     height="600"
+     loading="lazy">
+
+<!-- 3. Lazy load below-the-fold images -->
+<img src="photo.jpg" alt="Description" loading="lazy">
+
+<!-- 4. Use fetchpriority for LCP images -->
+<img src="hero.jpg" alt="Hero" fetchpriority="high">
+
+<!-- 5. Compress images (use tools like Squoosh, Sharp, ImageOptim) -->
+<!-- JPEG: quality 80-85 -->
+<!-- WebP: quality 75-80 -->
+<!-- PNG: use PNGQuant or similar -->
+
+<!-- 6. Use CDN with image transformation -->
+<img src="https://cdn.example.com/photo.jpg?w=800&q=80&format=webp"
+     alt="Description"></code></pre>
+
+<!-- ============================================================================
+     5. FONT LOADING
+     ============================================================================ -->
+
+<h2>5. Font Loading Optimization</h2>
+
+<pre><code><!-- 1. Preload critical fonts -->
+<link rel="preload" href="/fonts/main.woff2" as="font" type="font/woff2" crossorigin>
+
+<!-- 2. Use font-display in @font-face -->
+<style>
+    @font-face {
+        font-family: 'CustomFont';
+        src: url('/fonts/custom.woff2') format('woff2');
+        font-display: swap;  /* Show fallback text immediately, swap when font loads */
+    }
+
+    @font-face {
+        font-family: 'IconFont';
+        src: url('/fonts/icons.woff2') format('woff2');
+        font-display: block;  /* Hide text briefly, then swap */
+    }
+</style>
+
+<!-- 3. Use system font stack as fallback -->
+body {
+    font-family: 'CustomFont', system-ui, -apple-system, sans-serif;
+}
+
+<!-- 4. Subset fonts (include only needed characters) -->
+<!-- 5. Use variable fonts (one file instead of multiple weights) -->
+<!-- 6. Self-host fonts instead of using Google Fonts (fewer DNS lookups) -->
+
+<!-- font-display values -->
+<!-- auto: Browser default (usually block) -->
+<!-- block: Invisible text for ~3s, then swap -->
+<!-- swap: Fallback text immediately, swap when font loads (best for UX) -->
+<!-- fallback: Invisible for ~100ms, fallback for ~3s, then swap -->
+<!-- optional: Fallback text immediately, font used only if already cached --></code></pre>
+
+<!-- ============================================================================
+     6. HTML STRUCTURE
+     ============================================================================ -->
+
+<h2>6. HTML Structure for Performance</h2>
+
+<pre><code><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fast Page</title>
+
+    <!-- Critical CSS inlined -->
+    <style>
+        /* Above-the-fold styles only */
+        body { margin: 0; font-family: system-ui, sans-serif; }
+        header { height: 60px; }
+        .hero { min-height: 80vh; }
+    </style>
+
+    <!-- Preload critical resources -->
+    <link rel="preload" href="/fonts/main.woff2" as="font" crossorigin>
+    <link rel="preload" href="/hero.webp" as="image">
+
+    <!-- Preconnect to third-party origins -->
+    <link rel="preconnect" href="https://api.example.com">
+
+    <!-- Deferred non-critical CSS -->
+    <link rel="preload" href="/styles.css" as="style"
+          onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/styles.css"></noscript>
+</head>
+<body>
+    <!-- Critical content first (above the fold) -->
+    <header>
+        <h1>Fast Page</h1>
+    </header>
+
+    <main>
+        <!-- LCP element: hero image with dimensions -->
+        <img src="/hero.webp" alt="Hero" fetchpriority="high"
+             width="1200" height="600">
+
+        <!-- Non-critical content with lazy loading -->
+        <section>
+            <h2>Content</h2>
+            <img src="/photo.jpg" alt="Photo" loading="lazy"
+                 width="800" height="600">
+        </section>
+    </main>
+
+    <!-- Deferred scripts at end of body -->
+    <script src="/app.js" defer></script>
+    <script src="/analytics.js" async></script>
+</body>
+</html></code></pre>
+
+<!-- ============================================================================
+     7. MEASURING PERFORMANCE
+     ============================================================================ -->
+
+<h2>7. Measuring Performance</h2>
+
+<pre><code><!-- 1. Navigation Timing API -->
+<script>
+    window.addEventListener('load', () => {
+        const perf = performance.getEntriesByType('navigation')[0];
+        console.log('DOM Content Loaded:', perf.domContentLoadedEventEnd);
+        console.log('Load Event:', perf.loadEventEnd);
+        console.log('DOM Interactive:', perf.domInteractive);
+        console.log('TTFB:', perf.responseStart - perf.requestStart);
+    });
+</script>
+
+<!-- 2. Performance Observer (Core Web Vitals) -->
+<script>
+    // LCP
+    const lcpObserver = new PerformanceObserver((list) => {
+        const entries = list.getEntries();
+        const lastEntry = entries[entries.length - 1];
+        console.log('LCP:', lastEntry.startTime);
+    });
+    lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
+
+    // FID
+    const fidObserver = new PerformanceObserver((list) => {
+        list.getEntries().forEach(entry => {
+            console.log('FID:', entry.processingStart - entry.startTime);
+        });
+    });
+    fidObserver.observe({ type: 'first-input', buffered: true });
+
+    // CLS
+    let clsValue = 0;
+    const clsObserver = new PerformanceObserver((list) => {
+        list.getEntries().forEach(entry => {
+            if (!entry.hadRecentInput) {
+                clsValue += entry.value;
+            }
+        });
+        console.log('CLS:', clsValue);
+    });
+    clsObserver.observe({ type: 'layout-shift', buffered: true });
+</script>
+
+<!-- 3. Web Vitals library (npm: web-vitals) -->
+<script type="module">
+    import { onLCP, onFID, onCLS } from 'https://unpkg.com/web-vitals?module';
+
+    onLCP(console.log);
+    onFID(console.log);
+    onCLS(console.log);
+</script>
+
+<!-- 4. Lighthouse (run in Chrome DevTools or CLI) -->
+<!-- lighthouse https://example.com --output=json --quiet --></code></pre>
+
+<!-- ============================================================================
+     8. PERFORMANCE BUDGETS
+     ============================================================================ -->
+
+<h2>8. Performance Budgets and Monitoring</h2>
+
+<pre><code><!-- Performance budget example (in your build config) -->
+/*
+    Performance Budget:
+    - Total page weight: < 500KB
+    - Time to Interactive: < 3.8s
+    - LCP: < 2.5s
+    - CLS: < 0.1
+    - FID: < 100ms
+    - Number of HTTP requests: < 30
+    - JavaScript bundle: < 200KB
+    - CSS bundle: < 50KB
+    - Images: < 200KB total
+*/
+
+<!-- Performance monitoring snippet -->
+<script>
+    // Send performance metrics to analytics
+    function sendMetric(name, value) {
+        if (navigator.sendBeacon) {
+            navigator.sendBeacon('/analytics', JSON.stringify({
+                name,
+                value,
+                url: window.location.pathname,
+                timestamp: Date.now()
+            }));
+        }
+    }
+
+    // Monitor LCP
+    new PerformanceObserver((list) => {
+        const entries = list.getEntries();
+        sendMetric('LCP', entries[entries.length - 1].startTime);
+    }).observe({ type: 'largest-contentful-paint', buffered: true });
+
+    // Monitor CLS
+    let cls = 0;
+    new PerformanceObserver((list) => {
+        list.getEntries().forEach(entry => {
+            if (!entry.hadRecentInput) cls += entry.value;
+        });
+        sendMetric('CLS', cls);
+    }).observe({ type: 'layout-shift', buffered: true });
+</script></code></pre>
+
+<div class="tip">
+    <strong>Performance checklist:</strong>
+    <ul>
+        <li>Measure baseline performance with Lighthouse</li>
+        <li>Optimize images (modern formats, responsive, lazy loading)</li>
+        <li>Defer non-critical CSS and JavaScript</li>
+        <li>Preload critical resources (fonts, hero images)</li>
+        <li>Set explicit dimensions on all media elements</li>
+        <li>Use font-display: swap for web fonts</li>
+        <li>Minimize render-blocking resources</li>
+        <li>Use a CDN for static assets</li>
+        <li>Enable compression (Brotli, Gzip)</li>
+        <li>Set up performance monitoring</li>
+    </ul>
+</div>
+
+</body>
+</html>

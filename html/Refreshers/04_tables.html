@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<!--
+    HTML TABLES
+    File: 04_tables.html
+
+    Comprehensive guide to HTML tables. Covers table structure, spanning,
+    styling, accessibility, and responsive patterns. Builds from junior-level
+    basics to mid-level understanding of complex data tables and accessibility.
+
+    Key Concepts Covered:
+    1. Basic Table Structure (table, tr, th, td)
+    2. Table Sections (thead, tbody, tfoot)
+    3. Column and Row Spanning (colspan, rowspan)
+    4. Column Groups (colgroup, col)
+    5. Table Captions and Summaries
+    6. Table Accessibility (scope, headers, id)
+    7. Responsive Tables
+    8. Table Styling Best Practices
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Tables</title>
+    <style>
+        body { font-family: system-ui, sans-serif; line-height: 1.6; max-width: 900px; margin: 0 auto; padding: 20px; }
+        h1 { color: #e44d26; }
+        h2 { color: #333; border-bottom: 2px solid #e44d26; padding-bottom: 5px; }
+        pre { background: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto; }
+        code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; }
+        .note { background: #fff3cd; border-left: 4px solid #ffc107; padding: 10px 15px; margin: 15px 0; }
+        .warning { background: #f8d7da; border-left: 4px solid #dc3545; padding: 10px 15px; margin: 15px 0; }
+        .tip { background: #d4edda; border-left: 4px solid #28a745; padding: 10px 15px; margin: 15px 0; }
+        .demo-box { border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin: 15px 0; background: #fafafa; }
+        table.demo { border-collapse: collapse; width: 100%; margin: 10px 0; }
+        table.demo th, table.demo td { border: 1px solid #999; padding: 8px 12px; text-align: left; }
+        table.demo th { background: #e44d26; color: white; }
+        table.demo tfoot td { background: #f4f4f4; font-style: italic; }
+    </style>
+</head>
+<body>
+
+<h1>HTML Tables</h1>
+
+<!-- ============================================================================
+     1. BASIC TABLE STRUCTURE
+     ============================================================================ -->
+
+<h2>1. Basic Table Structure</h2>
+
+<!--
+    A table is defined with <table> and contains rows (<tr>) with
+    header cells (<th>) or data cells (<td>).
+-->
+
+<div class="demo-box">
+    <table class="demo">
+        <tr>
+            <th>Name</th>
+            <th>Age</th>
+            <th>City</th>
+        </tr>
+        <tr>
+            <td>Alice</td>
+            <td>30</td>
+            <td>New York</td>
+        </tr>
+        <tr>
+            <td>Bob</td>
+            <td>25</td>
+            <td>San Francisco</td>
+        </tr>
+        <tr>
+            <td>Charlie</td>
+            <td>35</td>
+            <td>Chicago</td>
+        </tr>
+    </table>
+</div>
+
+<pre><code><table>
+    <tr>
+        <th>Name</th>
+        <th>Age</th>
+        <th>City</th>
+    </tr>
+    <tr>
+        <td>Alice</td>
+        <td>30</td>
+        <td>New York</td>
+    </tr>
+    <tr>
+        <td>Bob</td>
+        <td>25</td>
+        <td>San Francisco</td>
+    </tr>
+</table></code></pre>
+
+<div class="note">
+    <strong>th vs td:</strong> Use <code><th></code> for header cells
+    (bold, centered by default, semantically important for screen readers).
+    Use <code><td></code> for regular data cells.
+</div>
+
+<!-- ============================================================================
+     2. TABLE SECTIONS
+     ============================================================================ -->
+
+<h2>2. Table Sections (thead, tbody, tfoot)</h2>
+
+<!--
+    Tables can be divided into three semantic sections:
+    - <thead>: Header rows (one or more rows of column headers)
+    - <tbody>: Body rows (the main data)
+    - <tfoot>: Footer rows (summaries, totals, notes)
+
+    Benefits:
+    - <thead> and <tfoot> repeat when printing across pages
+    - <tbody> allows styling groups of rows
+    - Screen readers use these for navigation
+-->
+
+<div class="demo-box">
+    <table class="demo">
+        <caption>Monthly Sales Report</caption>
+        <thead>
+            <tr>
+                <th>Month</th>
+                <th>Revenue</th>
+                <th>Expenses</th>
+                <th>Profit</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>January</td>
+                <td>$10,000</td>
+                <td>$7,000</td>
+                <td>$3,000</td>
+            </tr>
+            <tr>
+                <td>February</td>
+                <td>$12,000</td>
+                <td>$8,000</td>
+                <td>$4,000</td>
+            </tr>
+            <tr>
+                <td>March</td>
+                <td>$15,000</td>
+                <td>$9,000</td>
+                <td>$6,000</td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <th>Total</th>
+                <td>$37,000</td>
+                <td>$24,000</td>
+                <td>$13,000</td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+<pre><code><table>
+    <caption>Monthly Sales Report</caption>
+    <thead>
+        <tr>
+            <th>Month</th>
+            <th>Revenue</th>
+            <th>Expenses</th>
+            <th>Profit</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>January</td>
+            <td>$10,000</td>
+            <td>$7,000</td>
+            <td>$3,000</td>
+        </tr>
+        <!-- More rows... -->
+    </tbody>
+    <tfoot>
+        <tr>
+            <th>Total</th>
+            <td>$37,000</td>
+            <td>$24,000</td>
+            <td>$13,000</td>
+        </tr>
+    </tfoot>
+</table></code></pre>
+
+<div class="tip">
+    <strong>Order matters:</strong> In HTML, <code><tfoot></code> must come
+    <em>before</em> <code><tbody></code> (though it renders at the bottom).
+    This allows the browser to render the footer before loading all data rows.
+</div>
+
+<!-- ============================================================================
+     3. COLUMN AND ROW SPANNING
+     ============================================================================ -->
+
+<h2>3. Column and Row Spanning</h2>
+
+<!--
+    colspan: Merge cells horizontally (span across columns)
+    rowspan: Merge cells vertically (span across rows)
+-->
+
+<div class="demo-box">
+    <table class="demo">
+        <caption>Project Schedule (colspan/rowspan example)</caption>
+        <thead>
+            <tr>
+                <th>Phase</th>
+                <th>Task</th>
+                <th>Assignee</th>
+                <th>Duration</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td rowspan="3">Planning</td>
+                <td>Requirements gathering</td>
+                <td>Alice</td>
+                <td>2 weeks</td>
+            </tr>
+            <tr>
+                <td>System design</td>
+                <td>Bob</td>
+                <td>3 weeks</td>
+            </tr>
+            <tr>
+                <td>Prototype</td>
+                <td>Charlie</td>
+                <td>1 week</td>
+            </tr>
+            <tr>
+                <td rowspan="2">Development</td>
+                <td>Frontend</td>
+                <td>Alice</td>
+                <td>4 weeks</td>
+            </tr>
+            <tr>
+                <td>Backend</td>
+                <td>Bob</td>
+                <td>5 weeks</td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3">Total Duration</td>
+                <td>15 weeks</td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+<pre><code><!-- colspan: merge cells horizontally -->
+<td colspan="2">Spans two columns</td>
+
+<!-- rowspan: merge cells vertically -->
+<td rowspan="3">Spans three rows</td>
+
+<!-- Combined example -->
+<tr>
+    <td rowspan="2">Category</td>
+    <td>Item 1</td>
+    <td>$10</td>
+</tr>
+<tr>
+    <td>Item 2</td>
+    <td>$20</td>
+</tr>
+<tr>
+    <td colspan="2">Total</td>
+    <td>$30</td>
+</tr></code></pre>
+
+<div class="warning">
+    <strong>Spanning gotchas:</strong> When using <code>colspan</code> or
+    <code>rowspan</code>, the total number of cells in each row must be
+    consistent. A cell that spans 2 columns counts as 2 cells. Missing
+    cells can cause layout issues.
+</div>
+
+<!-- ============================================================================
+     4. COLUMN GROUPS
+     ============================================================================ -->
+
+<h2>4. Column Groups (colgroup, col)</h2>
+
+<!--
+    <colgroup> and <col> allow you to style entire columns at once,
+    without adding classes to every cell.
+-->
+
+<pre><code><!-- Style columns using colgroup -->
+<table>
+    <colgroup>
+        <col style="background: #f0f0f0;">
+        <col span="2" style="background: #e0e0e0;">
+        <col style="background: #f0f0f0;">
+    </colgroup>
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Q1</th>
+            <th>Q2</th>
+            <th>Q3</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Widget A</td>
+            <td>100</td>
+            <td>150</td>
+            <td>200</td>
+        </tr>
+    </tbody>
+</table></code></pre>
+
+<div class="note">
+    <strong>col limitations:</strong> <code><col></code> only supports a
+    limited set of CSS properties (border, background, width, visibility).
+    For complex column styling, use classes on cells instead.
+</div>
+
+<!-- ============================================================================
+     5. TABLE CAPTIONS AND SUMMARIES
+     ============================================================================ -->
+
+<h2>5. Table Captions and Summaries</h2>
+
+<!--
+    <caption> provides a title/description for the table.
+    It's similar to a heading but specifically for tables.
+    The caption should describe the table's purpose and content.
+-->
+
+<pre><code><!-- Caption (always the first child of <table>) -->
+<table>
+    <caption>Table 1: Quarterly Revenue by Product Line (2024)</caption>
+    <!-- table content -->
+</table>
+
+<!-- Caption position can be styled with caption-side -->
+<style>
+    caption { caption-side: top; }    /* default */
+    caption { caption-side: bottom; } /* below table */
+</style></code></pre>
+
+<div class="tip">
+    <strong>Caption vs summary:</strong> Use <code><caption></code> for a
+    visible title. For complex tables, add a summary using
+    <code>aria-describedby</code> pointing to a paragraph that explains how
+    to read the table.
+</div>
+
+<!-- ============================================================================
+     6. TABLE ACCESSIBILITY
+     ============================================================================ -->
+
+<h2>6. Table Accessibility</h2>
+
+<!--
+    Tables can be difficult for screen reader users. Proper markup is essential.
+    Key accessibility features:
+    - scope attribute on <th> (col, row, colgroup, rowgroup)
+    - headers + id for complex tables
+    - <caption> for table description
+    - Avoid using tables for layout
+-->
+
+<h3>Scope Attribute</h3>
+<pre><code><!-- Simple table: scope tells which direction the header applies -->
+<table>
+    <thead>
+        <tr>
+            <th scope="col">Product</th>
+            <th scope="col">Price</th>
+            <th scope="col">Quantity</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th scope="row">Widget A</th>
+            <td>$10</td>
+            <td>100</td>
+        </tr>
+    </tbody>
+</table></code></pre>
+
+<h3>Complex Tables (headers + id)</h3>
+<!--
+    For tables with multiple levels of headers, use id on <th> and
+    headers attribute on <td> to explicitly associate cells with headers.
+-->
+<pre><code><!-- Complex table with multi-level headers -->
+<table>
+    <caption>Regional Sales by Quarter</caption>
+    <thead>
+        <tr>
+            <th id="region">Region</th>
+            <th id="q1" colspan="2">Q1</th>
+            <th id="q2" colspan="2">Q2</th>
+        </tr>
+        <tr>
+            <th id="empty"></th>
+            <th id="q1-target" headers="q1">Target</th>
+            <th id="q1-actual" headers="q1">Actual</th>
+            <th id="q2-target" headers="q2">Target</th>
+            <th id="q2-actual" headers="q2">Actual</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th id="north" headers="region">North</th>
+            <td headers="north q1-target">100</td>
+            <td headers="north q1-actual">110</td>
+            <td headers="north q2-target">120</td>
+            <td headers="north q2-actual">115</td>
+        </tr>
+    </tbody>
+</table></code></pre>
+
+<div class="warning">
+    <strong>Don't use tables for layout!</strong> In the past, tables were used
+    for page layout. This is outdated and harmful for accessibility. Use CSS
+    Grid or Flexbox for layout. Tables are for tabular data only.
+</div>
+
+<!-- ============================================================================
+     7. RESPONSIVE TABLES
+     ============================================================================ -->
+
+<h2>7. Responsive Tables</h2>
+
+<!--
+    Tables are inherently non-responsive. Several techniques exist:
+    1. Horizontal scroll wrapper
+    2. Stacked/card layout on small screens
+    3. Priority columns (hide less important columns)
+-->
+
+<h3>Technique 1: Horizontal Scroll</h3>
+<pre><code><!-- Wrap table in a scrollable container -->
+<div style="overflow-x: auto;">
+    <table>
+        <!-- wide table content -->
+    </table>
+</div></code></pre>
+
+<h3>Technique 2: Stacked on Mobile (CSS)</h3>
+<pre><code>/* Convert table to card layout on small screens */
+@media (max-width: 600px) {
+    table, thead, tbody, tfoot, tr, th, td {
+        display: block;
+    }
+
+    /* Hide headers visually but keep for screen readers */
+    thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+
+    /* Add data-label attribute to td for pseudo-element labels */
+    td {
+        position: relative;
+        padding-left: 50%;
+    }
+
+    td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 10px;
+        font-weight: bold;
+    }
+}
+
+<!-- HTML with data-label attributes -->
+<td data-label="Name">Alice</td>
+<td data-label="Age">30</td>
+<td data-label="City">New York</td></code></pre>
+
+<h3>Technique 3: Priority Columns</h3>
+<pre><code>/* Hide/show columns based on screen width */
+@media (max-width: 800px) {
+    .priority-3 { display: none; }  /* Hide least important */
+}
+@media (max-width: 600px) {
+    .priority-2 { display: none; }  /* Hide medium importance */
+}
+
+<!-- HTML with priority classes -->
+<th class="priority-1">Name</th>
+<th class="priority-2">Email</th>
+<th class="priority-3">Phone</th>
+<th class="priority-1">Status</th></code></pre>
+
+<!-- ============================================================================
+     8. TABLE STYLING BEST PRACTICES
+     ============================================================================ -->
+
+<h2>8. Table Styling Best Practices</h2>
+
+<pre><code>/* 1. Collapse borders for clean look */
+table { border-collapse: collapse; }
+
+/* 2. Add zebra striping for readability */
+tbody tr:nth-child(even) { background: #f9f9f9; }
+
+/* 3. Hover effect for interactivity */
+tbody tr:hover { background: #f0f0f0; }
+
+/* 4. Consistent padding */
+th, td { padding: 8px 12px; }
+
+/* 5. Align numbers to the right */
+td.numeric { text-align: right; font-variant-numeric: tabular-nums; }
+
+/* 6. Sticky header for long tables */
+thead th { position: sticky; top: 0; z-index: 1; }
+
+/* 7. Responsive font size */
+@media (max-width: 600px) {
+    th, td { font-size: 0.875rem; padding: 6px 8px; }
+}</code></pre>
+
+<div class="tip">
+    <strong>Table checklist:</strong>
+    <ul>
+        <li>Use <code><caption></code> for table description</li>
+        <li>Use <code><thead></code>, <code><tbody></code>, <code><tfoot></code></li>
+        <li>Add <code>scope</code> to all <code><th></code> elements</li>
+        <li>Use <code>headers</code> + <code>id</code> for complex tables</li>
+        <li>Make tables responsive (scroll or stack on mobile)</li>
+        <li>Use zebra striping for readability</li>
+        <li>Align numbers to the right</li>
+        <li>Never use tables for layout</li>
+    </ul>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<!--
+    HTML TEXT ELEMENTS
+    File: 01_text_elements.html
+
+    Comprehensive guide to HTML text-level semantics. Covers headings,
+    paragraphs, lists, quotes, code formatting, and inline text elements.
+    Builds from junior-level basics to mid-level understanding of
+    semantic text markup and accessibility.
+
+    Key Concepts Covered:
+    1. Headings (h1-h6) and Document Outline
+    2. Paragraphs and Line Breaks
+    3. Inline Text Semantics (strong, em, mark, small, etc.)
+    4. Lists (ordered, unordered, description)
+    5. Quotations and Citations
+    6. Code and Preformatted Text
+    7. Horizontal Rules and Thematic Breaks
+    8. Text Direction and Internationalization
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Text Elements</title>
+    <style>
+        body { font-family: system-ui, sans-serif; line-height: 1.6; max-width: 900px; margin: 0 auto; padding: 20px; }
+        h1 { color: #e44d26; }
+        h2 { color: #333; border-bottom: 2px solid #e44d26; padding-bottom: 5px; }
+        pre { background: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto; }
+        code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; }
+        .note { background: #fff3cd; border-left: 4px solid #ffc107; padding: 10px 15px; margin: 15px 0; }
+        .warning { background: #f8d7da; border-left: 4px solid #dc3545; padding: 10px 15px; margin: 15px 0; }
+        .tip { background: #d4edda; border-left: 4px solid #28a745; padding: 10px 15px; margin: 15px 0; }
+        table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+        th { background: #e44d26; color: white; }
+        .demo-box { border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin: 15px 0; background: #fafafa; }
+    </style>
+</head>
+<body>
+
+<h1>HTML Text Elements</h1>
+
+<!-- ============================================================================
+     1. HEADINGS AND DOCUMENT OUTLINE
+     ============================================================================ -->
+
+<h2>1. Headings (h1-h6) and Document Outline</h2>
+
+<!--
+    HTML provides six levels of headings, from h1 (most important) to h6 (least).
+    They create a hierarchical document outline that helps:
+    - Users scan content quickly
+    - Screen readers navigate the page
+    - Search engines understand content structure
+
+    Rules for proper heading usage:
+    1. Only one h1 per page (typically the page title)
+    2. Don't skip levels (h1 → h3 is bad, h1 → h2 → h3 is good)
+    3. Headings should be descriptive of the content they introduce
+    4. Use for structure, not for font size (use CSS for sizing)
+-->
+
+<div class="demo-box">
+    <h1>h1: Page Title (use once)</h1>
+    <h2>h2: Major Section</h2>
+    <h3>h3: Sub-section</h3>
+    <h4>h4: Sub-sub-section</h4>
+    <h5>h5: Minor heading</h5>
+    <h6>h6: Least important heading</h6>
+</div>
+
+<pre><code><h1>Page Title (use once)</h1>
+<h2>Major Section</h2>
+<h3>Sub-section</h3>
+<h4>Sub-sub-section</h4>
+<h5>Minor heading</h5>
+<h6>Least important heading</h6></code></pre>
+
+<div class="warning">
+    <strong>Don't skip heading levels!</strong> Going from h2 to h4 breaks the
+    document outline and confuses screen readers. If you need smaller text,
+    use CSS <code>font-size</code> instead of jumping levels.
+</div>
+
+<h3>Document Outline Example</h3>
+<pre><code><h1>My Blog</h1>
+  <h2>Latest Posts</h2>
+    <h3>How to Learn HTML</h3>
+    <h3>CSS Grid vs Flexbox</h3>
+  <h2>About Me</h2>
+    <h3>My Background</h3>
+    <h3>Contact Information</h3></code></pre>
+
+<!-- ============================================================================
+     2. PARAGRAPHS AND LINE BREAKS
+     ============================================================================ -->
+
+<h2>2. Paragraphs and Line Breaks</h2>
+
+<!--
+    <p> defines a paragraph. Browsers add margin above and below paragraphs.
+    <br> creates a line break within a paragraph (use sparingly).
+-->
+
+<div class="demo-box">
+    <p>This is a paragraph of text. Paragraphs are block-level elements that automatically have margins above and below them. They represent a distinct block of text content.</p>
+
+    <p>This is another paragraph. Notice the space between paragraphs.<br>
+    This line uses a <br> tag to break without starting a new paragraph.<br>
+    Use <br> for addresses, poems, or song lyrics — not for layout spacing.</p>
+</div>
+
+<pre><code><p>This is a paragraph of text.</p>
+
+<p>This is another paragraph.<br>
+This line uses a &lt;br&gt; tag to break.</p></code></pre>
+
+<div class="tip">
+    <strong>When to use <br>:</strong> Addresses, poems, song lyrics, code line
+    preservation. <strong>When NOT to use:</strong> Creating space between elements
+    (use CSS <code>margin</code> instead).
+</div>
+
+<!-- ============================================================================
+     3. INLINE TEXT SEMANTICS
+     ============================================================================ -->
+
+<h2>3. Inline Text Semantics</h2>
+
+<!--
+    Inline elements don't start on a new line and only take up as much width
+    as necessary. They are used within block-level elements to mark up text
+    with semantic meaning.
+-->
+
+<table>
+    <tr>
+        <th>Element</th>
+        <th>Purpose</th>
+        <th>Rendered</th>
+    </tr>
+    <tr>
+        <td><code><strong></code></td>
+        <td>Strong importance (bold)</td>
+        <td><strong>Important text</strong></td>
+    </tr>
+    <tr>
+        <td><code><em></code></td>
+        <td>Emphasis (italic)</td>
+        <td><em>Emphasized text</em></td>
+    </tr>
+    <tr>
+        <td><code><b></code></td>
+        <td>Stylistic offset (bold, no semantic meaning)</td>
+        <td><b>Bold text</b></td>
+    </tr>
+    <tr>
+        <td><code><i></code></td>
+        <td>Alternate voice (italic, no semantic meaning)</td>
+        <td><i>Italic text</i></td>
+    </tr>
+    <tr>
+        <td><code><u></code></td>
+        <td>Unarticulated annotation (underline)</td>
+        <td><u>Underlined text</u></td>
+    </tr>
+    <tr>
+        <td><code><mark></code></td>
+        <td>Highlighted/marked text</td>
+        <td><mark>Highlighted text</mark></td>
+    </tr>
+    <tr>
+        <td><code><small></code></td>
+        <td>Side comments, fine print</td>
+        <td><small>Small / fine print text</small></td>
+    </tr>
+    <tr>
+        <td><code><del></code></td>
+        <td>Deleted text (strikethrough)</td>
+        <td><del>Deleted text</del></td>
+    </tr>
+    <tr>
+        <td><code><ins></code></td>
+        <td>Inserted text (underline)</td>
+        <td><ins>Inserted text</ins></td>
+    </tr>
+    <tr>
+        <td><code><s></code></td>
+        <td>Struck-through text (no longer accurate)</td>
+        <td><s>Struck-through text</s></td>
+    </tr>
+    <tr>
+        <td><code><sub></code></td>
+        <td>Subscript</td>
+        <td>H<sub>2</sub>O</td>
+    </tr>
+    <tr>
+        <td><code><sup></code></td>
+        <td>Superscript</td>
+        <td>E=mc<sup>2</sup></td>
+    </tr>
+    <tr>
+        <td><code><span></code></td>
+        <td>Generic inline container (no semantic meaning)</td>
+        <td><span style="color: blue;">Styled span</span></td>
+    </tr>
+    <tr>
+        <td><code><abbr></code></td>
+        <td>Abbreviation / acronym</td>
+        <td><abbr title="HyperText Markup Language">HTML</abbr></td>
+    </tr>
+    <tr>
+        <td><code><dfn></code></td>
+        <td>Defining instance of a term</td>
+        <td><dfn>HTML</dfn> is the standard markup language.</td>
+    </tr>
+    <tr>
+        <td><code><time></code></td>
+        <td>Machine-readable date/time</td>
+        <td><time datetime="2024-01-15">January 15</time></td>
+    </tr>
+</table>
+
+<div class="note">
+    <strong>Semantic vs Presentational:</strong> Use <code><strong></code> and
+    <code><em></code> for semantic meaning (importance, emphasis). Use
+    <code><b></code> and <code><i></code> only when no semantic element
+    fits (e.g., product names, foreign words). Screen readers emphasize
+    <code><strong></code> and <code><em></code> with different vocal tone.
+</div>
+
+<h3>Practical Example</h3>
+<div class="demo-box">
+    <p>The <abbr title="World Wide Web Consortium">W3C</abbr> defines <dfn>HTML</dfn> as the standard markup language for creating web pages. <strong>Important:</strong> Always use semantic elements. The event is on <time datetime="2024-06-15T14:00">June 15th at 2pm</time>. The chemical formula for water is H<sub>2</sub>O. Einstein's famous equation is E=mc<sup>2</sup>. <mark>This text is highlighted</mark> for emphasis. <small>Fine print or disclaimers go here.</small></p>
+</div>
+
+<!-- ============================================================================
+     4. LISTS
+     ============================================================================ -->
+
+<h2>4. Lists</h2>
+
+<h3>Ordered List (<ol>)</h3>
+<!--
+    Use ordered lists when the sequence matters: steps, rankings, instructions.
+-->
+
+<div class="demo-box">
+    <ol>
+        <li>First item</li>
+        <li>Second item</li>
+        <li>Third item</li>
+    </ol>
+</div>
+
+<pre><code><ol>
+    <li>First item</li>
+    <li>Second item</li>
+    <li>Third item</li>
+</ol></code></pre>
+
+<h4>Ordered List Attributes</h4>
+<table>
+    <tr>
+        <th>Attribute</th>
+        <th>Values</th>
+        <th>Example</th>
+        <th>Result</th>
+    </tr>
+    <tr>
+        <td><code>type</code></td>
+        <td>1, A, a, I, i</td>
+        <td><code><ol type="A"></code></td>
+        <td>A, B, C...</td>
+    </tr>
+    <tr>
+        <td><code>start</code></td>
+        <td>Number</td>
+        <td><code><ol start="5"></code></td>
+        <td>5, 6, 7...</td>
+    </tr>
+    <tr>
+        <td><code>reversed</code></td>
+        <td>Boolean</td>
+        <td><code><ol reversed></code></td>
+        <td>3, 2, 1...</td>
+    </tr>
+</table>
+
+<h3>Unordered List (<ul>)</h3>
+<!--
+    Use unordered lists when order doesn't matter: features, bullet points, navigation.
+-->
+
+<div class="demo-box">
+    <ul>
+        <li>Apples</li>
+        <li>Oranges</li>
+        <li>Bananas</li>
+    </ul>
+</div>
+
+<pre><code><ul>
+    <li>Apples</li>
+    <li>Oranges</li>
+    <li>Bananas</li>
+</ul></code></pre>
+
+<h3>Nested Lists</h3>
+<!--
+    Lists can be nested inside list items to create hierarchies.
+-->
+
+<div class="demo-box">
+    <ul>
+        <li>Fruits
+            <ul>
+                <li>Apples</li>
+                <li>Oranges</li>
+            </ul>
+        </li>
+        <li>Vegetables
+            <ul>
+                <li>Carrots</li>
+                <li>Broccoli</li>
+            </ul>
+        </li>
+    </ul>
+</div>
+
+<pre><code><ul>
+    <li>Fruits
+        <ul>
+            <li>Apples</li>
+            <li>Oranges</li>
+        </ul>
+    </li>
+    <li>Vegetables
+        <ul>
+            <li>Carrots</li>
+            <li>Broccoli</li>
+        </ul>
+    </li>
+</ul></code></pre>
+
+<h3>Description List (<dl>)</h3>
+<!--
+    Description lists are for name-value groups: glossaries, metadata, key-value pairs.
+-->
+
+<div class="demo-box">
+    <dl>
+        <dt>HTML</dt>
+        <dd>HyperText Markup Language — the standard language for creating web pages.</dd>
+
+        <dt>CSS</dt>
+        <dd>Cascading Style Sheets — controls the presentation of HTML documents.</dd>
+
+        <dt>JavaScript</dt>
+        <dd>A programming language that enables interactive web pages.</dd>
+    </dl>
+</div>
+
+<pre><code><dl>
+    <dt>HTML</dt>
+    <dd>HyperText Markup Language — the standard language for creating web pages.</dd>
+
+    <dt>CSS</dt>
+    <dd>Cascading Style Sheets — controls the presentation of HTML documents.</dd>
+</dl></code></pre>
+
+<div class="tip">
+    <strong>Choosing the right list:</strong>
+    <ul>
+        <li><code><ol></code> — Steps, rankings, instructions (order matters)</li>
+        <li><code><ul></code> — Features, bullet points, navigation (order doesn't matter)</li>
+        <li><code><dl></code> — Glossaries, metadata, key-value pairs</li>
+    </ul>
+</div>
+
+<!-- ============================================================================
+     5. QUOTATIONS AND CITATIONS
+     ============================================================================ -->
+
+<h2>5. Quotations and Citations</h2>
+
+<div class="demo-box">
+    <h3>Block Quote (<blockquote>)</h3>
+    <blockquote cite="https://www.example.com/source">
+        <p>This is a long quotation that spans multiple paragraphs. Block quotes are used for longer quotations that should be displayed as a separate block of text.</p>
+        <footer>— <cite>Author Name</cite>, <cite>Source Title</cite></footer>
+    </blockquote>
+
+    <h3>Inline Quote (<q>)</h3>
+    <p>The philosopher said, <q cite="https://example.com">The unexamined life is not worth living</q>, which has inspired generations.</p>
+
+    <h3>Citation (<cite>)</h3>
+    <p>One of my favorite books is <cite>The Pragmatic Programmer</cite> by Andrew Hunt and David Thomas.</p>
+</div>
+
+<pre><code><!-- Block quote with citation -->
+<blockquote cite="https://www.example.com/source">
+    <p>This is a long quotation...</p>
+    <footer>— <cite>Author Name</cite></footer>
+</blockquote>
+
+<!-- Inline quote -->
+<p>The philosopher said, <q cite="https://example.com">The unexamined life...</q></p>
+
+<!-- Citation for creative works -->
+<p>Book: <cite>The Pragmatic Programmer</cite></p></code></pre>
+
+<div class="note">
+    <strong>Quote best practices:</strong>
+    <ul>
+        <li>Use <code><blockquote></code> for long, block-level quotes</li>
+        <li>Use <code><q></code> for short, inline quotes (browsers add quotes automatically)</li>
+        <li>Use <code>cite</code> attribute for the source URL</li>
+        <li>Use <code><cite></code> for titles of creative works (books, articles, songs)</li>
+        <li>Don't use <code><blockquote></code> just for indentation — use CSS</li>
+    </ul>
+</div>
+
+<!-- ============================================================================
+     6. CODE AND PREFORMATTED TEXT
+     ============================================================================ -->
+
+<h2>6. Code and Preformatted Text</h2>
+
+<table>
+    <tr>
+        <th>Element</th>
+        <th>Purpose</th>
+        <th>Example</th>
+    </tr>
+    <tr>
+        <td><code><code></code></td>
+        <td>Inline code snippet</td>
+        <td>Use <code>console.log()</code> to debug</td>
+    </tr>
+    <tr>
+        <td><code><pre></code></td>
+        <td>Preformatted text (preserves whitespace)</td>
+        <td>See below</td>
+    </tr>
+    <tr>
+        <td><code><kbd></code></td>
+        <td>Keyboard input</td>
+        <td>Press <kbd>Ctrl</kbd> + <kbd>C</kbd> to copy</td>
+    </tr>
+    <tr>
+        <td><code><samp></code></td>
+        <td>Sample/output from a program</td>
+        <td><samp>Error: File not found</samp></td>
+    </tr>
+    <tr>
+        <td><code><var></code></td>
+        <td>Variable in math or programming</td>
+        <td>The variable <var>x</var> equals 5</td>
+    </tr>
+</table>
+
+<div class="demo-box">
+    <h3>Code Block with <pre> and <code></h3>
+    <pre><code>function greet(name) {
+    console.log(`Hello, ${name}!`);
+}
+
+greet('World');</code></pre>
+
+    <h3>Keyboard Input</h3>
+    <p>To save, press <kbd><kbd>Ctrl</kbd> + <kbd>S</kbd></kbd></p>
+
+    <h3>Program Output</h3>
+    <p><samp>Hello, World!<br>Process finished with exit code 0</samp></p>
+
+    <h3>Variables</h3>
+    <p>The equation <var>E</var> = <var>m</var><var>c</var><sup>2</sup> defines energy-mass equivalence.</p>
+</div>
+
+<pre><code><!-- Code block -->
+<pre><code>function greet(name) {
+    console.log(`Hello, ${name}!`);
+}
+</code></pre>
+
+<!-- Keyboard input -->
+<kbd>Ctrl</kbd> + <kbd>C</kbd>
+
+<!-- Program output -->
+<samp>Hello, World!</samp>
+
+<!-- Variable -->
+<var>x</var> = 5</code></pre>
+
+<div class="tip">
+    <strong>Code formatting tip:</strong> Always nest <code><code></code> inside
+    <code><pre></code> for multi-line code blocks. The <code><pre></code>
+    preserves indentation and line breaks, while <code><code></code> adds
+    semantic meaning.
+</div>
+
+<!-- ============================================================================
+     7. HORIZONTAL RULES
+     ============================================================================ -->
+
+<h2>7. Horizontal Rules (<hr>)</h2>
+
+<!--
+    <hr> represents a thematic break between sections of content.
+    It's semantic, not just a decorative line.
+-->
+
+<div class="demo-box">
+    <h3>Section One</h3>
+    <p>Content for the first section.</p>
+
+    <hr>
+
+    <h3>Section Two</h3>
+    <p>Content for the second section. The <hr> above indicates a thematic shift in content.</p>
+
+    <hr>
+
+    <h3>Section Three</h3>
+    <p>Content for the third section.</p>
+</div>
+
+<pre><code><h3>Section One</h3>
+<p>Content for the first section.</p>
+
+<hr>
+
+<h3>Section Two</h3>
+<p>Content for the second section.</p></code></pre>
+
+<div class="note">
+    <strong>Don't use <hr> for decoration!</strong> If you just want a visual line,
+    use CSS <code>border-bottom</code> on the parent element. The <code><hr></code>
+    should only be used when there's a thematic shift in content.
+</div>
+
+<!-- ============================================================================
+     8. TEXT DIRECTION AND INTERNATIONALIZATION
+     ============================================================================ -->
+
+<h2>8. Text Direction and Internationalization</h2>
+
+<!--
+    HTML supports both left-to-right (LTR) and right-to-left (RTL) text.
+    This is important for languages like Arabic, Hebrew, and Persian.
+-->
+
+<div class="demo-box">
+    <h3>Left-to-Right (default)</h3>
+    <p dir="ltr">This text reads from left to right.</p>
+
+    <h3>Right-to-Left</h3>
+    <p dir="rtl">هذا النص يقرأ من اليمين إلى اليسار</p>
+
+    <h3>Bidirectional Text Override</h3>
+    <p>The word <bdi dir="ltr">HTML</bdi> is embedded in RTL text.</p>
+</div>
+
+<pre><code><!-- Set direction on html element for entire page -->
+<html lang="ar" dir="rtl">
+
+<!-- Override direction for specific content -->
+<p dir="ltr">Left-to-right text</p>
+<p dir="rtl">نص من اليمين إلى اليسار</p>
+
+<!-- bdi isolates bidirectional text -->
+<p>The word <bdi dir="ltr">HTML</bdi> in RTL context.</p></code></pre>
+
+<div class="tip">
+    <strong>Internationalization checklist:</strong>
+    <ul>
+        <li>Always set <code>lang</code> on <code><html></code></li>
+        <li>Use <code>dir="rtl"</code> for Arabic, Hebrew, Persian, Urdu</li>
+        <li>Use <code><bdi></code> for user-generated content that might mix directions</li>
+        <li>Use UTF-8 encoding for universal character support</li>
+    </ul>
+</div>
+
+<!-- ============================================================================
+     COMPLETE TEXT CONTENT EXAMPLE
+     ============================================================================ -->
+
+<h2>Complete Example: Rich Text Content</h2>
+
+<div class="demo-box">
+    <article>
+        <h1>Getting Started with Web Development</h1>
+
+        <p>Web development involves three core technologies: <abbr title="HyperText Markup Language">HTML</abbr>, <abbr title="Cascading Style Sheets">CSS</abbr>, and JavaScript. Each serves a distinct purpose:</p>
+
+        <dl>
+            <dt><dfn>HTML</dfn></dt>
+            <dd>Defines the <strong>structure</strong> and <em>meaning</em> of web content.</dd>
+
+            <dt><dfn>CSS</dfn></dt>
+            <dd>Controls the <strong>presentation</strong> — layout, colors, and fonts.</dd>
+
+            <dt><dfn>JavaScript</dfn></dt>
+            <dd>Adds <strong>interactivity</strong> and dynamic behavior.</dd>
+        </dl>
+
+        <h2>Prerequisites</h2>
+        <ol>
+            <li>A text editor (e.g., <cite>VS Code</cite>)</li>
+            <li>A web browser (e.g., <cite>Chrome</cite> or <cite>Firefox</cite>)</li>
+            <li>Basic computer skills</li>
+        </ol>
+
+        <h2>Your First HTML Page</h2>
+        <p>Create a file called <code>index.html</code> and add the following:</p>
+
+        <pre><code><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My First Page</title>
+</head>
+<body>
+    <h1>Hello, World!</h1>
+    <p>This is my first web page.</p>
+</body>
+</html></code></pre>
+
+        <p>Open the file in your browser. You should see:</p>
+        <samp>
+            Hello, World!<br>
+            This is my first web page.
+        </samp>
+
+        <hr>
+
+        <p><small>Last updated: <time datetime="2024-01-15">January 15, 2024</time></small></p>
+    </article>
+</div>
+
+</body>
+</html>

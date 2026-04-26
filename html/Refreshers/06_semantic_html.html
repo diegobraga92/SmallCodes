@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<!--
+    SEMANTIC HTML
+    File: 06_semantic_html.html
+
+    Comprehensive guide to semantic HTML elements and document structure.
+    Covers HTML5 semantic elements, document outlines, and best practices
+    for meaningful markup. Builds from junior-level basics to mid-level
+    understanding of semantic architecture and accessibility.
+
+    Key Concepts Covered:
+    1. What is Semantic HTML?
+    2. Document Structure Elements (header, nav, main, footer)
+    3. Content Sectioning (article, section, aside)
+    4. Text-Level Semantics (time, mark, address, etc.)
+    5. Document Outline and Heading Hierarchy
+    6. Divitis vs Semantic Markup
+    7. Semantic HTML and SEO
+    8. Common Semantic Patterns
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semantic HTML</title>
+    <style>
+        body { font-family: system-ui, sans-serif; line-height: 1.6; max-width: 900px; margin: 0 auto; padding: 20px; }
+        h1 { color: #e44d26; }
+        h2 { color: #333; border-bottom: 2px solid #e44d26; padding-bottom: 5px; }
+        pre { background: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto; }
+        code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; }
+        .note { background: #fff3cd; border-left: 4px solid #ffc107; padding: 10px 15px; margin: 15px 0; }
+        .warning { background: #f8d7da; border-left: 4px solid #dc3545; padding: 10px 15px; margin: 15px 0; }
+        .tip { background: #d4edda; border-left: 4px solid #28a745; padding: 10px 15px; margin: 15px 0; }
+        table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+        th { background: #e44d26; color: white; }
+        .demo-box { border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin: 15px 0; background: #fafafa; }
+        .non-semantic { background: #fff3cd; padding: 10px; border-radius: 4px; }
+        .semantic { background: #d4edda; padding: 10px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+<h1>Semantic HTML</h1>
+
+<!-- ============================================================================
+     1. WHAT IS SEMANTIC HTML?
+     ============================================================================ -->
+
+<h2>1. What is Semantic HTML?</h2>
+
+<!--
+    Semantic HTML means using HTML elements according to their meaning,
+    not their appearance. A semantic element clearly describes its meaning
+    to both the browser and the developer.
+
+    Non-semantic: <div>, <span> — tell nothing about their content
+    Semantic: <form>, <table>, <article>, <nav> — clearly describe content
+
+    Benefits of semantic HTML:
+    1. Accessibility: Screen readers use semantics to navigate
+    2. SEO: Search engines understand content structure
+    3. Maintainability: Code is self-documenting
+    4. Future-proof: Browsers handle semantic elements consistently
+-->
+
+<table>
+    <tr>
+        <th>Non-Semantic (avoid)</th>
+        <th>Semantic (prefer)</th>
+        <th>Reason</th>
+    </tr>
+    <tr>
+        <td><code><div class="header"></code></td>
+        <td><code><header></code></td>
+        <td>Native landmark role</td>
+    </tr>
+    <tr>
+        <td><code><div class="nav"></code></td>
+        <td><code><nav></code></td>
+        <td>Navigation landmark</td>
+    </tr>
+    <tr>
+        <td><code><div class="main"></code></td>
+        <td><code><main></code></td>
+        <td>Main content landmark</td>
+    </tr>
+    <tr>
+        <td><code><div class="article"></code></td>
+        <td><code><article></code></td>
+        <td>Self-contained composition</td>
+    </tr>
+    <tr>
+        <td><code><div class="section"></code></td>
+        <td><code><section></code></td>
+        <td>Thematic grouping</td>
+    </tr>
+    <tr>
+        <td><code><div class="footer"></code></td>
+        <td><code><footer></code></td>
+        <td>Footer landmark</td>
+    </tr>
+    <tr>
+        <td><code><span class="bold"></code></td>
+        <td><code><strong></code></td>
+        <td>Strong importance</td>
+    </tr>
+    <tr>
+        <td><code><span class="italic"></code></td>
+        <td><code><em></code></td>
+        <td>Emphasis</td>
+    </tr>
+</table>
+
+<!-- ============================================================================
+     2. DOCUMENT STRUCTURE ELEMENTS
+     ============================================================================ -->
+
+<h2>2. Document Structure Elements</h2>
+
+<!--
+    HTML5 introduced structural elements that define the major regions
+    of a web page. These create ARIA landmarks automatically.
+-->
+
+<h3>Header</h3>
+<pre><code><!-- Introductory content for a page or section -->
+<header>
+    <h1>Site Title</h1>
+    <p>Site tagline or description</p>
+    <nav>
+        <!-- navigation links -->
+    </nav>
+</header>
+
+<!-- Can be used multiple times (per article, per section) -->
+<article>
+    <header>
+        <h2>Article Title</h2>
+        <p>Published: <time>2024-01-15</time></p>
+    </header>
+    <p>Article content...</p>
+</article></code></pre>
+
+<h3>Nav</h3>
+<pre><code><!-- Primary navigation -->
+<nav aria-label="Main">
+    <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/about">About</a></li>
+    </ul>
+</nav>
+
+<!-- Secondary navigation -->
+<nav aria-label="Breadcrumb">
+    <ol>
+        <li><a href="/">Home</a></li>
+        <li><a href="/blog">Blog</a></li>
+        <li aria-current="page">Current Article</li>
+    </ol>
+</nav></code></pre>
+
+<div class="note">
+    <strong>When to use <nav>:</strong> Only use <code><nav></code>
+    for primary navigation blocks. Don't wrap every group of links in
+    <code><nav></code> — footer links, social media links, and legal
+    links typically don't need it.
+</div>
+
+<h3>Main</h3>
+<pre><code><!-- The dominant content of the page (use only once) -->
+<main id="main-content">
+    <h1>Page Title</h1>
+    <p>Primary content...</p>
+</main></code></pre>
+
+<div class="warning">
+    <strong>Only one <main> per page!</strong> The <code><main></code>
+    element should contain the unique content of the page. Don't include
+    site-wide elements like headers, footers, or sidebars inside it.
+</div>
+
+<h3>Footer</h3>
+<pre><code><!-- Footer for a page or section -->
+<footer>
+    <p>&copy; 2024 My Company. All rights reserved.</p>
+    <address>
+        Contact: <a href="mailto:info@example.com">info@example.com</a>
+    </address>
+</footer></code></pre>
+
+<!-- ============================================================================
+     3. CONTENT SECTIONING
+     ============================================================================ -->
+
+<h2>3. Content Sectioning Elements</h2>
+
+<h3>Article</h3>
+<!--
+    <article> represents a self-contained composition that could be
+    distributed independently (blog post, news story, forum post, comment).
+-->
+<pre><code><article>
+    <h2>How to Write Semantic HTML</h2>
+    <p>Published by <author>Jane Doe</author></p>
+    <p>Semantic HTML is the foundation of accessible web content...</p>
+
+    <!-- Comments are also articles (self-contained) -->
+    <article>
+        <h3>Great article!</h3>
+        <p>Posted by User123 on <time>2024-01-16</time></p>
+        <p>This really helped me understand semantic elements.</p>
+    </article>
+</article></code></pre>
+
+<h3>Section</h3>
+<!--
+    <section> represents a thematic grouping of content, typically with
+    a heading. Use when the content could logically be in its own chapter.
+-->
+<pre><code><section>
+    <h2>Installation Guide</h2>
+    <p>Follow these steps to install the software...</p>
+</section>
+
+<section>
+    <h2>Configuration</h2>
+    <p>After installation, configure the settings...</p>
+</section></code></pre>
+
+<div class="tip">
+    <strong>Article vs Section:</strong>
+    <ul>
+        <li><strong>Article:</strong> Self-contained, could be syndicated (RSS, embed)</li>
+        <li><strong>Section:</strong> Thematic grouping within a larger document</li>
+        <li>An article can contain sections, and a section can contain articles</li>
+        <li>If in doubt, use <code><div></code> — not everything needs semantics</li>
+    </ul>
+</div>
+
+<h3>Aside</h3>
+<!--
+    <aside> represents content tangentially related to the main content.
+    Sidebars, pull quotes, related links, advertisements.
+-->
+<pre><code><article>
+    <h2>Climate Change Report</h2>
+    <p>Main article content...</p>
+
+    <aside>
+        <h3>Related Articles</h3>
+        <ul>
+            <li><a href="#">Renewable Energy Trends</a></li>
+            <li><a href="#">Carbon Footprint Calculator</a></li>
+        </ul>
+    </aside>
+</article></code></pre>
+
+<!-- ============================================================================
+     4. TEXT-LEVEL SEMANTICS
+     ============================================================================ -->
+
+<h2>4. Text-Level Semantics</h2>
+
+<table>
+    <tr>
+        <th>Element</th>
+        <th>Meaning</th>
+        <th>Example</th>
+    </tr>
+    <tr>
+        <td><code><time></code></td>
+        <td>Machine-readable date/time</td>
+        <td><code><time datetime="2024-01-15">Jan 15</time></code></td>
+    </tr>
+    <tr>
+        <td><code><address></code></td>
+        <td>Contact information for the author</td>
+        <td><code><address>Email: user@example.com</address></code></td>
+    </tr>
+    <tr>
+        <td><code><mark></code></td>
+        <td>Highlighted text (search results)</td>
+        <td><code><mark>keyword</mark></code></td>
+    </tr>
+    <tr>
+        <td><code><dfn></code></td>
+        <td>Defining instance of a term</td>
+        <td><code><dfn>HTML</dfn> is...</code></td>
+    </tr>
+    <tr>
+        <td><code><abbr></code></td>
+        <td>Abbreviation with expansion</td>
+        <td><code><abbr title="World Wide Web">WWW</abbr></code></td>
+    </tr>
+    <tr>
+        <td><code><cite></code></td>
+        <td>Title of a creative work</td>
+        <td><code><cite>The Great Gatsby</cite></code></td>
+    </tr>
+    <tr>
+        <td><code><del></code> / <code><ins></code></td>
+        <td>Deleted / inserted content</td>
+        <td><code><del>old</del> <ins>new</ins></code></td>
+    </tr>
+    <tr>
+        <td><code><s></code></td>
+        <td>No longer accurate/correct</td>
+        <td><code><s>$19.99</s> $14.99</code></td>
+    </tr>
+    <tr>
+        <td><code><u></code></td>
+        <td>Unarticulated annotation</td>
+        <td><code><u>misspelled</u></code></td>
+    </tr>
+    <tr>
+        <td><code><b></code></td>
+        <td>Stylistic offset (keywords, product names)</td>
+        <td><code><b>Product Name</b></code></td>
+    </tr>
+    <tr>
+        <td><code><i></code></td>
+        <td>Alternate voice (foreign words, technical terms)</td>
+        <td><code><i>et cetera</i></code></td>
+    </tr>
+    <tr>
+        <td><code><small></code></td>
+        <td>Side comments, fine print</td>
+        <td><code><small>Terms apply</small></code></td>
+    </tr>
+    <tr>
+        <td><code><data></code></td>
+        <td>Machine-readable value</td>
+        <td><code><data value="42">Forty-two</data></code></td>
+    </tr>
+</table>
+
+<!-- ============================================================================
+     5. DOCUMENT OUTLINE
+     ============================================================================ -->
+
+<h2>5. Document Outline and Heading Hierarchy</h2>
+
+<!--
+    The document outline is the structure created by heading elements (h1-h6)
+    and sectioning elements (article, section, nav, aside). Screen readers
+    and search engines use this to understand page structure.
+-->
+
+<h3>Good Outline Example</h3>
+<pre><code><h1>My Blog</h1>
+  <h2>Latest Posts</h2>
+    <h3>How to Learn HTML</h3>
+    <h3>CSS Grid Guide</h3>
+  <h2>About</h2>
+    <h3>My Background</h3>
+    <h3>Contact</h3></code></pre>
+
+<h3>Bad Outline (Don't Do This)</h3>
+<pre><code><h1>My Blog</h1>
+  <h3>Latest Posts</h3>     <!-- Skipped h2! -->
+    <h4>How to Learn HTML</h4> <!-- Skipped h3! --></code></pre>
+
+<div class="note">
+    <strong>Heading rules:</strong>
+    <ul>
+        <li>Only one <code><h1></code> per page</li>
+        <li>Don't skip heading levels (h1 → h3 is invalid)</li>
+        <li>Each sectioning element can have its own heading hierarchy</li>
+        <li>Headings should be descriptive of the content they introduce</li>
+        <li>Use CSS for font sizes, not heading levels</li>
+    </ul>
+</div>
+
+<!-- ============================================================================
+     6. DIVITIS VS SEMANTIC MARKUP
+     ============================================================================ -->
+
+<h2>6. Divitis vs Semantic Markup</h2>
+
+<!--
+    "Divitis" is the overuse of <div> elements when semantic alternatives exist.
+    It makes code harder to read, maintain, and access.
+-->
+
+<h3>Before: Divitis (Non-Semantic)</h3>
+<div class="non-semantic">
+<pre><code><div class="blog-post">
+    <div class="post-header">
+        <div class="post-title">How to Write Semantic HTML</div>
+        <div class="post-meta">Published Jan 15, 2024</div>
+    </div>
+    <div class="post-content">
+        <div class="intro">Semantic HTML is important...</div>
+        <div class="body">Here are the details...</div>
+    </div>
+    <div class="post-footer">
+        <div class="tags">HTML, Semantics</div>
+    </div>
+</div></code></pre>
+</div>
+
+<h3>After: Semantic Markup</h3>
+<div class="semantic">
+<pre><code><article>
+    <header>
+        <h2>How to Write Semantic HTML</h2>
+        <p>Published <time datetime="2024-01-15">Jan 15, 2024</time></p>
+    </header>
+    <p>Semantic HTML is important...</p>
+    <p>Here are the details...</p>
+    <footer>
+        <p>Tags: <a href="/tags/html">HTML</a>, <a href="/tags/semantics">Semantics</a></p>
+    </footer>
+</article></code></pre>
+</div>
+
+<div class="tip">
+    <strong>When to use <div>:</strong> Use <code><div></code> when
+    no semantic element fits. Common cases: CSS layout containers, JavaScript
+    hooks, generic wrappers. Not everything needs to be semantic — just the
+    meaningful structural elements.
+</div>
+
+<!-- ============================================================================
+     7. SEMANTIC HTML AND SEO
+     ============================================================================ -->
+
+<h2>7. Semantic HTML and SEO</h2>
+
+<!--
+    Search engines use semantic HTML to understand page content and structure.
+    Proper semantics can improve search rankings and rich snippet display.
+-->
+
+<h3>SEO Benefits of Semantic HTML</h3>
+<ul>
+    <li><strong>Headings:</strong> Search engines use h1-h6 to understand topic hierarchy</li>
+    <li><strong><title>:</strong> The most important SEO element (appears in search results)</li>
+    <li><strong><article>:</strong> Helps Google identify primary content vs navigation</li>
+    <li><strong><nav>:</strong> Identifies navigation links (different from content links)</li>
+    <li><strong><time>:</strong> Enables date-based rich snippets in search results</li>
+    <li><strong><address>:</strong> Helps local SEO by identifying contact information</li>
+    <li><strong><figure> / <figcaption>:</strong> Helps image search understand context</li>
+</ul>
+
+<h3>Structured Data with Semantic HTML</h3>
+<pre><code><!-- Semantic HTML + JSON-LD structured data -->
+<article itemscope itemtype="https://schema.org/Article">
+    <h2 itemprop="headline">How to Write Semantic HTML</h2>
+    <p>By <span itemprop="author">Jane Doe</span></p>
+    <time itemprop="datePublished" datetime="2024-01-15">Jan 15, 2024</time>
+    <p itemprop="description">A guide to writing meaningful HTML markup.</p>
+</article></code></pre>
+
+<!-- ============================================================================
+     8. COMMON SEMANTIC PATTERNS
+     ============================================================================ -->
+
+<h2>8. Common Semantic Patterns</h2>
+
+<h3>Blog Post</h3>
+<pre><code><article>
+    <header>
+        <h1>Blog Post Title</h1>
+        <p>By <author>Author Name</author> on <time>2024-01-15</time></p>
+    </header>
+    <p>Blog content...</p>
+    <footer>
+        <p>Posted in <a href="/category">Category</a></p>
+    </footer>
+</article></code></pre>
+
+<h3>Product Page</h3>
+<pre><code><article itemscope itemtype="https://schema.org/Product">
+    <h1 itemprop="name">Product Name</h1>
+    <img src="product.jpg" alt="Product Name" itemprop="image">
+    <p itemprop="description">Product description...</p>
+    <p>Price: <span itemprop="price" content="29.99">$29.99</span></p>
+    <button type="button">Add to Cart</button>
+</article></code></pre>
+
+<h3>FAQ Page</h3>
+<pre><code><section itemscope itemtype="https://schema.org/FAQPage">
+    <h1>Frequently Asked Questions</h1>
+
+    <div itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+        <h2 itemprop="name">What is semantic HTML?</h2>
+        <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+            <p itemprop="text">Semantic HTML uses elements according to their meaning...</p>
+        </div>
+    </div>
+</section></code></pre>
+
+<h3>Complete Page Template</h3>
+<pre><code><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Semantic Page Template</title>
+</head>
+<body>
+    <header>
+        <h1>Site Name</h1>
+        <nav aria-label="Main">
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/blog">Blog</a></li>
+                <li><a href="/contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <article>
+            <h2>Article Title</h2>
+            <p>Content...</p>
+        </article>
+
+        <aside>
+            <h2>Related Content</h2>
+            <ul>
+                <li><a href="#">Related link</a></li>
+            </ul>
+        </aside>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Site Name</p>
+    </footer>
+</body>
+</html></code></pre>
+
+</body>
+</html>

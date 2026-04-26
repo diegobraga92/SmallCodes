@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<!--
+    HTML IMAGES & MEDIA
+    File: 03_images_media.html
+
+    Comprehensive guide to embedding images, video, audio, and other
+    media in HTML. Covers responsive images, accessibility, performance,
+    and modern media formats. Builds from junior-level basics to mid-level
+    understanding of adaptive media delivery.
+
+    Key Concepts Covered:
+    1. Image Element (src, alt, width, height)
+    2. Responsive Images (srcset, sizes, <picture>)
+    3. Figure and Figcaption
+    4. Video and Audio Elements
+    5. Embedded Content (iframes, canvas, SVG)
+    6. Image Formats and Performance
+    7. Lazy Loading and Accessibility
+    8. Media Source Fallbacks
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Images & Media</title>
+    <style>
+        body { font-family: system-ui, sans-serif; line-height: 1.6; max-width: 900px; margin: 0 auto; padding: 20px; }
+        h1 { color: #e44d26; }
+        h2 { color: #333; border-bottom: 2px solid #e44d26; padding-bottom: 5px; }
+        pre { background: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto; }
+        code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; }
+        .note { background: #fff3cd; border-left: 4px solid #ffc107; padding: 10px 15px; margin: 15px 0; }
+        .warning { background: #f8d7da; border-left: 4px solid #dc3545; padding: 10px 15px; margin: 15px 0; }
+        .tip { background: #d4edda; border-left: 4px solid #28a745; padding: 10px 15px; margin: 15px 0; }
+        table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+        th { background: #e44d26; color: white; }
+        .demo-box { border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin: 15px 0; background: #fafafa; }
+        img { max-width: 100%; height: auto; }
+    </style>
+</head>
+<body>
+
+<h1>HTML Images & Media</h1>
+
+<!-- ============================================================================
+     1. IMAGE ELEMENT BASICS
+     ============================================================================ -->
+
+<h2>1. Image Element Basics</h2>
+
+<!--
+    The <img> element embeds an image in the page. It's a void element
+    (self-closing) and requires two critical attributes:
+    - src: The image URL (path or full URL)
+    - alt: Alternative text description (required for accessibility)
+-->
+
+<div class="demo-box">
+    <img src="https://via.placeholder.com/300x200/FF6B6B/FFFFFF?text=Example+Image"
+         alt="A placeholder image showing an example">
+</div>
+
+<pre><code><!-- Basic image -->
+<img src="photo.jpg" alt="A scenic mountain landscape">
+
+<!-- Image with explicit dimensions (prevents layout shift) -->
+<img src="photo.jpg" alt="Mountain landscape"
+     width="800" height="600">
+
+<!-- Image as a link -->
+<a href="full-size.jpg">
+    <img src="thumbnail.jpg" alt="Click to view full-size photo">
+</a></code></pre>
+
+<div class="warning">
+    <strong>Alt text is required!</strong> Every <code><img></code> must have
+    an <code>alt</code> attribute. If the image is purely decorative, use
+    <code>alt=""</code> (empty alt) so screen readers skip it. Never omit
+    the alt attribute entirely.
+</div>
+
+<h3>Alt Text Guidelines</h3>
+<table>
+    <tr>
+        <th>Image Type</th>
+        <th>Alt Text</th>
+        <th>Example</th>
+    </tr>
+    <tr>
+        <td>Informative</td>
+        <td>Describe the content</td>
+        <td><code>alt="Red apple on a wooden table"</code></td>
+    </tr>
+    <tr>
+        <td>Decorative</td>
+        <td>Empty alt</td>
+        <td><code>alt=""</code></td>
+    </tr>
+    <tr>
+        <td>Functional (link/button)</td>
+        <td>Describe the action</td>
+        <td><code>alt="View product details"</code></td>
+    </tr>
+    <tr>
+        <td>Logo</td>
+        <td>Company name</td>
+        <td><code>alt="Acme Corp"</code></td>
+    </tr>
+    <tr>
+        <td>Icon</td>
+        <td>Describe the icon's meaning</td>
+        <td><code>alt="Search"</code></td>
+    </tr>
+    <tr>
+        <td>Complex (chart/graph)</td>
+        <td>Brief summary + link to data</td>
+        <td><code>alt="Bar chart showing Q1 sales"</code></td>
+    </tr>
+</table>
+
+<!-- ============================================================================
+     2. RESPONSIVE IMAGES
+     ============================================================================ -->
+
+<h2>2. Responsive Images</h2>
+
+<!--
+    Responsive images adapt to different screen sizes and resolutions.
+    Two main approaches:
+    1. srcset + sizes: Provide multiple image files, let browser choose
+    2. <picture>: Art direction (different crops for different screens)
+-->
+
+<h3>srcset and sizes Attributes</h3>
+<!--
+    srcset lists image files with their widths (or pixel densities).
+    sizes tells the browser how much space the image will occupy.
+    The browser selects the best image based on viewport and device pixel ratio.
+-->
+
+<pre><code><!-- Resolution switching (different sizes for different viewports) -->
+<img src="photo-800.jpg"
+     srcset="photo-400.jpg 400w,
+             photo-800.jpg 800w,
+             photo-1200.jpg 1200w,
+             photo-1600.jpg 1600w"
+     sizes="(max-width: 600px) 100vw,
+            (max-width: 1200px) 50vw,
+            33vw"
+     alt="Mountain landscape">
+
+<!-- Pixel density descriptors (for retina displays) -->
+<img src="photo-1x.jpg"
+     srcset="photo-1x.jpg 1x,
+             photo-2x.jpg 2x,
+             photo-3x.jpg 3x"
+     alt="Mountain landscape"></code></pre>
+
+<div class="note">
+    <strong>How srcset works:</strong> The browser knows its viewport width and
+    device pixel ratio. It uses the <code>sizes</code> attribute to calculate
+    how many CSS pixels the image will occupy, then picks the best source from
+    <code>srcset</code>. You don't need JavaScript — it's built into HTML.
+</div>
+
+<h3>Picture Element (Art Direction)</h3>
+<!--
+    The <picture> element allows different image sources for different
+    conditions. Use it when you need different image crops (art direction)
+    or different formats (WebP, AVIF with JPEG fallback).
+-->
+
+<pre><code><!-- Art direction: different crops for mobile vs desktop -->
+<picture>
+    <source media="(max-width: 600px)" srcset="photo-mobile.jpg">
+    <source media="(max-width: 1200px)" srcset="photo-tablet.jpg">
+    <img src="photo-desktop.jpg" alt="Mountain landscape">
+</picture>
+
+<!-- Format fallback: modern formats with JPEG safety net -->
+<picture>
+    <source type="image/avif" srcset="photo.avif">
+    <source type="image/webp" srcset="photo.webp">
+    <img src="photo.jpg" alt="Mountain landscape">
+</picture></code></pre>
+
+<div class="tip">
+    <strong>Picture vs srcset:</strong> Use <code>srcset</code> for resolution
+    switching (same image, different sizes). Use <code><picture></code>
+    for art direction (different crops) or format fallbacks. You can combine
+    both: <code><source srcset="photo-400.jpg 400w, photo-800.jpg 800w"></code>.
+</div>
+
+<!-- ============================================================================
+     3. FIGURE AND FIGCAPTION
+     ============================================================================ -->
+
+<h2>3. Figure and Figcaption</h2>
+
+<!--
+    <figure> represents self-contained content (images, diagrams, code snippets).
+    <figcaption> provides a caption for the figure content.
+-->
+
+<div class="demo-box">
+    <figure>
+        <img src="https://via.placeholder.com/400x250/4A90D9/FFFFFF?text=Chart"
+             alt="Bar chart showing quarterly sales data">
+        <figcaption>Figure 1: Quarterly sales performance for fiscal year 2024</figcaption>
+    </figure>
+</div>
+
+<pre><code><!-- Image with caption -->
+<figure>
+    <img src="chart.png" alt="Bar chart of quarterly sales">
+    <figcaption>Figure 1: Quarterly sales performance for FY 2024</figcaption>
+</figure>
+
+<!-- Code snippet with caption -->
+<figure>
+    <pre><code>console.log('Hello, World!');</code></pre>
+    <figcaption>Example 1: Basic JavaScript greeting</figcaption>
+</figure>
+
+<!-- Multiple images in one figure -->
+<figure>
+    <img src="photo-front.jpg" alt="Front view">
+    <img src="photo-side.jpg" alt="Side view">
+    <figcaption>Product views: front and side angles</figcaption>
+</figure></code></pre>
+
+<div class="note">
+    <strong>Figure vs aside:</strong> Use <code><figure></code> for content
+    that is referenced from the main text but could be moved elsewhere without
+    affecting the flow. Use <code><aside></code> for tangential content.
+</div>
+
+<!-- ============================================================================
+     4. VIDEO AND AUDIO
+     ============================================================================ -->
+
+<h2>4. Video and Audio</h2>
+
+<h3>Video Element</h3>
+<pre><code><!-- Basic video with controls -->
+<video src="video.mp4" controls width="640" height="360">
+    <p>Your browser doesn't support video. <a href="video.mp4">Download it</a>.</p>
+</video>
+
+<!-- Video with multiple sources and attributes -->
+<video controls width="640" height="360"
+       poster="thumbnail.jpg"
+       preload="metadata"
+       autoplay muted loop>
+    <source src="video.mp4" type="video/mp4">
+    <source src="video.webm" type="video/webm">
+    <source src="video.ogv" type="video/ogg">
+    <track kind="captions" src="captions.vtt" srclang="en" label="English">
+    <p>Your browser doesn't support video. <a href="video.mp4">Download it</a>.</p>
+</video></code></pre>
+
+<table>
+    <tr>
+        <th>Attribute</th>
+        <th>Description</th>
+    </tr>
+    <tr><td><code>controls</code></td><td>Show browser's default playback controls</td></tr>
+    <tr><td><code>autoplay</code></td><td>Start playing automatically (requires muted in most browsers)</td></tr>
+    <tr><td><code>muted</code></td><td>Start with audio muted</td></tr>
+    <tr><td><code>loop</code></td><td>Restart playback when finished</td></tr>
+    <tr><td><code>poster</code></td><td>Thumbnail image shown before playback</td></tr>
+    <tr><td><code>preload</code></td><td>Hint: none, metadata, or auto (how much to buffer)</td></tr>
+    <tr><td><code>playsinline</code></td><td>Play inline on iOS (not fullscreen)</td></tr>
+</table>
+
+<h3>Audio Element</h3>
+<pre><code><!-- Basic audio -->
+<audio controls preload="metadata">
+    <source src="podcast.mp3" type="audio/mpeg">
+    <source src="podcast.ogg" type="audio/ogg">
+    <source src="podcast.wav" type="audio/wav">
+    <p>Your browser doesn't support audio. <a href="podcast.mp3">Download</a>.</p>
+</audio></code></pre>
+
+<h3>Track Element (Captions and Subtitles)</h3>
+<pre><code><!-- WebVTT caption file (captions.vtt) -->
+WEBVTT
+
+00:00:01.000 --> 00:00:05.000
+Welcome to this tutorial on HTML media elements.
+
+00:00:06.000 --> 00:00:10.000
+Today we'll cover video, audio, and captions.
+
+<!-- HTML with track -->
+<video controls>
+    <source src="tutorial.mp4" type="video/mp4">
+    <track kind="captions" src="captions.vtt"
+           srclang="en" label="English" default>
+    <track kind="subtitles" src="spanish.vtt"
+           srclang="es" label="Spanish">
+    <track kind="chapters" src="chapters.vtt"
+           srclang="en" label="Chapters">
+</video></code></pre>
+
+<div class="warning">
+    <strong>Autoplay restrictions:</strong> Most browsers block autoplay with audio.
+    Use <code>autoplay muted</code> for video backgrounds. Always provide controls
+    so users can start/stop playback. Never autoplay with sound without user consent.
+</div>
+
+<!-- ============================================================================
+     5. EMBEDDED CONTENT
+     ============================================================================ -->
+
+<h2>5. Embedded Content</h2>
+
+<h3>Iframe</h3>
+<pre><code><!-- Embed another page -->
+<iframe src="https://www.example.com"
+        width="800" height="600"
+        title="Example website"
+        loading="lazy"
+        sandbox="allow-scripts allow-same-origin">
+    <p>Your browser doesn't support iframes.</p>
+</iframe>
+
+<!-- YouTube embed -->
+<iframe width="560" height="315"
+        src="https://www.youtube.com/embed/VIDEO_ID"
+        title="YouTube video player"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen>
+</iframe></code></pre>
+
+<table>
+    <tr>
+        <th>Iframe Attribute</th>
+        <th>Purpose</th>
+    </tr>
+    <tr><td><code>sandbox</code></td><td>Restricts capabilities (forms, scripts, popups, etc.)</td></tr>
+    <tr><td><code>allow</code></td><td>Feature policy (camera, microphone, fullscreen, etc.)</td></tr>
+    <tr><td><code>loading="lazy"</code></td><td>Defer loading until near viewport</td></tr>
+    <tr><td><code>title</code></td><td>Accessible name for screen readers (required!)</td></tr>
+    <tr><td><code>srcdoc</code></td><td>Inline HTML content instead of src URL</td></tr>
+</table>
+
+<h3>Canvas</h3>
+<pre><code><!-- Canvas for dynamic graphics (JavaScript required) -->
+<canvas id="myCanvas" width="400" height="300">
+    <p>Your browser doesn't support canvas.</p>
+</canvas>
+
+<script>
+    const canvas = document.getElementById('myCanvas');
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = 'blue';
+    ctx.fillRect(10, 10, 100, 50);
+</script></code></pre>
+
+<h3>Inline SVG</h3>
+<pre><code><!-- SVG scales infinitely and can be styled with CSS -->
+<svg width="100" height="100" viewBox="0 0 100 100"
+     aria-label="A blue circle" role="img">
+    <circle cx="50" cy="50" r="40"
+            fill="blue" stroke="darkblue" stroke-width="3" />
+</svg></code></pre>
+
+<!-- ============================================================================
+     6. IMAGE FORMATS AND PERFORMANCE
+     ============================================================================ -->
+
+<h2>6. Image Formats and Performance</h2>
+
+<table>
+    <tr>
+        <th>Format</th>
+        <th>Compression</th>
+        <th>Transparency</th>
+        <th>Animation</th>
+        <th>Best For</th>
+    </tr>
+    <tr>
+        <td>JPEG/JPG</td>
+        <td>Lossy</td>
+        <td>No</td>
+        <td>No</td>
+        <td>Photos, complex images</td>
+    </tr>
+    <tr>
+        <td>PNG</td>
+        <td>Lossless</td>
+        <td>Yes</td>
+        <td>No</td>
+        <td>Screenshots, logos, graphics with text</td>
+    </tr>
+    <tr>
+        <td>GIF</td>
+        <td>Lossless</td>
+        <td>Yes (1-bit)</td>
+        <td>Yes</td>
+        <td>Simple animations, memes</td>
+    </tr>
+    <tr>
+        <td>WebP</td>
+        <td>Both</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Modern replacement for JPEG/PNG/GIF (smaller files)</td>
+    </tr>
+    <tr>
+        <td>AVIF</td>
+        <td>Both</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Next-gen format, best compression (limited browser support)</td>
+    </tr>
+    <tr>
+        <td>SVG</td>
+        <td>Vector</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Icons, logos, illustrations (scales infinitely)</td>
+    </tr>
+</table>
+
+<h3>Performance Best Practices</h3>
+<pre><code><!-- 1. Always set width and height (prevents Cumulative Layout Shift) -->
+<img src="photo.jpg" alt="Description" width="800" height="600">
+
+<!-- 2. Lazy load below-the-fold images -->
+<img src="photo.jpg" alt="Description" loading="lazy">
+
+<!-- 3. Use modern formats with fallbacks -->
+<picture>
+    <source srcset="photo.avif" type="image/avif">
+    <source srcset="photo.webp" type="image/webp">
+    <img src="photo.jpg" alt="Description" width="800" height="600">
+</picture>
+
+<!-- 4. Use srcset for resolution switching -->
+<img src="photo-800.jpg"
+     srcset="photo-400.jpg 400w, photo-800.jpg 800w, photo-1200.jpg 1200w"
+     sizes="(max-width: 600px) 100vw, 50vw"
+     alt="Description">
+
+<!-- 5. Preload critical images (hero images) -->
+<link rel="preload" as="image" href="hero.webp"
+      imagesrcset="hero-400.webp 400w, hero-800.webp 800w"
+      imagesizes="100vw"></code></pre>
+
+<div class="tip">
+    <strong>Image optimization checklist:</strong>
+    <ul>
+        <li>Resize images to the maximum display size needed</li>
+        <li>Use WebP/AVIF with JPEG/PNG fallback</li>
+        <li>Compress with tools like Squoosh, ImageOptim, or Sharp</li>
+        <li>Set explicit width and height attributes</li>
+        <li>Use <code>loading="lazy"</code> for non-critical images</li>
+        <li>Use <code>fetchpriority="high"</code> for hero/LCP images</li>
+        <li>Serve responsive images with srcset</li>
+    </ul>
+</div>
+
+<!-- ============================================================================
+     7. LAZY LOADING AND ACCESSIBILITY
+     ============================================================================ -->
+
+<h2>7. Lazy Loading and Accessibility</h2>
+
+<h3>Native Lazy Loading</h3>
+<pre><code><!-- Browser-native lazy loading (supported in modern browsers) -->
+<img src="photo.jpg" alt="Description" loading="lazy">
+<iframe src="widget.html" title="Widget" loading="lazy"></iframe>
+
+<!-- Eager loading (default, load immediately) -->
+<img src="hero.jpg" alt="Hero image" loading="eager">
+
+<!-- Priority hints for Core Web Vitals -->
+<img src="hero.jpg" alt="Hero" fetchpriority="high">
+<img src="below-fold.jpg" alt="Content" fetchpriority="low"></code></pre>
+
+<h3>Media Accessibility Checklist</h3>
+<ul>
+    <li><strong>Alt text:</strong> Every image needs alt text (descriptive or empty for decorative)</li>
+    <li><strong>Captions:</strong> Videos need captions for deaf/hard-of-hearing users</li>
+    <li><strong>Transcripts:</strong> Audio content needs text transcripts</li>
+    <li><strong>Audio descriptions:</strong> Videos need narration of visual information</li>
+    <li><strong>Controls:</strong> Media players need accessible controls (keyboard operable)</li>
+    <li><strong>Contrast:</strong> Text overlays on images need sufficient contrast</li>
+    <li><strong>ARIA:</strong> Use <code>role="img"</code> and <code>aria-label</code> for SVG icons</li>
+</ul>
+
+<!-- ============================================================================
+     8. MEDIA SOURCE FALLBACKS
+     ============================================================================ -->
+
+<h2>8. Media Source Fallbacks</h2>
+
+<!--
+    Always provide fallback content for browsers that don't support
+    certain media formats or elements. This ensures graceful degradation.
+-->
+
+<pre><code><!-- Image format fallback chain -->
+<picture>
+    <source srcset="photo.avif" type="image/avif">
+    <source srcset="photo.webp" type="image/webp">
+    <img src="photo.jpg" alt="Description">
+</picture>
+
+<!-- Video format fallback chain -->
+<video controls width="640" height="360">
+    <source src="video.mp4" type="video/mp4">
+    <source src="video.webm" type="video/webm">
+    <source src="video.ogv" type="video/ogg">
+    <!-- Fallback content -->
+    <p>Your browser doesn't support video.
+       <a href="video.mp4">Download the video</a> instead.</p>
+</video>
+
+<!-- Audio format fallback chain -->
+<audio controls>
+    <source src="audio.mp3" type="audio/mpeg">
+    <source src="audio.ogg" type="audio/ogg">
+    <source src="audio.wav" type="audio/wav">
+    <p>Your browser doesn't support audio.
+       <a href="audio.mp3">Download the audio</a> instead.</p>
+</audio></code></pre>
+
+<div class="note">
+    <strong>Fallback order:</strong> List sources from most modern/desirable to
+    least. The browser picks the first format it supports. Always include a
+    text fallback inside the element for browsers that don't support the
+    element at all.
+</div>
+
+</body>
+</html>

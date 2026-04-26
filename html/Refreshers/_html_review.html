@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<!--
+    HTML COMPREHENSIVE REVIEW & CHEATSHEET
+    File: _html_review.html
+
+    Quick-reference cheatsheet covering all HTML Refresher topics.
+    Use this for rapid lookup of syntax, best practices, and key concepts.
+    Covers junior-level fundamentals through mid-level patterns.
+
+    Sections:
+    1. Document Structure
+    2. Text & Content
+    3. Links & Navigation
+    4. Media (Images, Audio, Video)
+    5. Tables
+    6. Forms & Input
+    7. Semantic HTML
+    8. HTML5 APIs
+    9. Accessibility (A11y)
+    10. SEO & Metadata
+    11. Embedding & Iframes
+    12. Performance
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Review & Cheatsheet</title>
+    <style>
+        body { font-family: system-ui, sans-serif; line-height: 1.6; max-width: 1000px; margin: 0 auto; padding: 20px; }
+        h1 { color: #e44d26; text-align: center; }
+        h2 { color: #333; border-bottom: 2px solid #e44d26; padding-bottom: 5px; margin-top: 30px; }
+        h3 { color: #555; margin-top: 20px; }
+        pre { background: #f4f4f4; padding: 10px; border-radius: 5px; overflow-x: auto; font-size: 0.9em; }
+        code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; font-size: 0.9em; }
+        .note { background: #fff3cd; border-left: 4px solid #ffc107; padding: 8px 12px; margin: 10px 0; }
+        .tip { background: #d4edda; border-left: 4px solid #28a745; padding: 8px 12px; margin: 10px 0; }
+        .warning { background: #f8d7da; border-left: 4px solid #dc3545; padding: 8px 12px; margin: 10px 0; }
+        table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 0.9em; }
+        th, td { border: 1px solid #ddd; padding: 6px 10px; text-align: left; }
+        th { background: #e44d26; color: white; }
+        .tag { color: #e44d26; font-weight: bold; }
+        .attr { color: #1a73e8; }
+        .val { color: #188038; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+<h1>HTML Comprehensive Review & Cheatsheet</h1>
+
+<!-- ============================================================================
+     1. DOCUMENT STRUCTURE
+     ============================================================================ -->
+
+<h2>1. Document Structure</h2>
+
+<pre><code><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Title</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Content here -->
+    <script src="app.js" defer></script>
+</body>
+</html></code></pre>
+
+<table>
+    <tr><th>Element</th><th>Purpose</th></tr>
+    <tr><td><code><!DOCTYPE html></code></td><td>HTML5 document type declaration</td></tr>
+    <tr><td><code><html></code></td><td>Root element. Use <code>lang</code> attribute for accessibility/SEO</td></tr>
+    <tr><td><code><head></code></td><td>Metadata container (not displayed)</td></tr>
+    <tr><td><code><body></code></td><td>Visible content container</td></tr>
+</table>
+
+<!-- ============================================================================
+     2. TEXT & CONTENT
+     ============================================================================ -->
+
+<h2>2. Text & Content</h2>
+
+<div class="grid">
+<div>
+<h3>Headings</h3>
+<pre><code><h1>Main Title</h1>  <!-- One per page -->
+<h2>Section</h2>
+<h3>Sub-section</h3>
+<h4>Sub-sub</h4>
+<h5>Minor</h5>
+<h6>Smallest</h6></code></pre>
+</div>
+<div>
+<h3>Text Elements</h3>
+<pre><code><p>Paragraph</p>
+<strong>Bold</strong>  <!-- or <b> -->
+<em>Italic</em>      <!-- or <i> -->
+<u>Underline</u>
+<s>Strikethrough</s>
+<br>  <!-- Line break -->
+<hr>  <!-- Thematic break --></code></pre>
+</div>
+</div>
+
+<h3>Lists</h3>
+<pre><code><ul>                    <!-- Unordered -->
+    <li>Item 1</li>
+    <li>Item 2</li>
+</ul>
+
+<ol>                    <!-- Ordered -->
+    <li>First</li>
+    <li>Second</li>
+</ol>
+
+<dl>                    <!-- Description -->
+    <dt>Term</dt>
+    <dd>Definition</dd>
+</dl></code></pre>
+
+<h3>Quotations & Code</h3>
+<pre><code><blockquote cite="url">Long quote</blockquote>
+<q>Inline quote</q>
+<code>code snippet</code>
+<pre>Preformatted text</pre>
+<figure>
+    <figcaption>Caption</figcaption>
+</figure></code></pre>
+
+<!-- ============================================================================
+     3. LINKS & NAVIGATION
+     ============================================================================ -->
+
+<h2>3. Links & Navigation</h2>
+
+<pre><code><!-- Basic link -->
+<a href="https://example.com">Visit Example</a>
+
+<!-- Open in new tab (security: add rel="noopener") -->
+<a href="https://example.com" target="_blank" rel="noopener noreferrer">New tab</a>
+
+<!-- Email and phone -->
+<a href="mailto:user@example.com">Email me</a>
+<a href="tel:+1234567890">Call us</a>
+
+<!-- Download -->
+<a href="file.pdf" download="new-name.pdf">Download PDF</a>
+
+<!-- Anchor (same page) -->
+<a href="#section-id">Jump to section</a>
+
+<!-- Navigation -->
+<nav>
+    <a href="/" aria-current="page">Home</a>
+    <a href="/about">About</a>
+</nav></code></pre>
+
+<!-- ============================================================================
+     4. MEDIA
+     ============================================================================ -->
+
+<h2>4. Media</h2>
+
+<h3>Images</h3>
+<pre><code><!-- Basic -->
+<img src="photo.jpg" alt="Description" width="800" height="600">
+
+<!-- Responsive with srcset -->
+<img src="photo-800.jpg"
+     srcset="photo-400.jpg 400w, photo-800.jpg 800w, photo-1200.jpg 1200w"
+     sizes="(max-width: 600px) 100vw, 50vw"
+     alt="Description" loading="lazy">
+
+<!-- Picture element (modern formats) -->
+<picture>
+    <source srcset="photo.avif" type="image/avif">
+    <source srcset="photo.webp" type="image/webp">
+    <img src="photo.jpg" alt="Description">
+</picture>
+
+<!-- Figure with caption -->
+<figure>
+    <img src="chart.png" alt="Sales chart">
+    <figcaption>Q4 2024 Sales Data</figcaption>
+</figure></code></pre>
+
+<h3>Audio & Video</h3>
+<pre><code><!-- Audio -->
+<audio controls preload="metadata">
+    <source src="audio.mp3" type="audio/mpeg">
+    <source src="audio.ogg" type="audio/ogg">
+    Your browser doesn't support audio.
+</audio>
+
+<!-- Video -->
+<video controls width="640" height="360" poster="thumbnail.jpg">
+    <source src="video.mp4" type="video/mp4">
+    <source src="video.webm" type="video/webm">
+    <track src="subtitles.vtt" kind="subtitles" srclang="en" label="English">
+    Your browser doesn't support video.
+</video></code></pre>
+
+<!-- ============================================================================
+     5. TABLES
+     ============================================================================ -->
+
+<h2>5. Tables</h2>
+
+<pre><code><table>
+    <caption>Table Title</caption>
+    <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Age</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th scope="row">Alice</th>
+            <td>30</td>
+        </tr>
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="2">Footer</td>
+        </tr>
+    </tfoot>
+</table></code></pre>
+
+<p><strong>Key attributes:</strong> <code>colspan</code>, <code>rowspan</code>, <code>scope="col|row"</code></p>
+
+<!-- ============================================================================
+     6. FORMS & INPUT
+     ============================================================================ -->
+
+<h2>6. Forms & Input</h2>
+
+<pre><code><form action="/submit" method="POST" novalidate>
+    <!-- Text input -->
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required
+           placeholder="Enter name" maxlength="100">
+
+    <!-- Email -->
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
+
+    <!-- Password -->
+    <label for="pw">Password:</label>
+    <input type="password" id="pw" name="pw" minlength="8">
+
+    <!-- Number -->
+    <input type="number" min="0" max="100" step="1">
+
+    <!-- Date -->
+    <input type="date" min="2024-01-01" max="2024-12-31">
+
+    <!-- Select / Dropdown -->
+    <label for="country">Country:</label>
+    <select id="country" name="country">
+        <option value="">Select...</option>
+        <option value="us">United States</option>
+        <option value="ca">Canada</option>
+    </select>
+
+    <!-- Textarea -->
+    <label for="bio">Bio:</label>
+    <textarea id="bio" name="bio" rows="4" cols="50"></textarea>
+
+    <!-- Checkbox -->
+    <label>
+        <input type="checkbox" name="subscribe" checked> Subscribe
+    </label>
+
+    <!-- Radio -->
+    <fieldset>
+        <legend>Gender</legend>
+        <label><input type="radio" name="gender" value="m"> Male</label>
+        <label><input type="radio" name="gender" value="f"> Female</label>
+    </fieldset>
+
+    <!-- Range -->
+    <input type="range" min="0" max="100" value="50">
+
+    <!-- File -->
+    <input type="file" accept=".pdf,.jpg" multiple>
+
+    <!-- Hidden -->
+    <input type="hidden" name="token" value="abc123">
+
+    <!-- Buttons -->
+    <button type="submit">Submit</button>
+    <button type="reset">Reset</button>
+    <button type="button" onclick="doSomething()">Custom</button>
+</form></code></pre>
+
+<h3>Input Types Quick Reference</h3>
+<table>
+    <tr><th>Type</th><th>Use Case</th></tr>
+    <tr><td><code>text</code></td><td>General text input</td></tr>
+    <tr><td><code>email</code></td><td>Email addresses (validates @)</td></tr>
+    <tr><td><code>password</code></td><td>Password (masked characters)</td></tr>
+    <tr><td><code>number</code></td><td>Numeric values (shows spinner)</td></tr>
+    <tr><td><code>tel</code></td><td>Phone numbers</td></tr>
+    <tr><td><code>url</code></td><td>URLs (validates protocol)</td></tr>
+    <tr><td><code>search</code></td><td>Search fields (clearable)</td></tr>
+    <tr><td><code>date</code></td><td>Date picker</td></tr>
+    <tr><td><code>time</code></td><td>Time picker</td></tr>
+    <tr><td><code>datetime-local</code></td><td>Date + time picker</td></tr>
+    <tr><td><code>color</code></td><td>Color picker</td></tr>
+    <tr><td><code>range</code></td><td>Slider control</td></tr>
+    <tr><td><code>file</code></td><td>File upload</td></tr>
+    <tr><td><code>checkbox</code></td><td>Multiple selection</td></tr>
+    <tr><td><code>radio</code></td><td>Single selection from group</td></tr>
+    <tr><td><code>hidden</code></td><td>Non-visible data submission</td></tr>
+</table>
+
+<h3>Form Validation Attributes</h3>
+<table>
+    <tr><th>Attribute</th><th>Description</th></tr>
+    <tr><td><code>required</code></td><td>Field must be filled</td></tr>
+    <tr><td><code>minlength</code> / <code>maxlength</code></td><td>Character limits</td></tr>
+    <tr><td><code>min</code> / <code>max</code></td><td>Numeric/date range</td></tr>
+    <tr><td><code>pattern</code></td><td>Regex validation (e.g., <code>[A-Za-z]+</code>)</td></tr>
+    <tr><td><code>step</code></td><td>Increment step for numbers</td></tr>
+    <tr><td><code>multiple</code></td><td>Allow multiple values (email, file)</td></tr>
+</table>
+
+<!-- ============================================================================
+     7. SEMANTIC HTML
+     ============================================================================ -->
+
+<h2>7. Semantic HTML</h2>
+
+<pre><code><header>  <!-- Site header / intro -->
+<nav>     <!-- Navigation links -->
+<main>    <!-- Primary content (one per page) -->
+<article><!-- Self-contained content -->
+<section><!-- Thematic grouping -->
+<aside>   <!-- Sidebar / complementary -->
+<footer>  <!-- Footer info -->
+<search>  <!-- Search functionality -->
+
+<!-- Grouping -->
+<div>     <!-- Generic container (no semantic meaning) -->
+<span>    <!-- Inline container --></code></pre>
+
+<div class="tip">
+    <strong>Rule of thumb:</strong> Use semantic elements to describe content
+    meaning, not appearance. Use <code><div></code> and
+    <code><span></code> only when no semantic element fits.
+</div>
+
+<!-- ============================================================================
+     8. HTML5 APIS
+     ============================================================================ -->
+
+<h2>8. HTML5 APIs</h2>
+
+<table>
+    <tr><th>API</th><th>Key Methods/Properties</th></tr>
+    <tr><td>Geolocation</td><td><code>navigator.geolocation.getCurrentPosition()</code>, <code>watchPosition()</code></td></tr>
+    <tr><td>Web Storage</td><td><code>localStorage.setItem/getItem/removeItem/clear()</code>, <code>sessionStorage</code></td></tr>
+    <tr><td>History</td><td><code>history.pushState()</code>, <code>replaceState()</code>, <code>popstate</code> event</td></tr>
+    <tr><td>Drag & Drop</td><td><code>dragstart</code>, <code>dragover</code>, <code>drop</code>, <code>dataTransfer</code></td></tr>
+    <tr><td>Clipboard</td><td><code>navigator.clipboard.writeText()</code>, <code>readText()</code></td></tr>
+    <tr><td>Fullscreen</td><td><code>element.requestFullscreen()</code>, <code>document.exitFullscreen()</code></td></tr>
+    <tr><td>Page Visibility</td><td><code>document.visibilityState</code>, <code>visibilitychange</code> event</td></tr>
+    <tr><td>Web Workers</td><td><code>new Worker('worker.js')</code>, <code>postMessage()</code>, <code>onmessage</code></td></tr>
+    <tr><td>Service Workers</td><td><code>navigator.serviceWorker.register()</code>, <code>install</code>, <code>activate</code>, <code>fetch</code> events</td></tr>
+</table>
+
+<!-- ============================================================================
+     9. ACCESSIBILITY
+     ============================================================================ -->
+
+<h2>9. Accessibility (A11y)</h2>
+
+<h3>WCAG POUR Principles</h3>
+<table>
+    <tr><th>Principle</th><th>Key Requirements</th></tr>
+    <tr><td><strong>Perceivable</strong></td><td>Alt text, captions, sufficient contrast (4.5:1)</td></tr>
+    <tr><td><strong>Operable</strong></td><td>Keyboard navigation, visible focus, no flashing</td></tr>
+    <tr><td><strong>Understandable</strong></td><td>Clear language, predictable behavior, error identification</td></tr>
+    <tr><td><strong>Robust</strong></td><td>Valid HTML, proper ARIA, works with assistive tech</td></tr>
+</table>
+
+<h3>ARIA Quick Reference</h3>
+<pre><code><!-- Labels -->
+aria-label="Close"           <!-- Direct label -->
+aria-labelledby="title-id"  <!-- Reference label -->
+aria-describedby="desc-id"  <!-- Additional description -->
+
+<!-- States -->
+aria-expanded="true|false"  <!-- Expandable content -->
+aria-pressed="true|false"   <!-- Toggle button -->
+aria-hidden="true"          <!-- Hide from screen readers -->
+aria-current="page"         <!-- Current item in set -->
+aria-required="true"        <!-- Required field -->
+
+<!-- Live regions -->
+aria-live="polite|assertive" <!-- Announce dynamic content -->
+role="alert"                 <!-- Important message -->
+
+<!-- Landmarks (use semantic HTML instead when possible) -->
+role="banner" role="navigation" role="main" role="complementary"</code></pre>
+
+<div class="warning">
+    <strong>First rule of ARIA:</strong> Don't use ARIA if you can use a
+    native HTML element. Use <code><button></code> instead of
+    <code><div role="button"></code>.
+</div>
+
+<!-- ============================================================================
+     10. SEO & METADATA
+     ============================================================================ -->
+
+<h2>10. SEO & Metadata</h2>
+
+<pre><code><!-- Essential -->
+<title>Primary Keyword - Secondary | Brand</title>
+<meta name="description" content="150-160 char compelling description">
+<link rel="canonical" href="https://example.com/page">
+
+<!-- Open Graph (Facebook, LinkedIn) -->
+<meta property="og:title" content="...">
+<meta property="og:description" content="...">
+<meta property="og:image" content="https://...">
+<meta property="og:url" content="https://...">
+<meta property="og:type" content="website|article|product">
+
+<!-- Twitter Cards -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="...">
+<meta name="twitter:description" content="...">
+<meta name="twitter:image" content="https://...">
+
+<!-- Robots -->
+<meta name="robots" content="index, follow">
+<!-- noindex, nofollow, noarchive, nosnippet -->
+
+<!-- Hreflang -->
+<link rel="alternate" hreflang="es" href="https://example.com/es/">
+
+<!-- Structured Data (JSON-LD) -->
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Title",
+    "author": { "@type": "Person", "name": "Author" }
+}
+</script></code></pre>
+
+<!-- ============================================================================
+     11. EMBEDDING & IFRAMES
+     ============================================================================ -->
+
+<h2>11. Embedding & Iframes</h2>
+
+<pre><code><!-- Iframe -->
+<iframe src="https://example.com"
+        title="Descriptive title (required!)"
+        sandbox="allow-scripts allow-same-origin"
+        loading="lazy"
+        allowfullscreen>
+    <p>Fallback content</p>
+</iframe>
+
+<!-- Responsive iframe container -->
+<div style="aspect-ratio: 16/9">
+    <iframe src="..." title="..." style="width:100%;height:100%"></iframe>
+</div>
+
+<!-- Cross-origin communication -->
+iframe.contentWindow.postMessage(data, targetOrigin);
+window.addEventListener('message', (e) => { if (e.origin === '...') { ... } });
+
+<!-- Object (PDFs, plugins) -->
+<object data="doc.pdf" type="application/pdf" width="800" height="600">
+    <p>Fallback: <a href="doc.pdf">Download PDF</a></p>
+</object></code></pre>
+
+<!-- ============================================================================
+     12. PERFORMANCE
+     ============================================================================ -->
+
+<h2>12. Performance</h2>
+
+<h3>Resource Loading</h3>
+<table>
+    <tr><th>Strategy</th><th>Syntax</th><th>When to Use</th></tr>
+    <tr><td>Blocking</td><td><code><script src="..."></code></td><td>Critical scripts</td></tr>
+    <tr><td>Async</td><td><code><script src="..." async></code></td><td>Independent scripts (analytics)</td></tr>
+    <tr><td>Defer</td><td><code><script src="..." defer></code></td><td>DOM-dependent scripts</td></tr>
+    <tr><td>Module</td><td><code><script type="module"></code></td><td>ES modules (deferred by default)</td></tr>
+    <tr><td>Preload</td><td><code><link rel="preload"></code></td><td>Critical late-discovered resources</td></tr>
+    <tr><td>Prefetch</td><td><code><link rel="prefetch"></code></td><td>Next-page resources (low priority)</td></tr>
+    <tr><td>Preconnect</td><td><code><link rel="preconnect"></code></td><td>Early third-party connections</td></tr>
+</table>
+
+<h3>Core Web Vitals Targets</h3>
+<table>
+    <tr><th>Metric</th><th>Good</th><th>Needs Improvement</th><th>Poor</th></tr>
+    <tr><td>LCP</td><td>≤ 2.5s</td><td>2.5s - 4.0s</td><td>> 4.0s</td></tr>
+    <tr><td>FID</td><td>≤ 100ms</td><td>100ms - 300ms</td><td>> 300ms</td></tr>
+    <tr><td>CLS</td><td>≤ 0.1</td><td>0.1 - 0.25</td><td>> 0.25</td></tr>
+</table>
+
+<h3>Quick Performance Checklist</h3>
+<ul>
+    <li>✅ Set <code>width</code> and <code>height</code> on all images</li>
+    <li>✅ Use <code>loading="lazy"</code> for below-the-fold images/iframes</li>
+    <li>✅ Use <code>fetchpriority="high"</code> on LCP image</li>
+    <li>✅ Defer non-critical JavaScript (<code>defer</code> or <code>async</code>)</li>
+    <li>✅ Preload critical fonts and hero images</li>
+    <li>✅ Use modern image formats (WebP, AVIF)</li>
+    <li>✅ Use <code>font-display: swap</code> for web fonts</li>
+    <li>✅ Inline critical CSS, defer non-critical CSS</li>
+    <li>✅ Set explicit dimensions for ads and embeds</li>
+    <li>✅ Use <code>aspect-ratio</code> CSS for responsive media</li>
+</ul>
+
+<hr>
+
+<p style="text-align:center; color:#666; margin-top:30px;">
+    <strong>HTML Refresher — Complete</strong><br>
+    Covers junior-level fundamentals through mid-level patterns.<br>
+    See individual files (00-11) for detailed coverage of each topic.
+</p>
+
+</body>
+</html>

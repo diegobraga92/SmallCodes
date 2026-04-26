@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<!--
+    HTML SYNTAX & STRUCTURE
+    File: 00_html_syntax_structure.html
+
+    Comprehensive guide to HTML document structure, syntax rules, and
+    fundamental concepts. Builds from junior-level basics to mid-level
+    understanding of HTML parsing, validation, and best practices.
+
+    Key Concepts Covered:
+    1. DOCTYPE Declaration and HTML Version History
+    2. Document Structure (html, head, body)
+    3. Elements, Tags, and Attributes
+    4. Void Elements vs Container Elements
+    5. Character Encoding and Language Declaration
+    6. Comments and Whitespace Handling
+    7. HTML Parsing and the DOM Tree
+    8. Validation and Best Practices
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Syntax & Structure</title>
+    <style>
+        body { font-family: system-ui, sans-serif; line-height: 1.6; max-width: 900px; margin: 0 auto; padding: 20px; }
+        h1 { color: #e44d26; }
+        h2 { color: #333; border-bottom: 2px solid #e44d26; padding-bottom: 5px; }
+        pre { background: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto; }
+        code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; }
+        .note { background: #fff3cd; border-left: 4px solid #ffc107; padding: 10px 15px; margin: 15px 0; }
+        .warning { background: #f8d7da; border-left: 4px solid #dc3545; padding: 10px 15px; margin: 15px 0; }
+        .tip { background: #d4edda; border-left: 4px solid #28a745; padding: 10px 15px; margin: 15px 0; }
+        table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+        th { background: #e44d26; color: white; }
+    </style>
+</head>
+<body>
+
+<h1>HTML Syntax & Structure</h1>
+
+<!-- ============================================================================
+     1. DOCTYPE DECLARATION
+     ============================================================================ -->
+
+<h2>1. DOCTYPE Declaration</h2>
+
+<!--
+    The DOCTYPE declaration is the very first line in an HTML document.
+    It tells the browser which version of HTML to expect and triggers
+    standards mode (vs quirks mode) rendering.
+
+    HTML5 DOCTYPE (modern, always use this):
+-->
+<pre><code><!DOCTYPE html></code></pre>
+
+<div class="note">
+    <strong>Why DOCTYPE matters:</strong> Without it, browsers render in "quirks mode,"
+    emulating old IE5 behavior. Always use <code><!DOCTYPE html></code> for
+    standards-compliant rendering.
+</div>
+
+<!--
+    Historical DOCTYPEs (for reference only - never use these):
+    - HTML 4.01 Strict:  <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+    - XHTML 1.0 Strict: <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+-->
+
+<!-- ============================================================================
+     2. DOCUMENT STRUCTURE
+     ============================================================================ -->
+
+<h2>2. Document Structure</h2>
+
+<!--
+    Every HTML document has a standard skeleton structure:
+-->
+<pre><code><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Title</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Visible content goes here -->
+</body>
+</html></code></pre>
+
+<!--
+    The three main sections:
+
+    <html> - The root element. The lang attribute is important for accessibility
+             and search engines. Always set it to the document's primary language.
+
+    <head> - Contains metadata (not displayed on the page):
+             - <title>: Required. Shows in browser tab and search results.
+             - <meta charset>: Character encoding. UTF-8 is the standard.
+             - <meta name="viewport">: Controls responsive behavior on mobile.
+             - <link>: Links to external resources (CSS, favicons).
+             - <style>: Embedded CSS (use sparingly, prefer external files).
+             - <script>: JavaScript (can also go in body).
+
+    <body> - Contains all visible content. Only one <body> per document.
+-->
+
+<div class="tip">
+    <strong>Best Practice:</strong> Always include <code><meta charset="UTF-8"></code>
+    within the first 1024 bytes of the document so the browser knows the encoding
+    before parsing the rest of the page.
+</div>
+
+<!-- ============================================================================
+     3. ELEMENTS, TAGS, AND ATTRIBUTES
+     ============================================================================ -->
+
+<h2>3. Elements, Tags, and Attributes</h2>
+
+<!--
+    An HTML element consists of:
+    - Opening tag:  <tagname>
+    - Content:      (text or other elements)
+    - Closing tag:  </tagname>
+
+    Attributes provide additional information about elements:
+    - Global attributes: id, class, style, title, lang, dir, hidden, data-*
+    - Event handlers: onclick, onload, onmouseover, etc.
+    - Element-specific: href (for <a>), src (for <img>), type (for <input>)
+-->
+
+<h3>Element Anatomy</h3>
+<pre><code><p class="intro" id="first-paragraph">
+    This is the content of the paragraph element.
+</p>
+│       │                       │               │
+│       └── Attributes          └── Content     └── Closing tag
+│
+└── Opening tag</code></pre>
+
+<h3>Attribute Types</h3>
+<table>
+    <tr>
+        <th>Attribute</th>
+        <th>Example</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>id</td>
+        <td><code>id="header"</code></td>
+        <td>Unique identifier (must be unique per page)</td>
+    </tr>
+    <tr>
+        <td>class</td>
+        <td><code>class="container active"</code></td>
+        <td>CSS class(es), can be reused, space-separated list</td>
+    </tr>
+    <tr>
+        <td>style</td>
+        <td><code>style="color: red;"</code></td>
+        <td>Inline CSS (avoid when possible, use classes)</td>
+    </tr>
+    <tr>
+        <td>data-*</td>
+        <td><code>data-user-id="42"</code></td>
+        <td>Custom data attributes for JavaScript</td>
+    </tr>
+    <tr>
+        <td>hidden</td>
+        <td><code>hidden</code></td>
+        <td>Boolean attribute, hides the element</td>
+    </tr>
+    <tr>
+        <td>title</td>
+        <td><code>title="Tooltip text"</code></td>
+        <td>Tooltip on hover (use sparingly for accessibility)</td>
+    </tr>
+    <tr>
+        <td>tabindex</td>
+        <td><code>tabindex="0"</code></td>
+        <td>Controls keyboard tab order</td>
+    </tr>
+    <tr>
+        <td>aria-*</td>
+        <td><code>aria-label="Close"</code></td>
+        <td>Accessibility attributes (see file 08)</td>
+    </tr>
+</table>
+
+<div class="warning">
+    <strong>Boolean Attributes:</strong> Some attributes are boolean — their presence
+    means true, absence means false. Examples: <code>hidden</code>, <code>disabled</code>,
+    <code>checked</code>, <code>required</code>, <code>readonly</code>.
+    Write them as <code><input disabled></code> or <code><input disabled="disabled"></code>.
+</div>
+
+<!-- ============================================================================
+     4. VOID ELEMENTS VS CONTAINER ELEMENTS
+     ============================================================================ -->
+
+<h2>4. Void Elements vs Container Elements</h2>
+
+<!--
+    Void elements (self-closing) have no content and no closing tag.
+    Container elements wrap content and need both opening and closing tags.
+-->
+
+<h3>Void Elements (Self-Closing)</h3>
+<table>
+    <tr>
+        <th>Element</th>
+        <th>Purpose</th>
+        <th>Example</th>
+    </tr>
+    <tr>
+        <td><code><br></code></td>
+        <td>Line break</td>
+        <td><code>Line 1<br>Line 2</code></td>
+    </tr>
+    <tr>
+        <td><code><hr></code></td>
+        <td>Thematic break (horizontal rule)</td>
+        <td><code><hr></code></td>
+    </tr>
+    <tr>
+        <td><code><img></code></td>
+        <td>Image</td>
+        <td><code><img src="photo.jpg" alt="Description"></code></td>
+    </tr>
+    <tr>
+        <td><code><input></code></td>
+        <td>Form input field</td>
+        <td><code><input type="text"></code></td>
+    </tr>
+    <tr>
+        <td><code><meta></code></td>
+        <td>Metadata</td>
+        <td><code><meta charset="UTF-8"></code></td>
+    </tr>
+    <tr>
+        <td><code><link></code></td>
+        <td>External resource link</td>
+        <td><code><link rel="stylesheet" href="style.css"></code></td>
+    </tr>
+    <tr>
+        <td><code><source></code></td>
+        <td>Media source</td>
+        <td><code><source src="video.mp4" type="video/mp4"></code></td>
+    </tr>
+    <tr>
+        <td><code><wbr></code></td>
+        <td>Word break opportunity</td>
+        <td><code>Super<wbr>Long<wbr>Word</code></td>
+    </tr>
+</table>
+
+<div class="note">
+    <strong>Self-closing syntax:</strong> In HTML5, <code><br></code> is valid.
+    The XHTML-style <code><br /></code> also works but is unnecessary.
+    Pick one style and be consistent.
+</div>
+
+<h3>Container Elements</h3>
+<p>Most HTML elements are containers that wrap content:</p>
+<pre><code><div>Generic block container</div>
+<p>Paragraph of text</p>
+<span>Generic inline container</span>
+<section>Thematic grouping of content</section>
+<article>Self-contained composition</article></code></pre>
+
+<!-- ============================================================================
+     5. CHARACTER ENCODING AND LANGUAGE
+     ============================================================================ -->
+
+<h2>5. Character Encoding and Language</h2>
+
+<!--
+    Character encoding tells the browser how to interpret bytes as characters.
+    UTF-8 is the universal standard and supports all languages and symbols.
+-->
+
+<pre><code><!-- Always use UTF-8 -->
+<meta charset="UTF-8">
+
+<!-- Set the document language on the html element -->
+<html lang="en">  <!-- English -->
+<html lang="es">  <!-- Spanish -->
+<html lang="fr">  <!-- French -->
+<html lang="ja">  <!-- Japanese -->
+
+<!-- Override language for specific content -->
+<p>The French word <span lang="fr">bonjour</span> means hello.</p></code></pre>
+
+<div class="tip">
+    <strong>Why lang matters:</strong>
+    <ul>
+        <li>Screen readers use it for correct pronunciation</li>
+        <li>Search engines use it to serve content to the right audience</li>
+        <li>Browsers use it for spell-checking and hyphenation</li>
+        <li>Translation tools use it as a hint</li>
+    </ul>
+</div>
+
+<!-- ============================================================================
+     6. COMMENTS AND WHITESPACE
+     ============================================================================ -->
+
+<h2>6. Comments and Whitespace</h2>
+
+<!--
+    HTML comments are not displayed in the browser but are visible in source code.
+    Use them to document your markup, but don't include sensitive information.
+-->
+
+<pre><code><!-- This is an HTML comment -->
+
+<!--
+    Multi-line comments
+    are useful for documenting
+    complex sections of markup
+-->
+
+<!--
+    TODO: Replace placeholder image with final asset
+    FIXME: This section doesn't render correctly on mobile
+-->
+
+<!-- [if IE]>
+    Conditional comments for IE (deprecated, no longer needed)
+<![endif] --></code></pre>
+
+<h3>Whitespace Handling</h3>
+<!--
+    HTML collapses multiple whitespace characters (spaces, tabs, newlines)
+    into a single space. This is called "whitespace collapse."
+-->
+<pre><code><p>This     text    has
+    extra    spaces
+    and  line  breaks.</p>
+
+<!-- Renders as: "This text has extra spaces and line breaks." -->
+
+<!-- To preserve whitespace, use <pre> or CSS white-space -->
+<pre>This     text    has
+    extra    spaces
+    and  line  breaks.</pre></code></pre>
+
+<!-- ============================================================================
+     7. HTML PARSING AND THE DOM TREE
+     ============================================================================ -->
+
+<h2>7. HTML Parsing and the DOM Tree</h2>
+
+<!--
+    When a browser loads an HTML document, it parses the markup and builds
+    a Document Object Model (DOM) tree — an in-memory representation of the
+    document structure.
+
+    Key parsing behaviors:
+    1. Tags are case-insensitive (<DIV> = <div>)
+    2. Browsers automatically fix some errors (missing closing tags, etc.)
+    3. The parser is forgiving but you shouldn't rely on this
+    4. <script> tags block parsing (unless async/defer)
+    5. <link rel="stylesheet"> blocks rendering but not parsing
+-->
+
+<h3>DOM Tree Example</h3>
+<pre><code><!-- HTML Source -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Page</title>
+</head>
+<body>
+    <h1>Hello</h1>
+    <p>World</p>
+</body>
+</html>
+
+<!-- DOM Tree (simplified) -->
+document
+ └── html
+      ├── head
+      │    └── title
+      │         └── "My Page"
+      └── body
+           ├── h1
+           │    └── "Hello"
+           └── p
+                └── "World"</code></pre>
+
+<div class="warning">
+    <strong>Parser Blocking:</strong> Regular <code><script></code> tags without
+    <code>async</code> or <code>defer</code> block HTML parsing. Place scripts at
+    the end of <code><body></code> or use <code>defer</code>.
+</div>
+
+<!-- ============================================================================
+     8. VALIDATION AND BEST PRACTICES
+     ============================================================================ -->
+
+<h2>8. Validation and Best Practices</h2>
+
+<h3>HTML Validation Checklist</h3>
+<ul>
+    <li><strong>DOCTYPE:</strong> Always start with <code><!DOCTYPE html></code></li>
+    <li><strong>Character encoding:</strong> <code><meta charset="UTF-8"></code> in head</li>
+    <li><strong>Language:</strong> <code>lang</code> attribute on <code><html></code></li>
+    <li><strong>Title:</strong> Every page needs a unique, descriptive <code><title></code></li>
+    <li><strong>Viewport:</strong> <code><meta name="viewport" content="width=device-width, initial-scale=1.0"></code></li>
+    <li><strong>Nesting:</strong> Elements must be properly nested (no overlapping)</li>
+    <li><strong>Closing tags:</strong> Container elements must have closing tags</li>
+    <li><strong>Attributes:</strong> Quote attribute values (single or double quotes)</li>
+    <li><strong>Alt text:</strong> Every <code><img></code> needs an <code>alt</code> attribute</li>
+    <li><strong>IDs:</strong> Must be unique within the document</li>
+</ul>
+
+<h3>Common Mistakes to Avoid</h3>
+<table>
+    <tr>
+        <th>Mistake</th>
+        <th>Wrong</th>
+        <th>Correct</th>
+    </tr>
+    <tr>
+        <td>Missing DOCTYPE</td>
+        <td><code><html>...</html></code></td>
+        <td><code><!DOCTYPE html><html>...</html></code></td>
+    </tr>
+    <tr>
+        <td>Unquoted attributes</td>
+        <td><code><div class=box></code></td>
+        <td><code><div class="box"></code></td>
+    </tr>
+    <tr>
+        <td>Overlapping tags</td>
+        <td><code><b>bold <i>italic</b></i></code></td>
+        <td><code><b>bold <i>italic</i></b></code></td>
+    </tr>
+    <tr>
+        <td>Block inside inline</td>
+        <td><code><span><div>text</div></span></code></td>
+        <td><code><div><span>text</span></div></code></td>
+    </tr>
+    <tr>
+        <td>Duplicate IDs</td>
+        <td><code><div id="x">...<div id="x"></code></td>
+        <td>Use classes for repeated identifiers</td>
+    </tr>
+</table>
+
+<h3>Validation Tools</h3>
+<ul>
+    <li><a href="https://validator.w3.org/">W3C HTML Validator</a> — Official validator</li>
+    <li><strong>Browser DevTools:</strong> Elements panel shows the parsed DOM</li>
+    <li><strong>Lighthouse:</strong> Built into Chrome DevTools, checks HTML best practices</li>
+    <li><strong>Editor extensions:</strong> VS Code HTMLHint, Emmet</li>
+</ul>
+
+<div class="tip">
+    <strong>Pro tip:</strong> Run your HTML through the W3C validator before deploying.
+    Even experienced developers make mistakes, and validation catches issues that
+    can cause subtle rendering bugs across different browsers.
+</div>
+
+<!-- ============================================================================
+     PRACTICAL EXAMPLE: COMPLETE HTML DOCUMENT
+     ============================================================================ -->
+
+<h2>Complete Example: Well-Structured HTML Document</h2>
+
+<pre><code><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A well-structured HTML5 document example">
+    <title>My Semantic Web Page</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <header>
+        <h1>Website Title</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/about">About</a></li>
+                <li><a href="/contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <article>
+            <h2>Article Title</h2>
+            <p>Published on <time datetime="2024-01-15">January 15, 2024</time></p>
+            <p>Article content goes here...</p>
+        </article>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 My Website. All rights reserved.</p>
+    </footer>
+
+    <script src="scripts.js" defer></script>
+</body>
+</html></code></pre>
+
+<!-- ============================================================================
+     ENTITY REFERENCE
+     ============================================================================ -->
+
+<h2>Appendix: Common HTML Entities</h2>
+
+<!--
+    HTML entities are used to display reserved characters and special symbols.
+    They start with & and end with ;.
+-->
+
+<table>
+    <tr>
+        <th>Entity</th>
+        <th>Character</th>
+        <th>Description</th>
+    </tr>
+    <tr><td><code>&amp;</code></td><td>&</td><td>Ampersand</td></tr>
+    <tr><td><code>&lt;</code></td><td><</td><td>Less than</td></tr>
+    <tr><td><code>&gt;</code></td><td>></td><td>Greater than</td></tr>
+    <tr><td><code>&quot;</code></td><td>"</td><td>Double quote</td></tr>
+    <tr><td><code>'</code></td><td>'</td><td>Single quote (apostrophe)</td></tr>
+    <tr><td><code>&nbsp;</code></td><td>&nbsp;</td><td>Non-breaking space</td></tr>
+    <tr><td><code>&copy;</code></td><td>&copy;</td><td>Copyright</td></tr>
+    <tr><td><code>&reg;</code></td><td>&reg;</td><td>Registered trademark</td></tr>
+    <tr><td><code>&trade;</code></td><td>&trade;</td><td>Trademark</td></tr>
+    <tr><td><code>&mdash;</code></td><td>&mdash;</td><td>Em dash</td></tr>
+    <tr><td><code>&ndash;</code></td><td>&ndash;</td><td>En dash</td></tr>
+    <tr><td><code>&hearts;</code></td><td>&hearts;</td><td>Heart symbol</td></tr>
+</table>
+
+<div class="note">
+    <strong>When to use entities:</strong> Always escape <code>&</code>, <code><</code>,
+    and <code>></code> in text content. Use <code>&nbsp;</code> sparingly — prefer
+    CSS <code>white-space: nowrap</code> for preventing line breaks.
+</div>
+
+</body>
+</html>

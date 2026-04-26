@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<!--
+    HTML ACCESSIBILITY (A11Y)
+    File: 08_accessibility.html
+
+    Comprehensive guide to web accessibility. Covers WCAG guidelines,
+    ARIA roles and attributes, keyboard navigation, and inclusive design
+    patterns. Builds from junior-level basics to mid-level understanding
+    of accessible web development.
+
+    Key Concepts Covered:
+    1. What is Web Accessibility? (WCAG, POUR principles)
+    2. Semantic HTML for Accessibility
+    3. ARIA Roles, States, and Properties
+    4. Keyboard Navigation and Focus Management
+    5. Color and Contrast
+    6. Screen Reader Considerations
+    7. Accessible Forms
+    8. Testing and Tools
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Accessibility</title>
+    <style>
+        body { font-family: system-ui, sans-serif; line-height: 1.6; max-width: 900px; margin: 0 auto; padding: 20px; }
+        h1 { color: #e44d26; }
+        h2 { color: #333; border-bottom: 2px solid #e44d26; padding-bottom: 5px; }
+        pre { background: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto; }
+        code { background: #f4f4f4; padding: 2px 5px; border-radius: 3px; }
+        .note { background: #fff3cd; border-left: 4px solid #ffc107; padding: 10px 15px; margin: 15px 0; }
+        .warning { background: #f8d7da; border-left: 4px solid #dc3545; padding: 10px 15px; margin: 15px 0; }
+        .tip { background: #d4edda; border-left: 4px solid #28a745; padding: 10px 15px; margin: 15px 0; }
+        table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
+        th { background: #e44d26; color: white; }
+        .demo-box { border: 1px solid #ddd; padding: 15px; border-radius: 5px; margin: 15px 0; background: #fafafa; }
+        .bad-a11y { background: #f8d7da; padding: 10px; border-radius: 4px; }
+        .good-a11y { background: #d4edda; padding: 10px; border-radius: 4px; }
+        .skip-link { position: absolute; top: -40px; left: 0; background: #000; color: #fff; padding: 8px; z-index: 100; }
+        .skip-link:focus { top: 0; }
+    </style>
+</head>
+<body>
+
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<h1>HTML Accessibility (A11y)</h1>
+
+<!-- ============================================================================
+     1. WHAT IS WEB ACCESSIBILITY?
+     ============================================================================ -->
+
+<h2>1. What is Web Accessibility?</h2>
+
+<!--
+    Web accessibility means designing and developing websites that can be
+    used by people with disabilities. This includes visual, auditory,
+    physical, speech, cognitive, and neurological disabilities.
+
+    WCAG (Web Content Accessibility Guidelines) defines four POUR principles:
+    - Perceivable: Information must be presentable to users
+    - Operable: UI components must be operable
+    - Understandable: Information and UI must be understandable
+    - Robust: Content must be interpretable by assistive technologies
+-->
+
+<table>
+    <tr>
+        <th>Principle</th>
+        <th>Description</th>
+        <th>Example</th>
+    </tr>
+    <tr>
+        <td><strong>Perceivable</strong></td>
+        <td>Users must be able to perceive the content</td>
+        <td>Alt text on images, captions on videos</td>
+    </tr>
+    <tr>
+        <td><strong>Operable</strong></td>
+        <td>Users must be able to operate the interface</td>
+        <td>Keyboard navigation, sufficient time limits</td>
+    </tr>
+    <tr>
+        <td><strong>Understandable</strong></td>
+        <td>Content and UI must be understandable</td>
+        <td>Clear language, predictable navigation</td>
+    </tr>
+    <tr>
+        <td><strong>Robust</strong></td>
+        <td>Content must work with assistive technologies</td>
+        <td>Valid HTML, proper ARIA usage</td>
+    </tr>
+</table>
+
+<div class="note">
+    <strong>WCAG Levels:</strong>
+    <ul>
+        <li><strong>Level A:</strong> Minimum level (essential for some users)</li>
+        <li><strong>Level AA:</strong> Recommended (addresses most barriers) — <em>target this</em></li>
+        <li><strong>Level AAA:</strong> Highest level (not possible for all content)</li>
+    </ul>
+</div>
+
+<!-- ============================================================================
+     2. SEMANTIC HTML FOR ACCESSIBILITY
+     ============================================================================ -->
+
+<h2>2. Semantic HTML for Accessibility</h2>
+
+<!--
+    Semantic HTML is the foundation of accessibility. Screen readers and
+    other assistive technologies rely on semantic elements to understand
+    page structure and content.
+-->
+
+<h3>Landmarks</h3>
+<pre><code><!-- HTML5 semantic elements create ARIA landmarks automatically -->
+<header role="banner">...</header>     <!-- Site header -->
+<nav role="navigation">...</nav>        <!-- Navigation -->
+<main role="main">...</main>            <!-- Main content -->
+<aside role="complementary">...</aside> <!-- Complementary -->
+<footer role="contentinfo">...</footer> <!-- Footer info -->
+<form role="form">...</form>            <!-- Form -->
+<search role="search">...</search>      <!-- Search --></code></pre>
+
+<h3>Headings</h3>
+<pre><code><!-- Proper heading hierarchy is critical for screen reader navigation -->
+<h1>Page Title</h1>           <!-- One per page -->
+    <h2>Section Title</h2>
+        <h3>Sub-section</h3>
+    <h2>Another Section</h2></code></pre>
+
+<h3>Links and Buttons</h3>
+<pre><code><!-- Bad: ambiguous link text -->
+<a href="/products/123">Click here</a>
+
+<!-- Good: descriptive link text -->
+<a href="/products/123">View product: Wireless Headphones</a>
+
+<!-- Bad: div acting as button -->
+<div onclick="submit()">Submit</div>
+
+<!-- Good: actual button -->
+<button type="button" onclick="submit()">Submit</button></code></pre>
+
+<!-- ============================================================================
+     3. ARIA
+     ============================================================================ -->
+
+<h2>3. ARIA Roles, States, and Properties</h2>
+
+<!--
+    ARIA (Accessible Rich Internet Applications) supplements HTML semantics
+    when native HTML elements aren't sufficient. Three types:
+    - Roles: What is this element? (role="button", role="dialog")
+    - States: Current condition (aria-expanded, aria-pressed)
+    - Properties: Characteristics (aria-label, aria-describedby)
+
+    First rule of ARIA: Don't use ARIA if you can use a native HTML element.
+-->
+
+<h3>ARIA Roles</h3>
+<pre><code><!-- Landmark roles (use semantic HTML instead when possible) -->
+<div role="banner">...</div>           <!-- Use <header> -->
+<div role="navigation">...</div>       <!-- Use <nav> -->
+<div role="main">...</div>             <!-- Use <main> -->
+
+<!-- Widget roles (for custom interactive elements) -->
+<div role="button" tabindex="0">Click</div>
+<div role="tabpanel">...</div>
+<div role="alert">Error occurred</div>
+<div role="dialog" aria-modal="true">...</div>
+
+<!-- Document structure roles -->
+<article role="article">...</article>
+<img role="presentation" src="decorative.jpg" alt=""></code></pre>
+
+<h3>ARIA States and Properties</h3>
+<pre><code><!-- aria-label: Provide an accessible name -->
+<button aria-label="Close dialog">×</button>
+
+<!-- aria-labelledby: Reference another element as label -->
+<h2 id="dialog-title">Confirm Delete</h2>
+<div role="dialog" aria-labelledby="dialog-title">...</div>
+
+<!-- aria-describedby: Provide additional description -->
+<input type="password" aria-describedby="pw-hint">
+<span id="pw-hint">Must be at least 8 characters</span>
+
+<!-- aria-expanded: Indicate expandable content -->
+<button aria-expanded="false" aria-controls="details">Show details</button>
+<div id="details" hidden>...</div>
+
+<!-- aria-hidden: Hide decorative content from screen readers -->
+<span aria-hidden="true">→</span>
+
+<!-- aria-live: Announce dynamic content -->
+<div aria-live="polite" id="status">Loading...</div>
+<!-- polite: Wait until user is idle -->
+<!-- assertive: Interrupt immediately (use sparingly) -->
+
+<!-- aria-required: Indicate required fields -->
+<input type="text" required aria-required="true">
+
+<!-- aria-current: Indicate current item in a set -->
+<a href="/" aria-current="page">Home</a></code></pre>
+
+<div class="warning">
+    <strong>First rule of ARIA:</strong> If you can use a native HTML element
+    that already has the semantics you need, don't use ARIA. For example,
+    use <code><button></code> instead of
+    <code><div role="button"></code>.
+</div>
+
+<!-- ============================================================================
+     4. KEYBOARD NAVIGATION
+     ============================================================================ -->
+
+<h2>4. Keyboard Navigation and Focus Management</h2>
+
+<h3>Tab Order</h3>
+<pre><code><!-- Natural tab order follows DOM order -->
+<button>First</button>
+<button>Second</button>
+<button>Third</button>
+
+<!-- tabindex values -->
+<button tabindex="0">Focusable (natural order)</button>
+<button tabindex="-1">Programmatically focusable only</button>
+<!-- tabindex="1" (positive) — AVOID: creates混乱 order -->
+
+<!-- Skip link for keyboard users -->
+<a href="#main-content" class="skip-link">Skip to main content</a></code></pre>
+
+<h3>Focus Management</h3>
+<pre><code>// Move focus to an element
+function openDialog(dialogId) {
+    const dialog = document.getElementById(dialogId);
+    dialog.style.display = 'block';
+    dialog.focus();  // Move focus to dialog
+}
+
+// Trap focus within a modal
+function trapFocus(element) {
+    const focusable = element.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+
+    element.addEventListener('keydown', (e) => {
+        if (e.key === 'Tab') {
+            if (e.shiftKey && document.activeElement === first) {
+                e.preventDefault();
+                last.focus();
+            } else if (!e.shiftKey && document.activeElement === last) {
+                e.preventDefault();
+                first.focus();
+            }
+        }
+
+        if (e.key === 'Escape') {
+            closeDialog();
+        }
+    });
+}
+
+// Restore focus when closing
+let previousFocus;
+
+function openModal() {
+    previousFocus = document.activeElement;
+    document.getElementById('modal').style.display = 'block';
+}
+
+function closeModal() {
+    document.getElementById('modal').style.display = 'none';
+    previousFocus.focus();  // Return focus to trigger element
+}</code></pre>
+
+<h3>Visible Focus Indicators</h3>
+<pre><code>/* Never do this! */
+*:focus { outline: none; }
+
+/* Instead, provide visible focus styles */
+:focus-visible {
+    outline: 2px solid #e44d26;
+    outline-offset: 2px;
+}
+
+/* Custom focus style for specific elements */
+button:focus-visible {
+    box-shadow: 0 0 0 3px rgba(228, 77, 38, 0.4);
+}
+
+/* High contrast mode support */
+@media (forced-colors: active) {
+    :focus-visible {
+        outline: 2px solid Highlight;
+    }
+}</code></pre>
+
+<!-- ============================================================================
+     5. COLOR AND CONTRAST
+     ============================================================================ -->
+
+<h2>5. Color and Contrast</h2>
+
+<!--
+    WCAG AA requires:
+    - Normal text: 4.5:1 contrast ratio
+    - Large text (18px+ bold or 24px+ regular): 3:1
+    - UI components: 3:1
+
+    Never convey information through color alone.
+-->
+
+<pre><code><!-- Bad: color-only indicator -->
+<span style="color: red">Required field</span>
+
+<!-- Good: color + text + icon -->
+<span style="color: red">
+    <span aria-hidden="true">* </span>
+    Required field
+</span>
+
+<!-- Bad: color-only status -->
+<div class="status" style="background: green"></div>
+
+<!-- Good: status with text -->
+<div class="status" style="background: green">
+    <span>Online</span>
+</div></code></pre>
+
+<div class="tip">
+    <strong>Contrast tools:</strong>
+    <ul>
+        <li>WebAIM Contrast Checker</li>
+        <li>Chrome DevTools (Inspect → Color Picker shows contrast ratio)</li>
+        <li>Accessibility Insights browser extension</li>
+    </ul>
+</div>
+
+<!-- ============================================================================
+     6. SCREEN READER CONSIDERATIONS
+     ============================================================================ -->
+
+<h2>6. Screen Reader Considerations</h2>
+
+<pre><code><!-- 1. Descriptive alt text -->
+<img src="chart.png" alt="Bar chart showing 40% increase in Q4 sales">
+
+<!-- 2. Screen reader only text -->
+<span class="sr-only">New window</span>
+
+<!-- 3. Announce dynamic content -->
+<div aria-live="polite" aria-atomic="true">
+    <!-- Screen reader announces the entire content when it changes -->
+</div>
+
+<!-- 4. Use aria-label for icon-only buttons -->
+<button aria-label="Search">
+    <svg aria-hidden="true" focusable="false">...</svg>
+</button>
+
+<!-- 5. Hide decorative content -->
+<span aria-hidden="true">★</span>
+
+<!-- 6. Use role="alert" for important messages -->
+<div role="alert">Form submitted successfully</div>
+
+<!-- 7. Provide text alternatives for complex content -->
+<figure>
+    <img src="complex-chart.png" alt="Sales chart">
+    <figcaption>
+        <a href="data-table.html">View data table for this chart</a>
+    </figcaption>
+</figure></code></pre>
+
+<!-- ============================================================================
+     7. ACCESSIBLE FORMS
+     ============================================================================ -->
+
+<h2>7. Accessible Forms</h2>
+
+<pre><code><!-- Complete accessible form example -->
+<form action="/submit" method="POST" novalidate>
+    <!-- Group related fields -->
+    <fieldset>
+        <legend>Personal Information</legend>
+
+        <!-- Label + input with hint and error -->
+        <div class="form-group">
+            <label for="name">Full Name <span aria-hidden="true">*</span></label>
+            <input type="text" id="name" name="name" required
+                   aria-required="true"
+                   aria-describedby="name-hint name-error">
+            <span id="name-hint" class="hint">Enter your first and last name</span>
+            <span id="name-error" class="error" role="alert"></span>
+        </div>
+
+        <!-- Radio group -->
+        <fieldset>
+            <legend>Preferred Contact Method</legend>
+            <label>
+                <input type="radio" name="contact" value="email" checked> Email
+            </label>
+            <label>
+                <input type="radio" name="contact" value="phone"> Phone
+            </label>
+        </fieldset>
+    </fieldset>
+
+    <!-- Submit button -->
+    <button type="submit">Submit</button>
+</form></code></pre>
+
+<!-- ============================================================================
+     8. TESTING AND TOOLS
+     ============================================================================ -->
+
+<h2>8. Testing and Tools</h2>
+
+<h3>Automated Testing</h3>
+<pre><code>// axe-core (browser extension or npm package)
+import axe from 'axe-core';
+
+axe.run(document, {
+    runOnly: ['wcag2a', 'wcag2aa']
+}).then(results => {
+    console.log('Violations:', results.violations);
+    console.log('Passes:', results.passes);
+});
+
+// Lighthouse (built into Chrome DevTools)
+// Run: lighthouse https://example.com --output=json --quiet</code></pre>
+
+<h3>Manual Testing Checklist</h3>
+<table>
+    <tr>
+        <th>Test</th>
+        <th>How to Test</th>
+        <th>What to Check</th>
+    </tr>
+    <tr>
+        <td>Keyboard navigation</td>
+        <td>Tab through the page</td>
+        <td>All interactive elements are reachable and operable</td>
+    </tr>
+    <tr>
+        <td>Screen reader</td>
+        <td>Use VoiceOver, NVDA, or JAWS</td>
+        <td>Content is announced correctly, landmarks are present</td>
+    </tr>
+    <tr>
+        <td>Zoom</td>
+        <td>Zoom to 200% in browser</td>
+        <td>Content doesn't overlap or get cut off</td>
+    </tr>
+    <tr>
+        <td>Color contrast</td>
+        <td>Use contrast checker</td>
+        <td>4.5:1 for normal text, 3:1 for large text</td>
+    </tr>
+    <tr>
+        <td>Forms</td>
+        <td>Submit with errors</td>
+        <td>Errors are announced and focus moves to error</td>
+    </tr>
+    <tr>
+        <td>Reduced motion</td>
+        <td>Enable prefers-reduced-motion</td>
+        <td>Animations are disabled or reduced</td>
+    </tr>
+</table>
+
+<h3>Accessibility Statement</h3>
+<pre><code><!-- Include an accessibility statement on your site -->
+<footer>
+    <p>
+        We are committed to making our website accessible to everyone.
+        If you encounter any barriers, please
+        <a href="/contact">contact us</a>.
+    </p>
+</footer></code></pre>
+
+<div class="tip">
+    <strong>Accessibility checklist:</strong>
+    <ul>
+        <li>Use semantic HTML elements</li>
+        <li>Provide alt text for all images</li>
+        <li>Ensure proper heading hierarchy</li>
+        <li>Label all form inputs</li>
+        <li>Support keyboard navigation</li>
+        <li>Maintain sufficient color contrast</li>
+        <li>Test with screen readers</li>
+        <li>Test with zoom (200%)</li>
+        <li>Test with keyboard only</li>
+        <li>Use ARIA only when necessary</li>
+    </ul>
+</div>
+
+</body>
+</html>
