@@ -141,6 +141,49 @@ console.log("sort with comparator:", numbers);
 
 console.log("\n=== Iteration Methods ===");
 
+/**
+ * MUTATING vs NON-MUTATING METHODS:
+ * =================================
+ * 
+ * CRITICAL DISTINCTION FOR DEBUGGING AND DATA INTEGRITY!
+ * 
+ * MUTATING (change original array):
+ * - push, pop, shift, unshift
+ * - splice, reverse, sort
+ * - fill, copyWithin
+ * - USE CAREFULLY: Can cause unexpected side effects
+ * 
+ * NON-MUTATING (return new array):
+ * - map, filter, reduce
+ * - concat, slice
+ * - flat, flatMap
+ * - toSorted, toReversed, toSpliced (ES2023)
+ * - SAFER: Original array unchanged
+ * 
+ * WHY THIS MATTERS:
+ * 
+ * MUTATING (unexpected behavior):
+ * const original = [1, 2, 3];
+ * const sorted = original.sort();  // Mutates original!
+ * console.log(original);  // [1, 2, 3] - CHANGED!
+ * 
+ * NON-MUTATING (predictable):
+ * const original = [3, 1, 2];
+ * const sorted = original.toSorted();  // ES2023
+ * console.log(original);  // [3, 1, 2] - unchanged ✓
+ * 
+ * BEST PRACTICES:
+ * ✓ Prefer non-mutating methods (functional style)
+ * ✓ If you must mutate, copy first: [...arr].sort()
+ * ✓ Use const for arrays to catch reassignment bugs
+ * ✓ Consider immutable data structures for complex apps
+ * 
+ * PERFORMANCE NOTE:
+ * - Mutating is faster (no copy overhead)
+ * - But premature optimization = root of evil
+ * - Prefer readability and safety first
+ */
+
 const values = [1, 2, 3, 4, 5];
 
 // forEach() - Execute function for each element (no return value)

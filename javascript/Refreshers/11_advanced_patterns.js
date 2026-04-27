@@ -16,51 +16,126 @@ console.log("=" + "=".repeat(78) + "=");
 console.log("\n=== Closures ===");
 
 /**
- * Closure = function that has access to variables from outer scope
- * Even after outer function has returned
+ * CLOSURES EXPLAINED:
+ * ==================
+ * 
+ * DEFINITION:
+ * A closure is a function that has access to variables from an outer function
+ * even after the outer function has returned.
+ * 
+ * HOW IT WORKS:
+ * - Inner function "closes over" (captures) outer function's variables
+ * - Variables are kept alive in memory as long as closure exists
+ * - Each closure gets its own copy of the outer variables
+ * 
+ * WHEN CREATED:
+ * - Every time a function is created inside another function
+ * - Arrow functions, regular functions, methods - all can form closures
+ * 
+ * USE CASES:
+ * ✓ Data privacy (private variables)
+ * ✓ Factory functions (creating similar objects)
+ * ✓ Event handlers (accessing component state)
+ * ✓ Callbacks (remembering context)
+ * 
+ * MEMORY IMPLICATIONS:
+ * - Closures keep variables in memory (potential memory leak)
+ * - Each closure instance has separate memory
+ * - Only captured variables are retained (not entire scope)
+ * 
+ * TRADE-OFFS:
+ * PROS: Data privacy, state management, elegant code
+ * CONS: Memory overhead, harder to debug, can cause leaks
  */
 
 function makeCounter() {
-    let count = 0;  // Private variable
+    // This variable is in the outer function's scope
+    let count = 0;  // Private variable - not accessible from outside
     
+    // Return object with methods that close over 'count'
     return {
         increment() {
+            // This function forms a closure over 'count'
+            // Even after makeCounter returns, 'count' stays alive
             count++;
             return count;
         },
         decrement() {
+            // Another closure over the same 'count'
             count--;
             return count;
         },
         getCount() {
+            // Yet another closure over 'count'
             return count;
         }
     };
 }
 
 const counter = makeCounter();
+// makeCounter() has returned, but 'count' is still alive!
 console.log("Increment:", counter.increment());  // 1
 console.log("Increment:", counter.increment());  // 2
 console.log("Decrement:", counter.decrement());  // 1
 console.log("Get:", counter.getCount());         // 1
-// console.log(counter.count);  // undefined - private!
 
-// Closure in loop (classic interview question)
+// IMPORTANT: Can't access 'count' directly (data privacy!)
+console.log(counter.count);  // undefined - private!
+
+// Each call to makeCounter() creates a NEW closure with NEW variables
+const counter2 = makeCounter();
+console.log("Counter2:", counter2.increment());  // 1 (independent!)
+
+// CLOSURE IN LOOP - CLASSIC INTERVIEW QUESTION
 console.log("\nClosure in loop:");
+
+// PROBLEM: var is function-scoped, not block-scoped
 for (var i = 0; i < 3; i++) {
-    setTimeout(() => console.log("  var:", i), 100);  // Prints 3, 3, 3
+    // setTimeout callback closes over 'i'
+    // By the time callback executes, loop has finished and i = 3
+    setTimeout(() => console.log("  var:", i), 100);  // Prints 3, 3, 3 ❌
 }
+// WHY? All callbacks share the SAME 'i', which is 3 after loop ends
 
+// SOLUTION 1: Use 'let' (block-scoped)
 for (let j = 0; j < 3; j++) {
-    setTimeout(() => console.log("  let:", j), 100);  // Prints 0, 1, 2
+    // Each iteration creates a NEW 'j' in separate block scope
+    // Callback closes over its iteration's 'j'
+    setTimeout(() => console.log("  let:", j), 100);  // Prints 0, 1, 2 ✓
 }
 
-// Fix with IIFE
+// SOLUTION 2: IIFE (old way, before 'let')
 for (var k = 0; k < 3; k++) {
+    // IIFE creates new scope for each iteration
+    // Passes current 'k' value as 'num' parameter
     (function(num) {
-        setTimeout(() => console.log("  IIFE:", num), 100);  // Prints 0, 1, 2
+        // Callback closes over 'num' (frozen at this iteration's value)
+        setTimeout(() => console.log("  IIFE:", num), 100);  // Prints 0, 1, 2 ✓
     })(k);
 }
+
+/**
+ * MEMORY LEAK WARNING:
+ * 
+ * // BAD: Closure keeping large object in memory
+ * function createHandler() {
+ *     const largeData = new Array(1000000).fill('x');
+ *     
+ *     return function() {
+ *         console.log(largeData.length);  // Keeps entire array in memory!
+ *     };
+ * }
+ * 
+ * // GOOD: Only keep what you need
+ * function createHandler() {
+ *     const largeData = new Array(1000000).fill('x');
+ *     const length = largeData.length;  // Extract value
+ *     
+ *     return function() {
+ *         console.log(length);  // Only keeps number, not entire array
+ *     };
+ * }
+ */
 
 
 // ============================================================================
@@ -171,35 +246,110 @@ console.log("Generic curry:", curriedSum(1, 2)(3, 4));  // 10
 console.log("\n=== Memoization ===");
 
 /**
- * Memoization = Cache results of expensive function calls
+ * MEMOIZATION EXPLAINED:
+ * =====================
+ * 
+ * CONCEPT:
+ * Cache results of expensive function calls to avoid recalculation
+ * 
+ * HOW IT WORKS:
+ * 1. Check if result for these arguments exists in cache
+ * 2. If yes: return cached result (fast!)
+ * 3. If no: compute result, store in cache, return result
+ * 
+ * WHEN TO USE:
+ * ✓ Pure functions (same input → same output)
+ * ✓ Expensive calculations (fibonacci, factorials, complex algorithms)
+ * ✓ API calls with same parameters
+ * ✓ Recursive functions (massive speedup!)
+ * 
+ * WHEN NOT TO USE:
+ * ✗ Functions with side effects
+ * ✗ Functions that return different results for same input
+ * ✗ Rarely-called functions (cache overhead not worth it)
+ * ✗ Functions with many unique argument combinations (memory waste)
+ * 
+ * TRADE-OFFS:
+ * PROS: Massive performance gains for repeated calls
+ * CONS: Memory usage (cache grows), only works for pure functions
+ * 
+ * PERFORMANCE COMPARISON:
+ * fibonacci(40) without memoization: ~1-2 seconds (2^40 operations)
+ * fibonacci(40) with memoization: <1ms (40 operations + cache hits)
  */
 
-// Without memoization
+// Without memoization - EXPONENTIALLY SLOW
 function fibonacci(n) {
     if (n <= 1) return n;
+    // Each call spawns 2 more calls → 2^n time complexity!
     return fibonacci(n - 1) + fibonacci(n - 2);
 }
+// fibonacci(40) would take ~1 second, fibonacci(50) would take minutes!
 
-// With memoization
+// With memoization - LINEAR TIME
 function memoize(fn) {
-    const cache = {};
+    const cache = {};  // Store results here
     
     return function(...args) {
+        // Create cache key from arguments
         const key = JSON.stringify(args);
+        
+        // Check cache first
         if (key in cache) {
             console.log(`  Cache hit for ${key}`);
-            return cache[key];
+            return cache[key];  // Return instantly!
         }
+        
+        // Not in cache: compute result
         console.log(`  Computing for ${key}`);
         const result = fn.apply(this, args);
+        
+        // Store in cache for next time
         cache[key] = result;
         return result;
     };
 }
 
 const memoizedFib = memoize(fibonacci);
+
+// First call: computes and caches
 console.log("Fib(10):", memoizedFib(10));
+
+// Second call: instant from cache
 console.log("Fib(10) again:", memoizedFib(10));  // From cache
+
+/**
+ * MEMOIZATION PITFALLS:
+ * 
+ * 1. CACHE GROWS UNBOUNDED
+ *    Solution: Add cache size limit or TTL (time-to-live)
+ * 
+ * 2. REFERENCE TYPES AS ARGUMENTS
+ *    Objects/arrays: JSON.stringify might not create unique keys
+ *    Solution: Use better serialization or WeakMap
+ * 
+ * 3. MEMORY LEAKS
+ *    Cache never clears, grows forever
+ *    Solution: Implement cache eviction strategy (LRU, LFU)
+ * 
+ * ADVANCED MEMOIZATION (with cache limit):
+ * function memoizeWithLimit(fn, maxSize = 100) {
+ *     const cache = new Map();
+ *     return function(...args) {
+ *         const key = JSON.stringify(args);
+ *         if (cache.has(key)) return cache.get(key);
+ *         
+ *         const result = fn(...args);
+ *         cache.set(key, result);
+ *         
+ *         if (cache.size > maxSize) {
+ *             const firstKey = cache.keys().next().value;
+ *             cache.delete(firstKey);  // Remove oldest
+ *         }
+ *         return result;
+ *     };
+ * }
+ */
 
 
 // ============================================================================
@@ -209,46 +359,153 @@ console.log("Fib(10) again:", memoizedFib(10));  // From cache
 console.log("\n=== Debounce and Throttle ===");
 
 /**
- * DEBOUNCE = Execute after delay, restart timer on new call
- * Use: Search input, window resize
+ * DEBOUNCE vs THROTTLE - WHEN TO USE EACH:
+ * ========================================
  * 
- * THROTTLE = Execute at most once per time period
- * Use: Scroll events, button clicks
+ * DEBOUNCE:
+ * - Delays execution until activity stops
+ * - Resets timer on each new call
+ * - Only executes AFTER user stops triggering
+ * 
+ * VISUALIZATION:
+ * Events:  | | | | |     |      (user types/moves)
+ * Debounce:          [300ms]→ ✓  (only runs after pause)
+ * 
+ * USE WHEN:
+ * ✓ Search input (wait until user stops typing)
+ * ✓ Window resize (wait until user finishes resizing)
+ * ✓ Form validation (validate after user finishes typing)
+ * ✓ Auto-save (save after user stops editing)
+ * 
+ * THROTTLE:
+ * - Executes at regular intervals
+ * - Ignores calls during cooldown period
+ * - Guarantees execution at consistent rate
+ * 
+ * VISUALIZATION:
+ * Events:  | | | | | | | | | | (continuous events)
+ * Throttle: ✓   [300ms]   ✓   [300ms]   ✓  (every 300ms)
+ * 
+ * USE WHEN:
+ * ✓ Scroll events (update position every Xms, not every scroll)
+ * ✓ Mouse move tracking (sample position, not every pixel)
+ * ✓ Button clicks (prevent spam clicking)
+ * ✓ API rate limiting (max N requests per second)
+ * 
+ * KEY DIFFERENCE:
+ * Debounce: "Wait until they stop"
+ * Throttle: "Do it regularly, not constantly"
+ * 
+ * PERFORMANCE IMPACT:
+ * Without:  1000 events = 1000 function calls = 💀
+ * Debounce: 1000 events = 1 call (after stop) = ✓
+ * Throttle: 1000 events = ~10 calls (every 100ms) = ✓
  */
 
-// Debounce
+// DEBOUNCE IMPLEMENTATION
 function debounce(func, delay) {
-    let timeoutId;
+    let timeoutId;  // Stores the timer
     
     return function(...args) {
+        // Clear previous timer (restart the countdown!)
         clearTimeout(timeoutId);
+        
+        // Start new timer
         timeoutId = setTimeout(() => {
+            // Execute after delay (if no new calls interrupt)
             func.apply(this, args);
         }, delay);
+        
+        // KEY BEHAVIOR: Each call resets the timer
+        // Function only executes after 'delay' ms of silence
     };
 }
 
-// Usage
+// REAL-WORLD EXAMPLE: Search input
 const searchAPI = (query) => console.log(`  Searching for: ${query}`);
 const debouncedSearch = debounce(searchAPI, 500);
 
-// Simulate rapid typing
-debouncedSearch("a");
-debouncedSearch("ab");
-debouncedSearch("abc");  // Only this will execute after 500ms
+// Simulate rapid typing (user types "abc")
+debouncedSearch("a");    // Timer starts (500ms)
+debouncedSearch("ab");   // Timer resets (500ms)
+debouncedSearch("abc");  // Timer resets (500ms)
+// After 500ms of no calls: searchAPI("abc") executes
+// Result: Only 1 API call instead of 3!
 
-// Throttle
+/**
+ * WHY THIS MATTERS:
+ * Without debounce:
+ * - User types "javascript" (10 characters)
+ * - 10 API calls fired
+ * - Server overload, wasted bandwidth
+ * 
+ * With debounce (300ms):
+ * - User types "javascript" (10 characters)
+ * - 1 API call fired (after they stop typing)
+ * - Efficient, better UX
+ */
+
+// THROTTLE IMPLEMENTATION
 function throttle(func, limit) {
-    let inThrottle;
+    let inThrottle;  // Flag to track cooldown
     
     return function(...args) {
         if (!inThrottle) {
+            // Not in cooldown: execute immediately
             func.apply(this, args);
+            
+            // Start cooldown period
             inThrottle = true;
+            
+            // Reset flag after 'limit' ms
             setTimeout(() => inThrottle = false, limit);
+            
+            // KEY BEHAVIOR: Executes immediately, then cooldown
+            // Subsequent calls during cooldown are ignored
         }
+        // Calls during cooldown are silently dropped
     };
 }
+
+// REAL-WORLD EXAMPLE: Scroll tracking
+const trackScroll = () => console.log(`  Scroll position: ${window.scrollY}`);
+const throttledScroll = throttle(trackScroll, 100);
+
+// User scrolls continuously
+// window.addEventListener('scroll', throttledScroll);
+// Without throttle: fires 100+ times per second
+// With throttle (100ms): fires 10 times per second
+
+/**
+ * ADVANCED DEBOUNCE (with leading/trailing options):
+ * 
+ * function debounceAdvanced(func, delay, options = {}) {
+ *     let timeoutId;
+ *     const { leading = false, trailing = true } = options;
+ *     let lastArgs;
+ *     
+ *     return function(...args) {
+ *         lastArgs = args;
+ *         
+ *         if (leading && !timeoutId) {
+ *             func.apply(this, args);  // Execute immediately
+ *         }
+ *         
+ *         clearTimeout(timeoutId);
+ *         timeoutId = setTimeout(() => {
+ *             if (trailing) {
+ *                 func.apply(this, lastArgs);  // Execute after delay
+ *             }
+ *             timeoutId = null;
+ *         }, delay);
+ *     };
+ * }
+ * 
+ * USE CASES:
+ * - leading: true → Execute first call immediately, debounce rest
+ * - trailing: true → Execute after delay (default behavior)
+ * - both: Execute first call AND after delay
+ */
 
 // Usage
 const handleScroll = () => console.log("  Scroll event");

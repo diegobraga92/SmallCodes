@@ -22,28 +22,74 @@ console.log("=" + "=".repeat(78) + "=");
 
 console.log("\n=== Creating Objects ===");
 
-// Object literal (most common)
+/**
+ * OBJECT CREATION METHODS - WHEN TO USE EACH:
+ * ===========================================
+ * 
+ * 1. OBJECT LITERAL { } - USE 99% OF THE TIME
+ *    - Simple, concise syntax
+ *    - Best for single objects or data structures
+ *    - Prototype: Object.prototype
+ * 
+ * 2. NEW OBJECT() - AVOID (UNNECESSARY)
+ *    - Same as literal but more verbose
+ *    - No advantage over { }
+ * 
+ * 3. OBJECT.CREATE(proto) - USE FOR SPECIFIC PROTOTYPES
+ *    - When you need a specific prototype
+ *    - Object.create(null) for dictionary without inherited properties
+ *    - Useful for prototypal inheritance
+ * 
+ * 4. CONSTRUCTOR FUNCTION - USE FOR MULTIPLE INSTANCES (legacy)
+ *    - When you need multiple objects with same structure
+ *    - Prototypal inheritance
+ *    - Modern alternative: ES6 classes
+ */
+
+// 1. Object literal (most common and recommended)
 const person = {
     name: "Alice",
     age: 30,
     city: "New York"
 };
+// WHEN: Single object, data structure, configuration
+// PROS: Simple, concise, easy to read
+// CONS: Can't create multiple instances easily
 
-// Object constructor
+// 2. Object constructor (verbose, avoid)
 const person2 = new Object();
 person2.name = "Bob";
 person2.age = 25;
+// WHEN: Never use this, literal is better
+// CONS: More verbose than literal
 
-// Object.create()
-const person3 = Object.create(null);  // No prototype
+// 3. Object.create() - for specific prototypes
+const person3 = Object.create(null);  // No prototype at all!
 person3.name = "Charlie";
+// WHEN: Need object without inherited properties (true dictionary)
+// PROS: Clean object, no pollution from Object.prototype
+// CONS: Loses useful methods like hasOwnProperty()
 
-// Constructor function (old way)
+// Example: true dictionary without prototype pollution
+const dictionary = Object.create(null);
+dictionary.toString = "my value";  // Won't conflict with Object.prototype.toString
+console.log("Dictionary keys:", Object.keys(dictionary));  // ["toString"]
+
+// 4. Constructor function (old way before ES6 classes)
 function Person(name, age) {
+    // Called with 'new', 'this' refers to new object
     this.name = name;
     this.age = age;
 }
+// Add methods to prototype (shared by all instances)
+Person.prototype.greet = function() {
+    return `Hello, I'm ${this.name}`;
+};
+
 const person4 = new Person("David", 35);
+// WHEN: Need multiple objects with same structure (use ES6 classes instead)
+// PROS: Memory efficient (methods on prototype)
+// CONS: Verbose, ES6 classes are cleaner
 
 console.log("Literal:", person);
 console.log("Constructor:", person2);
@@ -159,38 +205,104 @@ console.log("Chained result:", result);
 
 console.log("\n=== 'this' Keyword ===");
 
+/**
+ * THE 'this' KEYWORD - FOUR BINDING RULES:
+ * =========================================
+ * 
+ * 1. DEFAULT BINDING (standalone function):
+ *    - In non-strict mode: 'this' refers to global object (window/globalThis)
+ *    - In strict mode: 'this' is undefined
+ * 
+ * 2. IMPLICIT BINDING (method call):
+ *    - 'this' refers to the object before the dot
+ *    - obj.method() → 'this' is obj
+ * 
+ * 3. EXPLICIT BINDING (call/apply/bind):
+ *    - Manually set 'this' using call(), apply(), or bind()
+ *    - func.call(obj) → 'this' is obj
+ * 
+ * 4. NEW BINDING (constructor):
+ *    - new Func() → 'this' is the new object being created
+ * 
+ * PRIORITY: new > explicit > implicit > default
+ * 
+ * ARROW FUNCTIONS:
+ * - Don't have their own 'this'
+ * - Inherit 'this' from enclosing lexical scope
+ * - Cannot be used with call/apply/bind or as constructors
+ */
+
 const obj = {
     value: 42,
     
+    // Regular method: 'this' determined at call time (implicit binding)
     regularMethod() {
+        // 'this' refers to obj when called as obj.regularMethod()
         console.log("Regular method 'this':", this.value);
     },
     
+    // Arrow function: 'this' captured from enclosing scope
     arrowMethod: () => {
-        // Arrow functions don't have their own 'this'
+        // Arrow functions DON'T have their own 'this'
+        // 'this' here refers to the scope where 'obj' was defined (global scope)
+        // In browser: 'this' would be window
+        // In Node.js: 'this' would be the module exports
         console.log("Arrow method 'this':", this.value);  // undefined
     },
     
+    // Nested function example
     nested() {
+        // 'this' here is obj (implicit binding)
         const inner = () => {
-            // Arrow function inherits 'this' from outer function
+            // Arrow function INHERITS 'this' from enclosing function
+            // Since outer 'this' is obj, inner 'this' is also obj
+            // This is why arrow functions are useful in callbacks!
             console.log("Nested arrow 'this':", this.value);
         };
         inner();
     }
 };
 
+// IMPLICIT BINDING: 'this' is obj
 obj.regularMethod();
+
+// Arrow function: 'this' is from definition scope, not obj
 obj.arrowMethod();
+
+// Nested arrow inherits 'this'
 obj.nested();
 
-// Losing 'this' context
+// COMMON PITFALL: Losing 'this' context
 const standalone = obj.regularMethod;
-// standalone();  // Error or undefined - 'this' is lost
+// standalone();  // Error or undefined!
+// WHY? When assigned to standalone, the function loses its connection to obj
+// When called as standalone(), there's no object before the dot
+// This falls back to DEFAULT BINDING (undefined in strict mode)
 
-// Fixing with bind
+// FIX 1: Use bind() to permanently attach 'this'
 const bound = obj.regularMethod.bind(obj);
-bound();  // Works!
+bound();  // Works! 'this' is permanently set to obj
+
+// FIX 2: Use an arrow function wrapper
+const wrapper = () => obj.regularMethod();
+wrapper();  // Works! Calls through obj
+
+// EXPLICIT BINDING examples
+function greet(greeting, punctuation) {
+    console.log(`${greeting}, ${this.name}${punctuation}`);
+}
+
+const person = { name: "Alice" };
+
+// call() - arguments passed individually
+greet.call(person, "Hello", "!");  // 'this' is person
+
+// apply() - arguments passed as array
+greet.apply(person, ["Hi", "!!"]);  // 'this' is person
+
+// bind() - creates new function with 'this' pre-set
+const boundGreet = greet.bind(person);
+boundGreet("Hey", "...");  // 'this' is always person
 
 
 // ============================================================================
@@ -390,32 +502,103 @@ console.log("After withdrawal:", account.balance);
 console.log("\n=== Prototypes ===");
 
 /**
- * Every object has an internal [[Prototype]] property
- * - Accessed via __proto__ or Object.getPrototypeOf()
- * - Forms the prototype chain
- * - Used for inheritance
+ * JAVASCRIPT PROTOTYPAL INHERITANCE EXPLAINED:
+ * ============================================
+ * 
+ * KEY CONCEPTS:
+ * 
+ * 1. [[Prototype]] (internal property):
+ *    - Every object has a hidden [[Prototype]] link to another object
+ *    - Accessed via __proto__ (deprecated) or Object.getPrototypeOf()
+ *    - Forms a chain: obj → prototype → prototype → ... → null
+ * 
+ * 2. Constructor.prototype:
+ *    - When you create a function, it gets a .prototype property (an object)
+ *    - Objects created with 'new Constructor()' have their [[Prototype]]
+ *      linked to Constructor.prototype
+ *    - IMPORTANT: Constructor.prototype !== Constructor's [[Prototype]]
+ * 
+ * 3. Prototype Chain Lookup:
+ *    - When accessing obj.prop, JS first looks at obj's own properties
+ *    - If not found, looks at obj.[[Prototype]]
+ *    - Continues up the chain until found or reaching null
+ * 
+ * 4. The 'new' Keyword:
+ *    - Creates a new empty object
+ *    - Sets its [[Prototype]] to Constructor.prototype
+ *    - Calls Constructor with 'this' = new object
+ *    - Returns the new object (unless constructor returns an object)
+ * 
+ * MENTAL MODEL:
+ * Constructor Function ──has──> .prototype (object)
+ *                                    ↑
+ *                                    │ [[Prototype]] link
+ *                                    │
+ * new Constructor() ──creates──> instance object
  */
 
 // Constructor function and prototype
 function Animal(name) {
-    this.name = name;
+    // When called with 'new':
+    // 1. A new object is created
+    // 2. Its [[Prototype]] is set to Animal.prototype
+    // 3. 'this' refers to the new object
+    // 4. Properties are added to the new object
+    this.name = name;  // Instance property (on the object itself)
 }
 
+// Add method to prototype (shared by all instances)
+// WHY put methods on prototype? Memory efficiency!
+// If we put speak() inside the constructor, every instance
+// would get its own copy of the function
 Animal.prototype.speak = function() {
     console.log(`${this.name} makes a sound`);
 };
 
 const dog = new Animal("Dog");
+// When we call dog.speak():
+// 1. JS looks for 'speak' on dog object → not found
+// 2. JS looks on dog.[[Prototype]] (Animal.prototype) → found!
+// 3. Calls the method with 'this' = dog
 dog.speak();
 
-// Checking prototype
-console.log("Prototype:", Object.getPrototypeOf(dog) === Animal.prototype);
-console.log("Is instance?", dog instanceof Animal);
+// Checking prototype relationships
+console.log("Prototype:", Object.getPrototypeOf(dog) === Animal.prototype);  // true
+console.log("Is instance?", dog instanceof Animal);  // true
+// instanceof checks: is Animal.prototype anywhere in dog's prototype chain?
 
-// Prototype chain
-console.log("dog.__proto__:", dog.__proto__ === Animal.prototype);
-console.log("Animal.prototype.__proto__:", Animal.prototype.__proto__ === Object.prototype);
+// THE PROTOTYPE CHAIN:
+console.log("dog.__proto__:", dog.__proto__ === Animal.prototype);  // true
+// dog.__proto__ is Animal.prototype (first link)
+
+console.log("Animal.prototype.__proto__:", Animal.prototype.__proto__ === Object.prototype);  // true
+// Animal.prototype is itself an object, so its [[Prototype]] is Object.prototype
+
 console.log("Object.prototype.__proto__:", Object.prototype.__proto__);  // null
+// Object.prototype is the top of the chain, its [[Prototype]] is null
+
+/**
+ * FULL CHAIN VISUALIZATION:
+ * 
+ * dog object
+ *   ↓ [[Prototype]]
+ * Animal.prototype (has 'speak' method)
+ *   ↓ [[Prototype]]
+ * Object.prototype (has 'toString', 'hasOwnProperty', etc.)
+ *   ↓ [[Prototype]]
+ * null (end of chain)
+ * 
+ * Property lookup walks up this chain!
+ */
+
+// IMPORTANT DISTINCTION: .prototype vs [[Prototype]]
+// Animal.prototype: The object that instances will inherit from
+// dog.[[Prototype]]: The actual prototype link (points to Animal.prototype)
+
+// Own properties vs inherited properties
+console.log("dog.hasOwnProperty('name'):", dog.hasOwnProperty('name'));  // true
+console.log("dog.hasOwnProperty('speak'):", dog.hasOwnProperty('speak'));  // false
+// 'name' is on dog, 'speak' is on Animal.prototype
 
 
 // ============================================================================
@@ -424,35 +607,104 @@ console.log("Object.prototype.__proto__:", Object.prototype.__proto__);  // null
 
 console.log("\n=== Prototypal Inheritance ===");
 
+/**
+ * SETTING UP INHERITANCE IN JAVASCRIPT:
+ * =====================================
+ * 
+ * GOAL: Make Car inherit from Vehicle
+ * 
+ * STEPS:
+ * 1. Call parent constructor (for instance properties)
+ * 2. Link prototypes (for inherited methods)
+ * 3. Fix constructor property
+ * 
+ * WHY THIS WORKS:
+ * - Vehicle.call(this, ...) sets up instance properties
+ * - Object.create(Vehicle.prototype) creates a new object with
+ *   Vehicle.prototype as its [[Prototype]]
+ * - This creates the chain: Car.prototype → Vehicle.prototype → Object.prototype
+ * 
+ * COMMON MISTAKE: Car.prototype = Vehicle.prototype
+ * - This makes them the SAME object (not a chain!)
+ * - Adding methods to Car.prototype would add them to Vehicle.prototype too
+ * 
+ * MODERN ALTERNATIVE: Use ES6 classes (cleaner syntax, same mechanism)
+ */
+
 // Parent constructor
 function Vehicle(type) {
+    // Instance properties (unique to each object)
     this.type = type;
 }
 
+// Parent methods (shared via prototype)
 Vehicle.prototype.describe = function() {
     return `This is a ${this.type}`;
 };
 
 // Child constructor
 function Car(brand, model) {
-    Vehicle.call(this, "car");  // Call parent constructor
+    // STEP 1: Call parent constructor to inherit instance properties
+    // Vehicle.call(this, "car") is equivalent to:
+    // - Setting 'this' to the new Car instance
+    // - Running Vehicle's code: this.type = "car"
+    // - This ensures Car instances get Vehicle's properties
+    Vehicle.call(this, "car");  
+    
+    // Add Car-specific instance properties
     this.brand = brand;
     this.model = model;
 }
 
-// Set up inheritance
+// STEP 2: Set up prototype chain for method inheritance
+// WRONG: Car.prototype = Vehicle.prototype (makes them same object!)
+// WRONG: Car.prototype = new Vehicle() (calls constructor unnecessarily)
+// RIGHT: Car.prototype = Object.create(Vehicle.prototype)
 Car.prototype = Object.create(Vehicle.prototype);
+
+// STEP 3: Fix constructor property
+// After Object.create(), Car.prototype.constructor points to Vehicle
+// We need to fix it to point back to Car
 Car.prototype.constructor = Car;
 
-// Add child methods
+// Add child-specific methods
+// These go on Car.prototype, NOT Vehicle.prototype
 Car.prototype.getInfo = function() {
     return `${this.brand} ${this.model}`;
 };
 
 const myCar = new Car("Toyota", "Camry");
+
+// getInfo is on Car.prototype (found immediately)
 console.log("Info:", myCar.getInfo());
-console.log("Describe:", myCar.describe());  // Inherited
-console.log("Is Vehicle?", myCar instanceof Vehicle);
+
+// describe is on Vehicle.prototype (found via prototype chain)
+// Lookup: myCar → Car.prototype → Vehicle.prototype → found!
+console.log("Describe:", myCar.describe());
+
+// instanceof walks the prototype chain
+console.log("Is Car?", myCar instanceof Car);  // true
+console.log("Is Vehicle?", myCar instanceof Vehicle);  // true
+console.log("Is Object?", myCar instanceof Object);  // true
+
+/**
+ * PROTOTYPE CHAIN FOR myCar:
+ * 
+ * myCar
+ *   ↓ [[Prototype]]
+ * Car.prototype (has getInfo)
+ *   ↓ [[Prototype]]
+ * Vehicle.prototype (has describe)
+ *   ↓ [[Prototype]]
+ * Object.prototype
+ *   ↓ [[Prototype]]
+ * null
+ * 
+ * WHEN TO USE:
+ * - Use prototypal inheritance when you need classical inheritance patterns
+ * - Consider composition over inheritance for most cases
+ * - Modern code: use ES6 classes (they do this internally)
+ */
 
 
 // ============================================================================

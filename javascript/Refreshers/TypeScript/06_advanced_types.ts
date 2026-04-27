@@ -16,12 +16,47 @@ console.log("=".repeat(80));
 console.log("\n=== Mapped Types ===");
 
 /**
- * Mapped types transform properties of existing types
- * Syntax: { [P in K]: T }
+ * MAPPED TYPES EXPLAINED:
+ * =======================
+ * 
+ * Mapped types create new types by transforming properties of existing types.
+ * They're TypeScript's way of applying transformations to type shapes.
+ * 
+ * SYNTAX BREAKDOWN:
+ * type NewType<T> = { [P in keyof T]: TransformedType };
+ * 
+ * - [P in keyof T]: Iterates over each property name in T
+ * - P: Property name (like a loop variable)
+ * - keyof T: Gets all property names from T as a union
+ * - TransformedType: New type for each property
+ * 
+ * MODIFIERS:
+ * - ?: Makes property optional
+ * - -?: Removes optional modifier (makes required)
+ * - readonly: Makes property readonly
+ * - -readonly: Removes readonly modifier (makes mutable)
+ * 
+ * WHEN TO USE:
+ * ✓ Creating variations of existing types (readonly, optional, etc.)
+ * ✓ Transforming API responses to client models
+ * ✓ Building utility types
+ * ✓ Type-safe property manipulation
+ * 
+ * WHEN NOT TO USE:
+ * ✗ Simple property selection (use Pick/Omit instead)
+ * ✗ When you need runtime logic (mapped types are compile-time only)
+ * 
+ * PERFORMANCE:
+ * - Compile-time only (no runtime cost)
+ * - Can slow compilation for very large types
+ * - TypeScript compiler caches mapped types
  */
 
 // Make all properties optional
 type MyPartial<T> = {
+    // [P in keyof T]: Iterate over each property name P in type T
+    // ?: Add optional modifier to each property
+    // T[P]: Keep the original property type
     [P in keyof T]?: T[P];
 };
 
@@ -32,32 +67,65 @@ interface User {
 }
 
 type PartialUser = MyPartial<User>;
-// { id?: number; name?: string; email?: string; }
+// Result: { id?: number; name?: string; email?: string; }
+// EACH PROPERTY is now optional (can be present or undefined)
 
 // Make all properties readonly
 type MyReadonly<T> = {
+    // readonly: Add readonly modifier to each property
+    // Properties can only be set during initialization, not modified later
     readonly [P in keyof T]: T[P];
 };
 
 type ReadonlyUser = MyReadonly<User>;
-// { readonly id: number; readonly name: string; readonly email: string; }
+// Result: { readonly id: number; readonly name: string; readonly email: string; }
+// IMMUTABLE: Cannot change properties after creation
 
 // Make all properties required
 type MyRequired<T> = {
-    [P in keyof T]-?: T[P];  // -? removes optional modifier
+    // -?: Remove optional modifier from each property
+    // This is the OPPOSITE of adding ?, it removes existing ?
+    // Useful when starting with a type that has optional properties
+    [P in keyof T]-?: T[P];
 };
+// USE CASE: Converting optional API response to required internal type
 
 // Make all properties mutable (remove readonly)
 type Mutable<T> = {
-    -readonly [P in keyof T]: T[P];  // -readonly removes readonly
+    // -readonly: Remove readonly modifier from each property
+    // Allows modification of previously readonly properties
+    // Useful when you need to modify immutable data structures
+    -readonly [P in keyof T]: T[P];
 };
+// USE CASE: Creating draft versions of readonly types for editing
 
 // Example usage
 const user1: PartialUser = { name: "Alice" };  // OK - all optional
+// We can omit id and email because ALL properties are optional
+
 const user2: ReadonlyUser = { id: 1, name: "Bob", email: "bob@example.com" };
-// user2.name = "Changed";  // Error: readonly
+// user2.name = "Changed";  // Error: Cannot assign to 'name' because it is a read-only property
+// TypeScript PREVENTS mutation at compile time
 
 console.log("Mapped types:", { user1, user2 });
+
+/**
+ * KEY INSIGHTS:
+ * 
+ * 1. MAPPED TYPES ARE TRANSFORMATIONS:
+ *    They don't copy types, they create NEW types by applying rules
+ * 
+ * 2. MODIFIERS CAN BE ADDED OR REMOVED:
+ *    +? (add optional), -? (remove optional)
+ *    +readonly (add readonly), -readonly (remove readonly)
+ * 
+ * 3. THEY'RE COMPOSABLE:
+ *    type ReadonlyPartial<T> = Readonly<Partial<T>>;
+ * 
+ * 4. COMMON PATTERN:
+ *    Most built-in utility types (Partial, Required, Readonly, Pick, Omit)
+ *    are implemented using mapped types!
+ */
 
 
 // ============================================================================
@@ -66,8 +134,36 @@ console.log("Mapped types:", { user1, user2 });
 
 console.log("\n=== Mapped Type Transformations ===");
 
+/**
+ * KEY REMAPPING (TypeScript 4.1+):
+ * =================================
+ * 
+ * Syntax: [P in keyof T as NewKeyType]: ValueType
+ * 
+ * The "as" clause allows you to:
+ * - Rename properties
+ * - Filter properties (using never)
+ * - Transform property names
+ * - Combine with template literal types
+ * 
+ * POWERFUL PATTERN:
+ * You can compute NEW property names from OLD property names
+ * This enables advanced type transformations like:
+ * - Adding prefixes/suffixes
+ * - Converting naming conventions
+ * - Filtering by property type
+ * - Creating derived types
+ */
+
 // Add 'get' prefix to all properties
 type Getters<T> = {
+    // KEY REMAPPING BREAKDOWN:
+    // 1. [P in keyof T]: Iterate over property names
+    // 2. as `get${Capitalize<string & P>}`: REMAP each key
+    //    - `get${...}` : Template literal type for string manipulation
+    //    - Capitalize<...>: Built-in utility to capitalize first letter
+    //    - string & P: Ensure P is treated as string (intersection)
+    // 3. () => T[P]: Transform to getter function type
     [P in keyof T as `get${Capitalize<string & P>}`]: () => T[P];
 };
 
@@ -77,10 +173,18 @@ interface Person {
 }
 
 type PersonGetters = Getters<Person>;
-// { getName: () => string; getAge: () => number; }
+// Result: { getName: () => string; getAge: () => number; }
+// PROPERTIES ARE RENAMED: 'name' → 'getName', 'age' → 'getAge'
+// TYPES ARE TRANSFORMED: T[P] → () => T[P] (value → getter function)
 
 // Filter properties by type
 type StringProperties<T> = {
+    // CONDITIONAL KEY REMAPPING (filtering):
+    // 1. T[P] extends string: Check if property type is string
+    // 2. ? P : never: If yes, keep property name; if no, use 'never'
+    // 3. never keys are EXCLUDED from the resulting type
+    // 
+    // This is TYPE-LEVEL FILTERING - removes properties at compile time
     [P in keyof T as T[P] extends string ? P : never]: T[P];
 };
 
@@ -92,15 +196,46 @@ interface Mixed {
 }
 
 type OnlyStrings = StringProperties<Mixed>;
-// { name: string; email: string; }
+// Result: { name: string; email: string; }
+// 'age' (number) and 'active' (boolean) are FILTERED OUT
+// Only string properties remain
 
 // Exclude certain properties
 type OmitType<T, K extends keyof T> = {
+    // PROPERTY EXCLUSION PATTERN:
+    // 1. P extends K: Check if current property is in exclusion list K
+    // 2. ? never : P: If yes, exclude (never); if no, keep property name
+    // 
+    // This is how Omit<T, K> utility type is implemented internally!
     [P in keyof T as P extends K ? never : P]: T[P];
 };
 
 type UserWithoutId = OmitType<User, "id">;
-// { name: string; email: string; }
+// Result: { name: string; email: string; }
+// 'id' property is REMOVED from the type
+
+/**
+ * KEY REMAPPING PATTERNS:
+ * 
+ * 1. RENAME PATTERN:
+ *    [P in keyof T as `prefix_${P}`]: T[P]
+ * 
+ * 2. FILTER PATTERN:
+ *    [P in keyof T as Condition ? P : never]: T[P]
+ * 
+ * 3. TRANSFORM PATTERN:
+ *    [P in keyof T as TransformKey<P>]: TransformValue<T[P]>
+ * 
+ * 4. COMBINE PATTERN:
+ *    Can combine filtering + renaming + type transformation
+ * 
+ * COMMON USE CASES:
+ * - API response → Client model transformation
+ * - Database column names → TypeScript property names
+ * - Event handlers (on + EventName pattern)
+ * - Getters/setters generation
+ * - Form validation schemas
+ */
 
 
 // ============================================================================
@@ -110,15 +245,70 @@ type UserWithoutId = OmitType<User, "id">;
 console.log("\n=== Conditional Types ===");
 
 /**
- * Conditional types: T extends U ? X : Y
- * Choose type based on condition
+ * CONDITIONAL TYPES EXPLAINED:
+ * ============================
+ * 
+ * Syntax: T extends U ? X : Y
+ * 
+ * Like a ternary operator, but for TYPES:
+ * - If type T is assignable to type U, result is X
+ * - Otherwise, result is Y
+ * 
+ * KEY CONCEPTS:
+ * 
+ * 1. "extends" MEANS "is assignable to":
+ *    - string extends string → true
+ *    - "hello" extends string → true (literal extends base)
+ *    - string extends "hello" → false (base does NOT extend literal)
+ *    - number extends string → false (incompatible types)
+ * 
+ * 2. DISTRIBUTIVE CONDITIONAL TYPES:
+ *    When T is a UNION type, TypeScript distributes the check:
+ *    
+ *    type Test<T> = T extends string ? true : false;
+ *    type Result = Test<string | number>;
+ *    
+ *    TypeScript DISTRIBUTES:
+ *    = (string extends string ? true : false) | (number extends string ? true : false)
+ *    = true | false
+ *    
+ *    This behavior is POWERFUL but can be surprising!
+ * 
+ * 3. NON-DISTRIBUTIVE (wrapped in tuple):
+ *    type Test<T> = [T] extends [string] ? true : false;
+ *    type Result = Test<string | number>;  // false
+ *    
+ *    [string | number] extends [string] → false (union doesn't extend)
+ * 
+ * WHEN TO USE:
+ * ✓ Type-level branching logic
+ * ✓ Filtering union types
+ * ✓ Extracting types from complex structures
+ * ✓ Creating flexible utility types
+ * 
+ * COMMON PATTERNS:
+ * - Exclude<T, U>: Remove types from union
+ * - Extract<T, U>: Keep only matching types
+ * - NonNullable<T>: Remove null/undefined
+ * - ReturnType<T>: Extract function return type
  */
 
 // Check if type is string
 type IsString<T> = T extends string ? true : false;
 
-type Test1 = IsString<string>;   // true
-type Test2 = IsString<number>;   // false
+// SIMPLE CHECKS:
+type Test1 = IsString<string>;   // true (string extends string)
+type Test2 = IsString<number>;   // false (number does NOT extend string)
+
+// DISTRIBUTIVE BEHAVIOR WITH UNIONS:
+type Test3 = IsString<string | number>;
+// TypeScript distributes the conditional:
+// = IsString<string> | IsString<number>
+// = true | false
+// = boolean (union of true and false)
+
+// WHY DISTRIBUTIVE? Because T is a "naked type parameter"
+// (not wrapped in array, tuple, or other type constructor)
 
 // Check if type is array
 type IsArray<T> = T extends any[] ? true : false;
@@ -176,12 +366,60 @@ type Test7 = NonNullable<string | null | undefined>;  // string
 console.log("\n=== Infer Keyword ===");
 
 /**
- * infer = declare type variable within conditional type
- * Extract types from complex type expressions
+ * INFER KEYWORD EXPLAINED:
+ * ========================
+ * 
+ * The "infer" keyword allows you to DECLARE a type variable within
+ * a conditional type's extends clause, then use it in the true branch.
+ * 
+ * SYNTAX:
+ * type MyType<T> = T extends SomePattern<infer U> ? U : never;
+ *                                        ^^^^^^^     ^
+ *                                        declare    use
+ * 
+ * HOW IT WORKS:
+ * 1. TypeScript tries to match T against the pattern
+ * 2. If it matches, it INFERS what U must be
+ * 3. U becomes available in the true branch
+ * 4. If no match, falls to false branch
+ * 
+ * THINK OF IT AS:
+ * "If T matches this pattern, figure out what the unknown type U is,
+ * then give me U"
+ * 
+ * COMMON PATTERNS:
+ * 
+ * 1. EXTRACT RETURN TYPE:
+ *    T extends (...args: any[]) => infer R
+ *    Match: function signature
+ *    Infer: what the function returns (R)
+ * 
+ * 2. EXTRACT PARAMETERS:
+ *    T extends (...args: infer P) => any
+ *    Match: function signature
+ *    Infer: what the parameters are (P as tuple)
+ * 
+ * 3. EXTRACT ARRAY ELEMENT:
+ *    T extends (infer U)[]
+ *    Match: array type
+ *    Infer: what the element type is (U)
+ * 
+ * 4. EXTRACT PROMISE VALUE:
+ *    T extends Promise<infer U>
+ *    Match: Promise type
+ *    Infer: what the Promise resolves to (U)
+ * 
+ * WHY SO POWERFUL?
+ * - Extracts nested types without explicit type parameters
+ * - Enables generic type introspection
+ * - Foundation for many built-in utility types
  */
 
 // Extract return type from function
 type MyReturnType<T> = T extends (...args: any[]) => infer R ? R : never;
+//                                                   ^^^^^^^ 
+//                                                   "If T is a function,
+//                                                   infer its return type as R"
 
 function getString(): string {
     return "hello";
@@ -192,25 +430,72 @@ function getNumber(): number {
 }
 
 type StringReturn = MyReturnType<typeof getString>;  // string
+// TypeScript matches: (...args: any[]) => string
+// Infers: R = string
+// Returns: string
+
 type NumberReturn = MyReturnType<typeof getNumber>;  // number
+// TypeScript matches: (...args: any[]) => number
+// Infers: R = number
+// Returns: number
 
 // Extract parameters from function
 type MyParameters<T> = T extends (...args: infer P) => any ? P : never;
+//                                        ^^^^^^^ 
+//                                        "Infer the parameters tuple as P"
 
 function add(a: number, b: number): number {
     return a + b;
 }
 
 type AddParams = MyParameters<typeof add>;  // [number, number]
+// TypeScript matches: (a: number, b: number) => number
+// Infers: P = [number, number] (as tuple!)
+// Returns: [number, number]
 
 // Extract array element type
-type Unpacked<T> = T extends (infer U)[] ? U : 
-                   T extends Promise<infer U> ? U : 
-                   T;
+type Unpacked<T> = 
+    // Try first pattern: is it an array?
+    T extends (infer U)[] ? U : 
+    // Try second pattern: is it a Promise?
+    T extends Promise<infer U> ? U : 
+    // No match: return T unchanged
+    T;
 
 type Test8 = Unpacked<string[]>;          // string
+// Matches first: string[] = (infer U)[]
+// Infers: U = string
+// Returns: string
+
 type Test9 = Unpacked<Promise<number>>;   // number
+// First fails, second matches: Promise<infer U>
+// Infers: U = number
+// Returns: number
+
 type Test10 = Unpacked<boolean>;          // boolean
+// Neither pattern matches
+// Returns: T unchanged = boolean
+
+/**
+ * ADVANCED INFER PATTERNS:
+ * 
+ * 1. NESTED INFER:
+ *    T extends Promise<infer U>[] ? U : never
+ *    Extract: Array of Promises → what each Promise resolves to
+ * 
+ * 2. MULTIPLE INFER:
+ *    T extends (a: infer A, b: infer B) => infer R ? [A, B, R] : never
+ *    Extract: Multiple parts of function signature
+ * 
+ * 3. RECURSIVE INFER:
+ *    type Flatten<T> = T extends (infer U)[] ? Flatten<U> : T
+ *    Recursively unwrap nested arrays
+ * 
+ * LIMITATIONS:
+ * - Can only use in conditional type extends clause
+ * - Cannot infer from non-type positions
+ * - Covariant inference position (output types)
+ */
 
 
 // ============================================================================
@@ -220,39 +505,143 @@ type Test10 = Unpacked<boolean>;          // boolean
 console.log("\n=== Template Literal Types ===");
 
 /**
- * Template literal types = string manipulation at type level
+ * TEMPLATE LITERAL TYPES EXPLAINED:
+ * ==================================
+ * 
+ * Template literal types use the same syntax as JavaScript template
+ * literals, but they operate at the TYPE LEVEL (compile time).
+ * 
+ * SYNTAX:
+ * type MyType = `${A}${B}${C}`;
+ * 
+ * KEY BEHAVIORS:
+ * 
+ * 1. STRING INTERPOLATION AT TYPE LEVEL:
+ *    Combines literal strings with types to create new string literal types
+ * 
+ * 2. UNION DISTRIBUTION:
+ *    When you use a union type in ${}, TypeScript creates a CARTESIAN PRODUCT
+ *    type A = "x" | "y";
+ *    type B = "1" | "2";
+ *    type C = `${A}${B}`;  // "x1" | "x2" | "y1" | "y2"
+ * 
+ * 3. WORKS WITH INTRINSIC STRING UTILITIES:
+ *    - Capitalize<T>: First letter uppercase
+ *    - Uncapitalize<T>: First letter lowercase
+ *    - Uppercase<T>: All letters uppercase
+ *    - Lowercase<T>: All letters lowercase
+ * 
+ * WHEN TO USE:
+ * ✓ Type-safe string patterns (URLs, CSS classes, event names)
+ * ✓ API route typing
+ * ✓ Database column names from types
+ * ✓ Event handler naming conventions
+ * ✓ CSS-in-JS type safety
+ * 
+ * LIMITATIONS:
+ * - Can create HUGE union types (performance impact)
+ * - Only works with string literal types, not arbitrary strings
+ * - No regex patterns or complex string manipulation
+ * 
+ * PERFORMANCE CONSIDERATION:
+ * Multiple unions multiply quickly:
+ * type A = "a" | "b";
+ * type B = "1" | "2";
+ * type C = "x" | "y";
+ * type D = `${A}${B}${C}`;  // 2 × 2 × 2 = 8 combinations
+ * 
+ * With 4 unions of 5 options each: 5^4 = 625 string literal types!
  */
 
 // Basic template literal type
 type Greeting = `Hello ${string}`;
-const greeting1: Greeting = "Hello Alice";
-const greeting2: Greeting = "Hello Bob";
-// const greeting3: Greeting = "Hi Alice";  // Error
+// This matches ANY string that starts with "Hello "
+// string in ${} acts as a wildcard for any string
 
-// With unions
+const greeting1: Greeting = "Hello Alice";       // ✓ Valid
+const greeting2: Greeting = "Hello Bob";         // ✓ Valid
+const greeting3: Greeting = "Hello 123";         // ✓ Valid
+// const greeting4: Greeting = "Hi Alice";       // ✗ Error: doesn't start with "Hello "
+// const greeting5: Greeting = "hello Alice";    // ✗ Error: wrong case
+
+// With unions - DISTRIBUTION
 type Direction = "top" | "right" | "bottom" | "left";
 type Margin = `margin${Capitalize<Direction>}`;
-// "marginTop" | "marginRight" | "marginBottom" | "marginLeft"
+// TypeScript distributes over the union:
+// = `margin${Capitalize<"top">}` | `margin${Capitalize<"right">}` | ...
+// = "marginTop" | "marginRight" | "marginBottom" | "marginLeft"
+// 
+// This creates 4 EXACT string literal types
+// You can ONLY assign these exact strings
 
-// Multiple unions (Cartesian product)
+// Multiple unions - CARTESIAN PRODUCT
 type HTTPMethod = "GET" | "POST";
 type Endpoint = "users" | "posts";
 type APIRoute = `${HTTPMethod} /${Endpoint}`;
-// "GET /users" | "GET /posts" | "POST /users" | "POST /posts"
+// Cartesian product of unions:
+// = ("GET" | "POST") × ("users" | "posts")
+// = "GET /users" | "GET /posts" | "POST /users" | "POST /posts"
+// 
+// Result: 2 × 2 = 4 possible combinations
+// Type-safe API routes!
 
-// Event handler types
+const validRoute1: APIRoute = "GET /users";      // ✓ Valid
+const validRoute2: APIRoute = "POST /posts";     // ✓ Valid
+// const invalidRoute: APIRoute = "DELETE /users"; // ✗ Error: not in union
+// const typo: APIRoute = "GET /user";            // ✗ Error: typo caught at compile time
+
+// Event handler types - REAL-WORLD PATTERN
 type EventName = "click" | "focus" | "blur";
 type EventHandler = `on${Capitalize<EventName>}`;
-// "onClick" | "onFocus" | "onBlur"
+// Result: "onClick" | "onFocus" | "onBlur"
+// 
+// Common in React, Vue, Angular for prop types:
+// interface ButtonProps {
+//     onClick?: () => void;
+//     onFocus?: () => void;
+//     onBlur?: () => void;
+// }
 
-// CSS properties
+// CSS properties - DESIGN SYSTEM TYPING
 type Size = "sm" | "md" | "lg";
 type Color = "primary" | "secondary";
 type ClassName = `${Size}-${Color}`;
-// "sm-primary" | "sm-secondary" | "md-primary" | "md-secondary" | ...
+// Cartesian product:
+// = ("sm" | "md" | "lg") × ("primary" | "secondary")
+// = "sm-primary" | "sm-secondary" | "md-primary" | 
+//   "md-secondary" | "lg-primary" | "lg-secondary"
+// 
+// Result: 3 × 2 = 6 type-safe CSS class names
+// Typos are caught at compile time!
 
-const cssClass: ClassName = "md-primary";
+const cssClass: ClassName = "md-primary";        // ✓ Valid
+// const typo: ClassName = "medium-primary";     // ✗ Error: not in union
+// const invalid: ClassName = "sm-tertiary";     // ✗ Error: tertiary not defined
+
 console.log("CSS class:", cssClass);
+
+/**
+ * ADVANCED PATTERNS:
+ * 
+ * 1. NESTED TEMPLATE LITERALS:
+ *    type Deep = `${A}-${`${B}-${C}`}`;
+ * 
+ * 2. CONDITIONAL IN TEMPLATES:
+ *    type Prefixed<T> = T extends string ? `prefix-${T}` : never;
+ * 
+ * 3. RECURSIVE PATTERNS:
+ *    type Path<T> = T extends object 
+ *        ? { [K in keyof T]: `${K}` | `${K}.${Path<T[K]>}` }[keyof T]
+ *        : never;
+ *    // Creates dot-notation paths for nested objects
+ * 
+ * REAL-WORLD USE CASES:
+ * - Type-safe URL routing in frameworks
+ * - CSS-in-JS type safety (styled-components, emotion)
+ * - Database query builders (Prisma, TypeORM)
+ * - GraphQL query type generation
+ * - Event system typing
+ */
 
 
 // ============================================================================

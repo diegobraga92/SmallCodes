@@ -14,10 +14,51 @@ console.log("=" + "=".repeat(78) + "=");
 // ============================================================================
 
 /**
- * Classes are syntactic sugar over constructor functions
- * - Introduced in ES6 (ES2015)
- * - Still use prototypal inheritance under the hood
- * - Cleaner, more intuitive syntax
+ * ES6 CLASSES vs CONSTRUCTOR FUNCTIONS:
+ * =====================================
+ * 
+ * Classes are "syntactic sugar" over constructor functions
+ * - They use the same prototypal inheritance underneath
+ * - Just a cleaner, more familiar syntax (especially for OOP devs)
+ * - NOT a new inheritance model!
+ * 
+ * CONSTRUCTOR FUNCTION (old way):
+ * function Person(name) {
+ *     this.name = name;
+ * }
+ * Person.prototype.greet = function() {
+ *     return `Hello, I'm ${this.name}`;
+ * };
+ * 
+ * ES6 CLASS (new way):
+ * class Person {
+ *     constructor(name) {
+ *         this.name = name;
+ *     }
+ *     greet() {
+ *         return `Hello, I'm ${this.name}`;
+ *     }
+ * }
+ * 
+ * BOTH CREATE THE SAME PROTOTYPE CHAIN!
+ * 
+ * ADVANTAGES OF CLASSES:
+ * ✓ Cleaner, more intuitive syntax
+ * ✓ Easier to set up inheritance (extends/super)
+ * ✓ Must use 'new' (throws error if forgotten)
+ * ✓ Methods are non-enumerable by default
+ * ✓ Easier to read and maintain
+ * ✓ Better TypeScript integration
+ * 
+ * WHEN TO USE CLASSES:
+ * - New code (ES6+)
+ * - When you need inheritance
+ * - Working with frameworks (React components, etc.)
+ * - Team prefers OOP style
+ * 
+ * WHEN TO USE CONSTRUCTOR FUNCTIONS:
+ * - Legacy code compatibility
+ * - Very simple objects (consider factory functions instead)
  */
 
 console.log("\n=== Basic Class ===");

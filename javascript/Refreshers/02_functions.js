@@ -110,51 +110,108 @@ const notHoisted = function() {
 
 console.log("\n============ ARROW FUNCTIONS ============\n");
 
-/*
-    ARROW FUNCTION SYNTAX:
-    const name = (parameters) => expression;
-    const name = (parameters) => { statements; return value; };
-    
-    - Shorter syntax
-    - Lexical 'this' binding
-    - Cannot be used as constructors
-    - No 'arguments' object
-*/
+/**
+ * ARROW FUNCTIONS EXPLAINED:
+ * ==========================
+ * 
+ * SYNTAX:
+ * const name = (parameters) => expression;
+ * const name = (parameters) => { statements; return value; };
+ * 
+ * KEY DIFFERENCES FROM REGULAR FUNCTIONS:
+ * 
+ * 1. LEXICAL 'this':
+ *    - Don't have their own 'this'
+ *    - Inherit 'this' from enclosing scope
+ *    - Perfect for callbacks (no .bind() needed!)
+ * 
+ * 2. CANNOT BE CONSTRUCTORS:
+ *    - Can't use 'new' with arrow functions
+ *    - No prototype property
+ * 
+ * 3. NO 'arguments' OBJECT:
+ *    - Use rest parameters (...args) instead
+ * 
+ * 4. NO 'super' OR 'new.target':
+ *    - Limitations in class methods
+ * 
+ * WHEN TO USE ARROW FUNCTIONS:
+ * ✓ Callbacks (map, filter, setTimeout, etc.)
+ * ✓ Short, simple functions
+ * ✓ When you need lexical 'this'
+ * ✓ Functional programming patterns
+ * 
+ * WHEN NOT TO USE:
+ * ✗ Object methods (need dynamic 'this')
+ * ✗ Constructors
+ * ✗ When you need 'arguments' object
+ * ✗ Event handlers that need 'this' = element
+ */
 
-// Basic arrow function
-const square = (x) => x * x;
+// Basic arrow function - implicit return
+const square = (x) => x * x;  // Returns x * x automatically
 console.log("square(5):", square(5));
 
-// Single parameter (parentheses optional)
-const double = x => x * 2;
+// Single parameter - parentheses optional
+const double = x => x * 2;  // Shorter syntax
 console.log("double(5):", double(5));
 
-// No parameters (parentheses required)
+// No parameters - parentheses required
 const getRandom = () => Math.random();
 console.log("random:", getRandom());
 
-// Multiple parameters
+// Multiple parameters - parentheses required
 const divide = (a, b) => a / b;
 console.log("divide(10, 2):", divide(10, 2));
 
-// Multiple statements (braces required, explicit return)
+// Multiple statements - braces and explicit return required
 const processNumber = (n) => {
     const doubled = n * 2;
     const squared = doubled * doubled;
-    return squared;
+    return squared;  // Must explicitly return
 };
 console.log("processNumber(3):", processNumber(3));
 
-// Returning object literal (wrap in parentheses)
+// Returning object literal - MUST wrap in parentheses
 const createPerson = (name, age) => ({ name, age });
+// Why? Without (), the { } looks like function body, not object!
+// WRONG: const createPerson = (name, age) => { name, age };  // Syntax error
 console.log("createPerson:", createPerson("Alice", 30));
 
-// Arrow function with array methods
+// Arrow functions shine with array methods
 const numbers = [1, 2, 3, 4, 5];
-const doubled = numbers.map(n => n * 2);
-const evens = numbers.filter(n => n % 2 === 0);
+const doubled = numbers.map(n => n * 2);        // Concise!
+const evens = numbers.filter(n => n % 2 === 0); // Readable!
 console.log("doubled:", doubled);
 console.log("evens:", evens);
+
+/**
+ * LEXICAL 'this' - THE KILLER FEATURE:
+ * 
+ * PROBLEM WITH REGULAR FUNCTIONS:
+ * const obj = {
+ *     value: 42,
+ *     method() {
+ *         setTimeout(function() {
+ *             console.log(this.value);  // undefined! 'this' is wrong
+ *         }, 100);
+ *     }
+ * };
+ * 
+ * OLD SOLUTION (bind):
+ * method() {
+ *     setTimeout(function() {
+ *         console.log(this.value);
+ *     }.bind(this), 100);  // Verbose!
+ * }
+ * 
+ * ARROW FUNCTION SOLUTION:
+ * method() {
+ *     setTimeout(() => {
+ *         console.log(this.value);  // Works! 'this' from enclosing scope
+ *     }, 100);
+ * }
+ */
 
 
 // ============================================================================

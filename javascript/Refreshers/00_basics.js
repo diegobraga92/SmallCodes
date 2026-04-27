@@ -226,24 +226,98 @@ console.log("Array.isArray({}):", Array.isArray({}));         // false
 // Type conversion (coercion)
 console.log("\n--- Type Conversion ---");
 
-// String conversion
-console.log("String(123):", String(123));           // "123"
-console.log("123 + '':", 123 + "");                 // "123" (implicit)
+/**
+ * TYPE COERCION EXPLAINED:
+ * =======================
+ * 
+ * EXPLICIT COERCION:
+ * - You manually convert types
+ * - String(), Number(), Boolean()
+ * - Clear and intentional
+ * 
+ * IMPLICIT COERCION:
+ * - JavaScript auto-converts types
+ * - Can be confusing and buggy
+ * - Happens in operators (+, -, ==, etc.)
+ * 
+ * COMMON COERCION RULES:
+ * 
+ * TO STRING:
+ * - Any + string → both become strings
+ * - "3" + 2 → "32" (concatenation, not addition!)
+ * 
+ * TO NUMBER:
+ * - Math operators (-, *, /, %) convert to number
+ * - "3" - 1 → 2 (subtraction works)
+ * - Unary + converts to number
+ * 
+ * TO BOOLEAN:
+ * - if/while/ternary convert to boolean
+ * - Falsy: false, 0, "", null, undefined, NaN
+ * - Truthy: EVERYTHING else (including "0", "false", [], {})
+ * 
+ * GOTCHAS:
+ * - "3" + 2 → "32" (string concat)
+ * - "3" - 2 → 1 (number subtraction)
+ * - [] + [] → "" (empty string!)
+ * - {} + [] → 0 (number!)
+ * - These are confusing - use explicit conversion!
+ */
 
-// Number conversion
-console.log("Number('123'):", Number("123"));       // 123
-console.log("+'123':", +"123");                     // 123 (unary plus)
-console.log("parseInt('123px'):", parseInt("123px"));  // 123
+// EXPLICIT STRING CONVERSION
+console.log("String(123):", String(123));           // "123" ✓
+console.log("(123).toString():", (123).toString()); // "123" ✓
+
+// IMPLICIT STRING CONVERSION (CONCATENATION)
+console.log("123 + '':", 123 + "");                 // "123" (+ with string = concat!)
+console.log("'Value: ' + 42:", "Value: " + 42);    // "Value: 42"
+
+// EXPLICIT NUMBER CONVERSION
+console.log("Number('123'):", Number("123"));       // 123 ✓
+console.log("+'123':", +"123");                     // 123 (unary plus trick)
+console.log("parseInt('123px'):", parseInt("123px"));  // 123 (stops at non-digit)
 console.log("parseFloat('3.14'):", parseFloat("3.14"));  // 3.14
 
-// Boolean conversion
-console.log("Boolean(1):", Boolean(1));             // true
-console.log("Boolean(0):", Boolean(0));             // false
-console.log("Boolean(''):", Boolean(""));           // false
-console.log("Boolean('hi'):", Boolean("hi"));       // true
+// IMPLICIT NUMBER CONVERSION (MATH OPERATORS)
+console.log("'3' - 1:", "3" - 1);                   // 2 (- coerces to number)
+console.log("'3' * 2:", "3" * 2);                   // 6
+console.log("'10' / '2':", "10" / "2");             // 5
 
-// Falsy values: false, 0, "", null, undefined, NaN
-// Everything else is truthy
+// EXPLICIT BOOLEAN CONVERSION
+console.log("Boolean(1):", Boolean(1));             // true ✓
+console.log("Boolean(0):", Boolean(0));             // false ✓
+console.log("Boolean(''):", Boolean(""));           // false ✓
+console.log("Boolean('hi'):", Boolean("hi"));       // true ✓
+
+// IMPLICIT BOOLEAN CONVERSION (if/while/ternary)
+if (1) console.log("  1 is truthy");                // Executes
+if (0) console.log("  Won't print");                // Doesn't execute
+if ("") console.log("  Won't print");               // Doesn't execute
+if ("0") console.log("  '0' is truthy!");           // Executes! (non-empty string)
+
+/**
+ * FALSY VALUES (only 6 in JavaScript):
+ * 1. false
+ * 2. 0 (and -0)
+ * 3. "" (empty string)
+ * 4. null
+ * 5. undefined
+ * 6. NaN
+ * 
+ * TRUTHY VALUES (EVERYTHING else):
+ * - "0" (non-empty string, even "false")
+ * - [] (empty array)
+ * - {} (empty object)
+ * - function() {} (functions)
+ * - All other values
+ * 
+ * COMMON MISTAKE:
+ * if (myArray.length) { }  // ✓ Good: 0 is falsy
+ * if (myObject) { }        // ❌ Bad: {} is truthy even when empty!
+ * 
+ * BETTER:
+ * if (Object.keys(myObject).length) { }  // ✓ Check key count
+ */
 
 
 // ============================================================================
@@ -278,15 +352,73 @@ y %= 3;   // y = y % 3
 console.log("after operations:", y);
 
 // Comparison operators
-console.log("5 == '5':", 5 == "5");    // true (loose equality, type coercion)
-console.log("5 === '5':", 5 === "5");  // false (strict equality, no coercion)
-console.log("5 != '5':", 5 != "5");    // false
-console.log("5 !== '5':", 5 !== "5");  // true
+/**
+ * == vs === - THE MOST IMPORTANT DISTINCTION:
+ * ===========================================
+ * 
+ * == (LOOSE EQUALITY):
+ * - Performs type coercion before comparing
+ * - Can lead to unexpected results
+ * - Generally considered bad practice
+ * 
+ * === (STRICT EQUALITY):
+ * - No type coercion
+ * - Compares both value AND type
+ * - ALWAYS use this (with rare exceptions)
+ * 
+ * WHY === IS BETTER:
+ * - Predictable behavior
+ * - Catches type bugs
+ * - No hidden coercion surprises
+ * 
+ * WEIRD == BEHAVIOR:
+ * 0 == false → true (both coerce to 0)
+ * "" == false → true (both coerce to 0)
+ * null == undefined → true (special case)
+ * "0" == 0 → true (string coerces to number)
+ * 
+ * RULE: Always use === and !== (strict equality)
+ * EXCEPTION: Checking for null/undefined together (x == null)
+ */
 
+console.log("5 == '5':", 5 == "5");    // true (coerces "5" to 5) ❌ Confusing!
+console.log("5 === '5':", 5 === "5");  // false (different types) ✓ Clear!
+
+console.log("5 != '5':", 5 != "5");    // false (loose inequality)
+console.log("5 !== '5':", 5 !== "5");  // true (strict inequality) ✓ Use this!
+
+// Weird == examples (why you should avoid it)
+console.log("0 == false:", 0 == false);           // true ❌
+console.log("'' == false:", "" == false);         // true ❌
+console.log("null == undefined:", null == undefined); // true (only case where == is useful)
+console.log("'0' == 0:", "0" == 0);              // true ❌
+console.log("'\\n' == 0:", "\n" == 0);           // true ❌ (whitespace coerces to 0!)
+
+// === never has these issues
+console.log("0 === false:", 0 === false);        // false ✓
+console.log("'' === false:", "" === false);      // false ✓
+console.log("null === undefined:", null === undefined); // false ✓
+
+/**
+ * WHEN TO USE == (rare):
+ * Only when checking for null OR undefined:
+ * 
+ * if (x == null) { }  // Catches both null and undefined
+ * // Equivalent to:
+ * // if (x === null || x === undefined) { }
+ * 
+ * This is the ONLY acceptable use of ==
+ */
+
+// Other comparison operators
 console.log("10 > 5:", 10 > 5);        // true
 console.log("10 >= 10:", 10 >= 10);    // true
 console.log("5 < 10:", 5 < 10);        // true
 console.log("5 <= 5:", 5 <= 5);        // true
+
+// String comparison (lexicographic/alphabetical)
+console.log("'b' > 'a':", "b" > "a");           // true
+console.log("'abc' < 'abd':", "abc" < "abd");   // true
 
 // Logical operators
 console.log("true && false:", true && false);  // false (AND)

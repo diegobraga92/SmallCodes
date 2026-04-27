@@ -437,18 +437,57 @@ namespace CSharpRefresher.ThreadingConcurrency
         {
             Console.WriteLine("\n=== 4. Synchronization Primitives ===\n");
             
+            /*
+                OVERVIEW: CHOOSING THE RIGHT SYNCHRONIZATION PRIMITIVE
+                ======================================================
+                
+                • lock/Monitor: General-purpose, simple, suitable for most cases
+                    - Use for: Quick critical sections, single-process scenarios
+                    - Performance: Fast (uncontended), moderate (contended)
+                    - When NOT to use: Cross-process sync, async/await contexts
+                
+                • SemaphoreSlim: Limits concurrent access to a resource
+                    - Use for: Throttling, rate limiting, resource pools
+                    - Has async support (WaitAsync)
+                    - Lighter weight than Semaphore
+                
+                • ReaderWriterLockSlim: Optimizes for many readers, few writers
+                    - Use for: Read-heavy scenarios (caches, configuration)
+                    - More complex and slower than lock when write-heavy
+                
+                • Mutex: Cross-process synchronization
+                    - Use for: Ensuring single application instance, IPC
+                    - Slower than lock (kernel object)
+                
+                • Interlocked: Lock-free atomic operations
+                    - Use for: Simple counters, flags, CAS operations
+                    - Fastest option for simple operations
+                
+                • SpinLock: Busy-waiting for short critical sections
+                    - Use for: Very short locks (<100ns) on multi-core systems
+                    - DON'T use for I/O or long operations (wastes CPU)
+            */
+            
             // Lock statement
             Console.WriteLine("1. Lock Statement:");
             
+            // Lock is syntactic sugar for Monitor.Enter/Exit
+            // It's the most common synchronization primitive for protecting shared state
+            // within a single process
             object lockObject = new object();
             int sharedCounter = 0;
             
+            // Without lock, this would cause race conditions and incorrect results
             Parallel.For(0, 1000, i =>
             {
+                // lock ensures only one thread can execute this block at a time
+                // Pros: Simple, reliable, automatic cleanup (even on exceptions)
+                // Cons: Blocks threads (no async support), single-process only
                 lock (lockObject)
                 {
-                    sharedCounter++;
+                    sharedCounter++; // Critical section: increment must be atomic
                 }
+                // Lock is released here automatically
             });
             
             Console.WriteLine($"Counter after lock: {sharedCounter}");
@@ -456,17 +495,45 @@ namespace CSharpRefresher.ThreadingConcurrency
             // Monitor (lock statement uses Monitor internally)
             Console.WriteLine("\n2. Monitor Class:");
             
+            /*
+                MONITOR vs LOCK:
+                ===============
+                
+                lock (obj) { ... } is equivalent to:
+                
+                bool lockTaken = false;
+                try {
+                    Monitor.Enter(obj, ref lockTaken);
+                    // ... critical section ...
+                } finally {
+                    if (lockTaken) Monitor.Exit(obj);
+                }
+                
+                WHY USE MONITOR DIRECTLY?
+                • Monitor.TryEnter: Non-blocking lock attempt with timeout
+                • Monitor.Wait/Pulse: Condition variables for complex coordination
+                • More control over lock acquisition/release
+                
+                WHEN TO USE LOCK INSTEAD:
+                • 99% of the time - lock is simpler and safer
+                • Use Monitor only when you need TryEnter or Wait/Pulse
+            */
+            
             var monitorCounter = 0;
             Parallel.For(0, 1000, i =>
             {
                 bool lockTaken = false;
                 try
                 {
+                    // Monitor.Enter acquires the lock on lockObject
+                    // The lockTaken parameter ensures we only Exit if we successfully entered
                     Monitor.Enter(lockObject, ref lockTaken);
-                    monitorCounter++;
+                    monitorCounter++; // Protected critical section
                 }
                 finally
                 {
+                    // CRITICAL: Always check lockTaken before calling Exit
+                    // Calling Exit without Enter causes SynchronizationLockException
                     if (lockTaken)
                         Monitor.Exit(lockObject);
                 }
@@ -477,115 +544,307 @@ namespace CSharpRefresher.ThreadingConcurrency
             // Mutex (cross-process)
             Console.WriteLine("\n3. Mutex (Cross-Process):");
             
+            /*
+                MUTEX vs LOCK:
+                =============
+                
+                Mutex:
+                • Can synchronize across processes (named mutex)
+                • Kernel object (slower than lock)
+                • Use for: Single-instance applications, cross-process coordination
+                
+                Lock/Monitor:
+                • Within single process only
+                • User-mode object (faster)
+                • Use for: All other scenarios
+                
+                PERFORMANCE COMPARISON:
+                • lock:  ~25ns (uncontended), ~100ns (contended)
+                • Mutex: ~1000ns (always goes through kernel)
+                
+                PRACTICAL USE CASES:
+                • Mutex: Preventing multiple app instances, file access coordination
+                • Lock: Everything else (protecting shared state within app)
+            */
+            
+            // Named mutex for cross-process synchronization
+            // "Global\\" prefix makes it visible across all sessions (including services)
+            // Use "Local\\" prefix for per-session mutexes
             using (var mutex = new Mutex(false, "Global\\MyAppMutex"))
             {
-                if (mutex.WaitOne(1000))
+                // WaitOne attempts to acquire the mutex with a timeout
+                // Returns true if acquired, false if timeout expired
+                // Timeout prevents deadlock if another process holds it indefinitely
+                if (mutex.WaitOne(1000)) // Wait up to 1 second
                 {
                     try
                     {
                         Console.WriteLine("Acquired mutex, doing work...");
+                        // Only one process can execute this code at a time
                         Thread.Sleep(100);
                     }
                     finally
                     {
+                        // CRITICAL: Always release mutex in finally block
+                        // Forgetting to release causes abandoned mutex
                         mutex.ReleaseMutex();
                         Console.WriteLine("Released mutex");
                     }
+                }
+                else
+                {
+                    // Timeout occurred - another process holds the mutex
+                    Console.WriteLine("Could not acquire mutex (timeout)");
                 }
             }
             
             // Semaphore and SemaphoreSlim
             Console.WriteLine("\n4. Semaphore/SemaphoreSlim:");
             
+            /*
+                SEMAPHORE vs SEMAPHORESLIM vs LOCK:
+                ===================================
+                
+                SemaphoreSlim (RECOMMENDED):
+                • Lightweight, single-process
+                • Supports async/await (WaitAsync)
+                • Use for: Rate limiting, throttling, resource pools
+                • Example: Limit concurrent HTTP requests to API
+                
+                Semaphore:
+                • Heavier (kernel object)
+                • Cross-process capable
+                • No async support
+                • Use for: Cross-process resource limits
+                
+                Lock:
+                • Binary (0 or 1), not countable
+                • No async support
+                • Use for: Simple mutual exclusion
+                
+                WHEN TO USE SEMAPHORESLIM:
+                • Limiting concurrent operations (e.g., max 5 concurrent downloads)
+                • Throttling API calls (e.g., max 10 requests/second)
+                • Managing resource pools (e.g., database connections)
+                • Any async scenario requiring controlled concurrency
+                
+                KEY CONCEPT:
+                • initialCount=2, maxCount=2: Allows 2 threads/tasks at once
+                • When 2 are inside, others wait until one releases
+                • Like a bouncer at a club: "Only 2 people allowed inside"
+            */
+            
+            // Create a semaphore that allows 2 concurrent entries
+            // initialCount=2: Start with 2 available slots
+            // maxCount=2: Maximum of 2 slots total
             using (var semaphore = new SemaphoreSlim(2, 2)) // Allow 2 concurrent
             {
-                var tasks = new Task[5];
+                var tasks = new Task[5]; // Create 5 tasks competing for 2 slots
                 for (int i = 0; i < tasks.Length; i++)
                 {
                     int id = i;
                     tasks[i] = Task.Run(async () =>
                     {
+                        // WaitAsync: Asynchronously wait for an available slot
+                        // This is a KEY ADVANTAGE over lock (which can't await)
                         await semaphore.WaitAsync();
                         try
                         {
                             Console.WriteLine($"Task {id} entered semaphore");
+                            // Simulate work: Only 2 tasks will be here at once
                             await Task.Delay(200);
                         }
                         finally
                         {
+                            // CRITICAL: Always release in finally block
+                            // Release() makes one slot available for waiting tasks
                             semaphore.Release();
                             Console.WriteLine($"Task {id} exited semaphore");
                         }
                     });
                 }
                 
+                // Wait for all 5 tasks to complete
+                // Even though 5 tasks run, only 2 execute concurrently at any time
                 await Task.WhenAll(tasks);
             }
             
             // ReaderWriterLockSlim
             Console.WriteLine("\n5. ReaderWriterLockSlim:");
             
+            /*
+                READERWRITERLOCKSLIM vs LOCK:
+                =============================
+                
+                ReaderWriterLockSlim:
+                • Optimized for scenarios with MANY reads, FEW writes
+                • Allows multiple concurrent readers
+                • Writers get exclusive access (blocks all readers and other writers)
+                • More complex and slower than lock when write-heavy
+                
+                Lock:
+                • Simple, fast, general-purpose
+                • Always exclusive (one thread at a time)
+                • Better for balanced read/write scenarios
+                
+                PERFORMANCE CHARACTERISTICS:
+                • Read-heavy (90% reads): ReaderWriterLockSlim wins
+                • Write-heavy (50%+ writes): lock is faster
+                • Overhead: ~3x slower than lock when uncontended
+                
+                USE CASES:
+                ✓ Configuration/settings caches (frequent reads, rare updates)
+                ✓ In-memory lookup tables
+                ✓ Shared data structures with < 10% write operations
+                ✗ Write-heavy scenarios (use lock instead)
+                ✗ Simple mutual exclusion (use lock instead)
+                
+                RULE OF THUMB:
+                If your write ratio > 20%, use lock instead.
+            */
+            
             var rwLock = new ReaderWriterLockSlim();
             var dictionary = new Dictionary<string, string>();
             
-            // Multiple readers
+            // Multiple readers can execute concurrently
+            // This is the KEY ADVANTAGE: no blocking between readers
             Parallel.For(0, 5, i =>
             {
+                // EnterReadLock: Multiple threads can hold read lock simultaneously
+                // As long as no writer has the lock
                 rwLock.EnterReadLock();
                 try
                 {
                     Console.WriteLine($"Reader {i} reading");
+                    // All 5 readers can be here at the same time
+                    // No contention between readers
                 }
                 finally
                 {
+                    // Always exit in finally block
                     rwLock.ExitReadLock();
                 }
             });
             
-            // Single writer
+            // Single writer gets exclusive access
+            // EnterWriteLock: Waits for all readers to finish, then gets exclusive lock
             rwLock.EnterWriteLock();
             try
             {
                 Console.WriteLine("Writer writing");
+                // No readers or other writers can be here
+                // This is the EXCLUSIVE section
                 dictionary["key"] = "value";
             }
             finally
             {
+                // Release write lock, allowing readers/writers to proceed
                 rwLock.ExitWriteLock();
             }
             
             // AutoResetEvent and ManualResetEvent
             Console.WriteLine("\n6. AutoResetEvent/ManualResetEvent:");
             
+            /*
+                AUTORESETEVENT vs MANUALRESETEVENT:
+                ===================================
+                
+                AutoResetEvent (Turnstile):
+                • Set(): Releases ONE waiting thread, then auto-resets to non-signaled
+                • Like a turnstile: one person passes, gate closes automatically
+                • Use for: Producer-consumer, signaling one specific thread
+                
+                ManualResetEvent (Gate):
+                • Set(): Releases ALL waiting threads, stays signaled until Reset()
+                • Like a gate: opens for everyone, stays open until manually closed
+                • Use for: Broadcasting to multiple threads, initialization complete signals
+                
+                WHEN TO USE:
+                • AutoReset: "Wake up ONE thread to handle this item"
+                • ManualReset: "All threads can now proceed"
+                
+                MODERN ALTERNATIVES:
+                • SemaphoreSlim.WaitAsync() for async scenarios
+                • TaskCompletionSource for async signaling
+                • async/await patterns in general
+                
+                NOTE: These are older primitives. Prefer SemaphoreSlim or
+                TaskCompletionSource in new code for better async support.
+            */
+            
+            // AutoResetEvent starts in non-signaled state (false)
             var autoEvent = new AutoResetEvent(false);
             
+            // Background thread will signal the event after 100ms
             Task.Run(() =>
             {
                 Thread.Sleep(100);
                 Console.WriteLine("Signaling event");
+                // Set() signals the event: releases ONE waiting thread
+                // Then AUTOMATICALLY resets to non-signaled
                 autoEvent.Set();
             });
             
             Console.WriteLine("Waiting for event...");
+            // WaitOne() blocks until event is signaled
+            // Once signaled, THIS thread proceeds and event auto-resets
             autoEvent.WaitOne();
             Console.WriteLine("Event received");
+            
+            // If another thread calls WaitOne() now, it would block
+            // because AutoResetEvent has already reset itself
             
             // CountdownEvent
             Console.WriteLine("\n7. CountdownEvent:");
             
+            /*
+                COUNTDOWNEVENT: Wait for N operations to complete
+                =================================================
+                
+                CONCEPT:
+                • Initialize with count N
+                • Each task calls Signal() when done (decrements count)
+                • Wait() blocks until count reaches 0
+                • Like waiting for N workers to finish before proceeding
+                
+                vs TASK.WHENALL:
+                • CountdownEvent: Use when you don't have Task objects
+                  (e.g., callbacks, events, non-async operations)
+                • Task.WhenAll: Use when you have Task objects (preferred for async)
+                
+                vs BARRIER:
+                • CountdownEvent: One-time coordination (waits for completion)
+                • Barrier: Multi-phase coordination (synchronizes at multiple points)
+                
+                USE CASES:
+                ✓ Waiting for N callbacks to complete
+                ✓ Initialization where multiple components must be ready
+                ✓ Aggregating results from parallel workers
+                ✗ Async operations with Task (use Task.WhenAll instead)
+            */
+            
+            // Create a countdown initialized to 3
+            // Will reach 0 when Signal() is called 3 times
             using (var countdown = new CountdownEvent(3))
             {
+                // Start 3 tasks that will each signal when done
                 for (int i = 0; i < 3; i++)
                 {
                     int id = i;
                     Task.Run(() =>
                     {
+                        // Simulate work of varying duration
                         Thread.Sleep(100 * (id + 1));
                         Console.WriteLine($"Task {id} completed");
+                        
+                        // Signal() decrements the count by 1
+                        // When count reaches 0, Wait() unblocks
                         countdown.Signal();
                     });
                 }
                 
+                // Wait() blocks until count reaches 0
+                // (i.e., all 3 tasks have called Signal())
                 countdown.Wait();
                 Console.WriteLine("All tasks completed");
             }
@@ -593,9 +852,43 @@ namespace CSharpRefresher.ThreadingConcurrency
             // Barrier
             Console.WriteLine("\n8. Barrier:");
             
+            /*
+                BARRIER: Multi-phase parallel algorithm coordination
+                ====================================================
+                
+                CONCEPT:
+                • Synchronization point for N threads/tasks
+                • All must reach the barrier before ANY can proceed
+                • Like a checkpoint in a race: everyone waits for the slowest runner
+                • Can have multiple phases (barriers in sequence)
+                
+                vs COUNTDOWNEVENT:
+                • Barrier: Reusable, multi-phase (stays open after reaching)
+                • CountdownEvent: One-time use (disposed after reaching 0)
+                
+                vs TASK.WHENALL:
+                • Barrier: For iterative parallel algorithms with phases
+                • Task.WhenAll: For waiting on completion of independent tasks
+                
+                USE CASES:
+                ✓ Parallel algorithms with phases (e.g., iterative solvers)
+                ✓ Game simulation with turn-based logic
+                ✓ Parallel data processing pipelines with checkpoints
+                ✓ Benchmarking (synchronize start of all threads)
+                
+                REAL-WORLD EXAMPLE:
+                Parallel matrix calculation where each iteration depends on
+                previous iteration's results from all workers.
+            */
+            
+            // Create barrier for 3 participants
+            // Post-phase action runs when all participants reach barrier
             var barrier = new Barrier(3, b =>
             {
+                // This callback executes after all threads signal
+                // but before any proceed to next phase
                 Console.WriteLine($"Barrier phase {b.CurrentPhaseNumber} completed");
+                // Useful for: aggregating results, logging, cleanup
             });
             
             for (int i = 0; i < 3; i++)
@@ -603,11 +896,20 @@ namespace CSharpRefresher.ThreadingConcurrency
                 int id = i;
                 Task.Run(() =>
                 {
+                    // Phase 0: All tasks work independently
                     Console.WriteLine($"Task {id} phase 0");
-                    barrier.SignalAndWait();
                     
-                    Console.WriteLine($"Task {id} phase 1");
+                    // SignalAndWait(): "I'm done with phase 0"
+                    // Blocks until all 3 tasks call SignalAndWait()
                     barrier.SignalAndWait();
+                    // At this point, all tasks have completed phase 0
+                    
+                    // Phase 1: All tasks proceed together
+                    Console.WriteLine($"Task {id} phase 1");
+                    
+                    // Another synchronization point
+                    barrier.SignalAndWait();
+                    // All tasks have now completed phase 1
                 });
             }
             
@@ -616,17 +918,65 @@ namespace CSharpRefresher.ThreadingConcurrency
             // SpinLock and SpinWait
             Console.WriteLine("\n9. SpinLock/SpinWait:");
             
+            /*
+                SPINLOCK: Busy-waiting lock for very short critical sections
+                ============================================================
+                
+                HOW IT WORKS:
+                • Instead of blocking (context switch), thread "spins" in a loop
+                • Keeps checking if lock is available (burns CPU cycles)
+                • No kernel transition = faster for SHORT locks (<100 nanoseconds)
+                
+                vs LOCK (Monitor):
+                • SpinLock: Busy-waits (uses CPU), faster for very short sections
+                • Lock: Blocks thread (context switch), better for longer sections
+                
+                WHEN TO USE SPINLOCK:
+                ✓ Critical section < 100ns on multi-core systems
+                ✓ Lock contention is low
+                ✓ You've measured and proven it's faster than lock
+                
+                WHEN NOT TO USE:
+                ✗ I/O operations (will waste CPU spinning)
+                ✗ Long critical sections (>1 microsecond)
+                ✗ Single-core systems (spinning prevents other threads)
+                ✗ Any async operations (never use with await)
+                ✗ Unknown workload (use lock instead)
+                
+                DANGER ZONE:
+                • Easy to misuse and harm performance
+                • Profile before using!
+                • 95% of the time, lock is the right choice
+                
+                RULE OF THUMB:
+                If in doubt, use lock. Only use SpinLock after profiling
+                shows lock is a bottleneck AND critical section is tiny.
+            */
+            
             var spinLock = new SpinLock();
             var spinCounter = 0;
             
             Parallel.For(0, 1000, i =>
             {
                 bool lockTaken = false;
+                // Enter() spins in a loop until lock is acquired
+                // This burns CPU but avoids context switch
                 spinLock.Enter(ref lockTaken);
                 if (lockTaken)
                 {
-                    try { spinCounter++; }
-                    finally { spinLock.Exit(); }
+                    try 
+                    { 
+                        // CRITICAL: Keep this section TINY
+                        // spinCounter++ is ~2ns - perfect for SpinLock
+                        // If this were > 100ns, lock would be faster
+                        spinCounter++; 
+                    }
+                    finally 
+                    { 
+                        // ALWAYS release in finally
+                        // Not releasing causes permanent lock
+                        spinLock.Exit(); 
+                    }
                 }
             });
             
@@ -635,24 +985,105 @@ namespace CSharpRefresher.ThreadingConcurrency
             // Volatile and Memory barriers
             Console.WriteLine("\n10. Volatile and Memory Barriers:");
             
+            /*
+                VOLATILE: Prevents compiler/CPU reordering of reads/writes
+                ==========================================================
+                
+                Without volatile:
+                • Compiler/CPU can reorder instructions for optimization
+                • Thread A: write X=1, Y=1
+                • Thread B might see: Y=1, X=0 (reordered by CPU)
+                
+                With volatile:
+                • Reads always see latest value
+                • Writes are immediately visible to other threads
+                • Prevents reordering around volatile operations
+                
+                WHEN TO USE:
+                ✓ Simple flags (bool shutdown = false)
+                ✓ Reference types (object instance = new Foo())
+                ✗ Complex operations (use lock or Interlocked instead)
+                ✗ Composite operations (i++ requires Interlocked)
+                
+                MEMORY BARRIER:
+                • Full fence: no reordering across this point
+                • Heavier than volatile, ensures full memory visibility
+            */
+            
             volatile int volatileValue = 0;
+            // volatile ensures other threads see changes immediately
+            
             Thread.MemoryBarrier(); // Ensures reads/writes don't get reordered
+            // Acts as a fence: no loads/stores move across this line
             
             // Interlocked operations
             Console.WriteLine("\n11. Interlocked Operations:");
             
+            /*
+                INTERLOCKED: Lock-free atomic operations
+                ========================================
+                
+                WHAT IS IT:
+                • CPU-level atomic operations (compare-and-swap, add, etc.)
+                • Lock-free: no blocking, no deadlocks
+                • Fastest synchronization primitive
+                • Hardware support ensures atomicity
+                
+                vs LOCK:
+                • Interlocked: Lock-free, ~5-10ns, simple operations only
+                • Lock: Blocking, ~25-100ns, protects complex operations
+                
+                AVAILABLE OPERATIONS:
+                • Increment/Decrement: i++, i--
+                • Add: i += n
+                • Exchange: swap values
+                • CompareExchange: CAS (compare-and-swap)
+                • Read: atomic 64-bit reads on 32-bit systems
+                
+                WHEN TO USE:
+                ✓ Simple counters (hits, requests, errors)
+                ✓ Flags (state = 1)
+                ✓ Lock-free algorithms (if you know what you're doing)
+                
+                WHEN NOT TO USE:
+                ✗ Complex operations (calculations, multiple vars)
+                ✗ When lock is simpler and fast enough
+                
+                PERFORMANCE:
+                Interlocked.Increment: ~5ns
+                lock { i++; }: ~25ns (uncontended), ~100ns (contended)
+            */
+            
             int interlockedCounter = 0;
             Parallel.For(0, 1000, i =>
             {
+                // Interlocked.Increment: atomic i++
+                // Equivalent to: lock(obj) { interlockedCounter++; }
+                // But lock-free and faster
                 Interlocked.Increment(ref interlockedCounter);
             });
             
             Console.WriteLine($"Interlocked counter: {interlockedCounter}");
             
-            // Compare exchange example
+            // CompareExchange: atomic compare-and-swap
+            // The foundation of lock-free programming
             int compareValue = 0;
+            
+            // CompareExchange(ref location, newValue, expectedValue)
+            // Atomically: if (location == expectedValue) { location = newValue; return expectedValue; }
+            // Returns: original value of location
             int original = Interlocked.CompareExchange(ref compareValue, 10, 0);
+            // If compareValue was 0, it's now 10, and original = 0
+            // If compareValue was NOT 0, it's unchanged, and original = old value
             Console.WriteLine($"CompareExchange: original={original}, new={compareValue}");
+            
+            /*
+                WHY COMPAREEXCHANGE IS POWERFUL:
+                • Building block for lock-free data structures
+                • Optimistic concurrency: "try to update, retry if someone else did first"
+                • Pattern: while (!Interlocked.CompareExchange(ref x, newVal, oldVal)) { }
+                • Used internally by: ConcurrentDictionary, ConcurrentQueue, etc.
+            */
         }
         
         static void DemonstrateConcurrentCollections()

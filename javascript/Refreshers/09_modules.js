@@ -14,11 +14,68 @@ console.log("=" + "=".repeat(78) + "=");
 // ============================================================================
 
 /**
- * ES6 MODULES (IMPORT/EXPORT)
- * - Standard JavaScript module system
- * - Static imports (analyzed at compile time)
- * - Works in modern browsers and Node.js (with .mjs or "type": "module")
- * - Better tree-shaking and optimization
+ * ESM vs COMMONJS - WHICH TO USE?
+ * ================================
+ * 
+ * ES6 MODULES (ESM):
+ * - Syntax: import/export
+ * - Standard JavaScript (official spec)
+ * - STATIC imports (analyzed before runtime)
+ * - Works in: Browsers, modern Node.js
+ * - Better tree-shaking (dead code elimination)
+ * - Asynchronous module loading
+ * - File extensions: .mjs or "type": "module" in package.json
+ * 
+ * COMMONJS (CJS):
+ * - Syntax: require()/module.exports
+ * - Node.js legacy format
+ * - DYNAMIC imports (runtime)
+ * - Works in: Node.js (default)
+ * - Synchronous loading
+ * - File extensions: .js or .cjs
+ * 
+ * KEY DIFFERENCES:
+ * 
+ * 1. STATIC vs DYNAMIC:
+ *    ESM:      import { x } from './file';  // Before runtime
+ *    CommonJS: const { x } = require('./file');  // At runtime
+ * 
+ * 2. TOP-LEVEL AWAIT:
+ *    ESM:      await fetch(...);  // ✓ Allowed
+ *    CommonJS: await fetch(...);  // ❌ Not allowed (use async IIFE)
+ * 
+ * 3. TREE-SHAKING:
+ *    ESM:      ✓ Unused exports removed by bundlers
+ *    CommonJS: ❌ Whole module included
+ * 
+ * 4. THIS BINDING:
+ *    ESM:      'this' is undefined at top level
+ *    CommonJS: 'this' is module.exports
+ * 
+ * 5. __dirname, __filename:
+ *    ESM:      ❌ Not available (use import.meta.url)
+ *    CommonJS: ✓ Available
+ * 
+ * WHEN TO USE ESM:
+ * ✓ New projects (2024+ standard)
+ * ✓ Browser code
+ * ✓ Want tree-shaking
+ * ✓ Modern build tools (Vite, Webpack 5+)
+ * ✓ Future-proof
+ * 
+ * WHEN TO USE COMMONJS:
+ * ✓ Legacy Node.js projects
+ * ✓ Need dynamic imports (conditional requires)
+ * ✓ Compatibility with old packages
+ * ✓ Simple Node.js scripts
+ * 
+ * INTEROPERABILITY:
+ * - ESM can import CommonJS (one-way)
+ * - CommonJS CANNOT require ESM directly
+ * - Use dynamic import() in CommonJS for ESM
+ * 
+ * RECOMMENDATION FOR NEW CODE:
+ * Use ESM! It's the standard and future of JavaScript modules.
  */
 
 console.log("\n=== ES6 Modules ===");
