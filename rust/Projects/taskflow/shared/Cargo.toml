@@ -1,0 +1,81 @@
+# =============================================================================
+# shared/Cargo.toml
+# =============================================================================
+#
+# This crate holds everything shared between the API and Worker services:
+#   1. Domain types (Task, TaskStatus) — the core business entities
+#   2. Event system (EventBus trait, InMemoryEventBus) — the communication contract
+#   3. Generated gRPC stubs — compiled from proto/task.proto at build time
+#
+# WHY A SEPARATE SHARED CRATE?
+#   Without this, both api-service and worker-service would need to:
+#   - Duplicate the domain types
+#   - Each run tonic-build to compile the .proto file
+#   - Keep their copies in sync manually
+#
+#   A shared crate is the simplest form of code reuse in a Rust workspace.
+#   In larger projects, you might split this further (e.g., domain-crate,
+#   proto-crate, event-crate), but for this scope, one shared crate is ideal.
+# =============================================================================
+
+[package]
+name = "shared"
+version = "0.1.0"
+edition = "2021"
+
+# =============================================================================
+# Runtime Dependencies
+# =============================================================================
+[dependencies]
+# tonic — gRPC framework for Rust.
+#   Provides the server/client abstractions, HTTP/2 transport, and codegen
+#   integration. We use it to include the generated proto code at compile time
+#   via `tonic::include_proto!("task")`.
+tonic = "0.12"
+
+# prost — Protocol Buffers implementation for Rust.
+#   Generates Rust structs from .proto message definitions. Tonic uses prost
+#   under the hood for serialization/deserialization.
+prost = "0.13"
+
+# tokio — Async runtime for Rust.
+#   We need the "full" features for the broadcast channel (used by the event
+#   bus). The shared crate itself doesn't use tokio directly, but the types
+#   it exports (broadcast::Receiver) require tokio to be available.
+tokio = { version = "1", features = ["full"] }
+
+# uuid — Universally Unique Identifier generation.
+#   Used to generate unique task IDs. We use v4 (random) UUIDs because they
+#   don't require coordination between nodes (unlike v1 which uses MAC/timestamp).
+#   In production, you might use v7 (time-ordered) for better DB index performance.
+uuid = { version = "1", features = ["v4"] }
+
+# serde — Serialization/deserialization framework.
+#   Used to derive Serialize/Deserialize on domain types. This enables:
+#   - JSON serialization for logging/debugging
+#   - Potential future use with message queues (Kafka, RabbitMQ)
+#   The "derive" feature enables the #[derive(Serialize, Deserialize)] macro.
+serde = { version = "1", features = ["derive"] }
+
+# =============================================================================
+# Build Dependencies
+# =============================================================================
+# These are only used during compilation (in build.rs), not at runtime.
+[build-dependencies]
+# tonic-build — Compiles .proto files into Rust gRPC code.
+#   Reads our proto/task.proto and generates:
+#   - task.rs (message types via prost)
+#   - task_service_server.rs (server trait + impl)
+#   - task_service_client.rs (client stub)
+tonic-build = "0.12"
+
+# prost-build — Compiles .proto message definitions into Rust structs.
+#   Used by tonic-build under the hood. We need it explicitly to configure
+#   the protoc executable path.
+prost-build = "0.13"
+
+# protoc-bin-vendored — Bundles the protoc compiler binary.
+#   protoc is the official Protocol Buffers compiler. Instead of requiring
+#   users to install it manually, this crate vendors a pre-built binary.
+#   This makes the build reproducible and zero-install for developers.
+protoc-bin-vendored = "3.0"

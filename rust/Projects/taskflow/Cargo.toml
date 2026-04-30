@@ -1,0 +1,33 @@
+# =============================================================================
+# Cargo.toml — Workspace Definition
+# =============================================================================
+#
+# WHAT IS A CARGO WORKSPACE?
+#   A workspace is a set of crates that share a common Cargo.lock and target
+#   directory. This means:
+#   - All crates use the same versions of shared dependencies
+#   - Build artifacts are shared (faster compilation)
+#   - You can run `cargo check --workspace` to check all crates at once
+#
+# WHY A WORKSPACE?
+#   We have 3 crates (shared, api-service, worker-service) that depend on each
+#   other. A workspace lets us:
+#   1. Keep them in separate directories with their own Cargo.toml
+#   2. Share the same Cargo.lock (no version conflicts)
+#   3. Use path dependencies (e.g., `shared = { path = "../shared" }`)
+#   4. Build them all with one command
+#
+# RESOLVER = "2"
+#   The resolver determines how Cargo resolves dependency features.
+#   Version 2 (introduced in Rust 2021 edition) handles dev-dependencies and
+#   target-specific dependencies more correctly. Always use resolver = "2"
+#   for workspaces.
+# =============================================================================
+
+[workspace]
+resolver = "2"
+members = [
+    "shared",         # Domain types, events, and generated gRPC stubs
+    "api-service",    # gRPC server that accepts task requests
+    "worker-service", # Async task processor
+]

@@ -1,0 +1,77 @@
+# =============================================================================
+# api-service/Cargo.toml
+# =============================================================================
+#
+# This crate implements the API service — a gRPC server that accepts task
+# creation and status query requests.
+#
+# ARCHITECTURE:
+#   This crate follows Clean Architecture with three layers:
+#   - application/: Use case handlers (business logic orchestration)
+#   - infrastructure/: Concrete implementations (SQLite repo)
+#   - main.rs: Wiring (dependency injection, server setup)
+#
+#   The domain layer lives in the shared crate (domain types, events).
+# =============================================================================
+
+[package]
+name = "api-service"
+version = "0.1.0"
+edition = "2021"
+
+# =============================================================================
+# Dependencies
+# =============================================================================
+[dependencies]
+# shared — Our shared crate with domain types, events, and gRPC stubs.
+shared = { path = "../shared" }
+
+# tonic — gRPC server framework.
+#   Provides the HTTP/2 server, service routing, and request/response handling.
+tonic = "0.12"
+
+# prost — Protocol Buffers serialization.
+#   Used by tonic under the hood for message encoding/decoding.
+prost = "0.13"
+
+# tokio — Async runtime.
+#   "full" enables all features: multi-threaded runtime, I/O, timers, channels.
+#   We use this for the gRPC server, async SQLite queries, and event bus.
+tokio = { version = "1", features = ["full"] }
+
+# uuid — UUID generation for task IDs.
+uuid = { version = "1", features = ["v4"] }
+
+# sqlx — Async SQL toolkit.
+#   We use the "runtime-tokio" feature for tokio integration and "sqlite"
+#   for SQLite support. sqlx checks SQL queries at compile time when using
+#   the `query!` macro, but we use the runtime `query()` function for simplicity.
+sqlx = { version = "0.8", features = ["runtime-tokio", "sqlite"] }
+
+# tracing — Structured logging framework.
+#   Unlike `log` (simple text logging), tracing supports:
+#   - Spans (nested context for async operations)
+#   - Structured fields (key=value pairs in log output)
+#   - Integration with OpenTelemetry for distributed tracing
+tracing = "0.1"
+
+# tracing-subscriber — Configures where tracing output goes.
+#   "env-filter" enables RUST_LOG-style filtering (e.g., `api_service=info`).
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# anyhow — Flexible error handling.
+#   Provides `anyhow::Error` (a type-erased error) and `anyhow::Result<T>`.
+#   Great for application code where you don't care about the exact error type.
+#   Contrast with `thiserror` which is better for library code (custom error types).
+anyhow = "1"
+
+# fastrand — Fast, simple random number generation.
+#   Used in the combined binary for simulating random task failures.
+#   We use fastrand instead of rand because it's simpler and faster for
+#   non-cryptographic use cases.
+fastrand = "2"
+
+# tonic-reflection — gRPC reflection support.
+#   Allows tools like grpcurl to discover services at runtime.
+#   This is the gRPC equivalent of OpenAPI/Swagger for REST.
+tonic-reflection = "0.12"

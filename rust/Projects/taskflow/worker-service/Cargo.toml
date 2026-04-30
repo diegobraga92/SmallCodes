@@ -1,0 +1,57 @@
+# =============================================================================
+# worker-service/Cargo.toml
+# =============================================================================
+#
+# This crate implements the Worker service — an async event consumer that
+# processes tasks and updates their status.
+#
+# ARCHITECTURE:
+#   The worker is simpler than the API service. It doesn't need:
+#   - gRPC (it doesn't serve requests)
+#   - Tonic (no server)
+#   - Application layer (no use case handlers — processing logic is inline)
+#
+#   The worker just:
+#   1. Connects to the same SQLite database as the API service
+#   2. Listens for TaskCreated events
+#   3. Processes tasks with retry logic
+#   4. Updates task status in the database
+#
+# WHY NO APPLICATION LAYER?
+#   The worker's logic is simple enough to live in main.rs. If the worker
+#   grew more complex (multiple event types, complex processing pipelines),
+#   you'd extract it into application/ and infrastructure/ modules.
+# =============================================================================
+
+[package]
+name = "worker-service"
+version = "0.1.0"
+edition = "2021"
+
+# =============================================================================
+# Dependencies
+# =============================================================================
+[dependencies]
+# shared — Domain types and event system.
+shared = { path = "../shared" }
+
+# tokio — Async runtime for the event loop and sleep/timers.
+tokio = { version = "1", features = ["full"] }
+
+# uuid — For task ID handling (parsing, comparison).
+uuid = { version = "1", features = ["v4"] }
+
+# sqlx — Async SQLite queries for reading/updating task status.
+sqlx = { version = "0.8", features = ["runtime-tokio", "sqlite"] }
+
+# tracing — Structured logging for observability.
+tracing = "0.1"
+
+# tracing-subscriber — Log output configuration.
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# anyhow — Flexible error handling for the main function.
+anyhow = "1"
+
+# fastrand — Random boolean generation for simulating task failures.
+fastrand = "2"

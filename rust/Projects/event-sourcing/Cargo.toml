@@ -1,0 +1,63 @@
+# =============================================================================
+# Cargo.toml — Event Sourcing Demo
+# =============================================================================
+#
+# WHAT IS EVENT SOURCING?
+#   Event sourcing is a pattern where state changes are stored as a sequence
+#   of events, rather than updating the current state in-place. The current
+#   state is derived by replaying all events.
+#
+#   Example: Instead of updating `account.balance = 70`, you append
+#   `MoneyWithdrawn { amount: 30 }` to the event log. The balance is
+#   computed by replaying all events: 0 + 100 - 30 = 70.
+#
+# WHY EVENT SOURCING?
+#   - Full audit trail: every state change is recorded
+#   - Temporal queries: what was the state at any point in time?
+#   - Debugging: replay events to reproduce bugs
+#   - CQRS: events feed read models (projections)
+#
+# TRADEOFFS:
+#   - More storage (events accumulate)
+#   - Eventual consistency (projections lag behind)
+#   - Schema evolution is harder (old events must still be readable)
+#   - Querying current state requires replay (mitigated by snapshots)
+# =============================================================================
+
+[package]
+name = "event-sourcing"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# sqlx — Async SQL toolkit for SQLite event storage.
+# We use "runtime-tokio" for tokio integration and "sqlite" for SQLite.
+sqlx = { version = "0.8", features = ["runtime-tokio", "sqlite"] }
+
+# tokio — Async runtime for async SQLite operations.
+tokio = { version = "1", features = ["full"] }
+
+# serde — Serialization for events stored as JSON in SQLite.
+# Events are serialized to JSON strings and stored in a TEXT column.
+# This is simpler than protobuf for a demo and more debuggable.
+serde = { version = "1", features = ["derive"] }
+
+# serde_json — JSON serialization/deserialization for events.
+serde_json = "1"
+
+# uuid — Generate unique account and event IDs.
+uuid = { version = "1", features = ["v4"] }
+
+# tracing — Structured logging for observability.
+tracing = "0.1"
+
+# tracing-subscriber — Log output configuration.
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# chrono — Timestamps for events (ISO 8601 format).
+chrono = { version = "0.4", features = ["serde"] }
+
+# thiserror — Custom error types with Display and Error derives.
+# Better than anyhow for library-style code where callers need to
+# match on specific error variants.
+thiserror = "2"

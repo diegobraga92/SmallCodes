@@ -1,0 +1,21 @@
+[package]
+name = "jwt-auth"
+version = "0.1.0"
+edition = "2021"
+description = "JWT authentication and authorization demo — for studying JD requirements"
+
+[dependencies]
+axum = "0.7"
+tokio = { version = "1", features = ["full"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+jsonwebtoken = "9"
+bcrypt = "0.16"
+uuid = { version = "1", features = ["v4"] }
+chrono = { version = "0.4", features = ["serde"] }
+thiserror = "2"
+tower-http = { version = "0.5", features = ["cors", "trace"] }
+tower = "0.5"
+async-trait = "0.1"

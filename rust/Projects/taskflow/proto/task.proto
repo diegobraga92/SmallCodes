@@ -1,0 +1,117 @@
+// =============================================================================
+// task.proto — gRPC Service Definition
+// =============================================================================
+//
+// WHAT IS PROTOCOL BUFFERS (protobuf)?
+//   Protobuf is a language-neutral, platform-neutral mechanism for serializing
+//   structured data, developed by Google. It's like JSON or XML, but:
+//   - Smaller (binary encoding instead of text)
+//   - Faster (no parsing overhead)
+//   - Strongly typed (the schema IS the contract)
+//   - Language-agnostic (generate code for Rust, Go, Python, etc.)
+//
+// WHAT IS gRPC?
+//   gRPC is an RPC (Remote Procedure Call) framework that uses protobuf as its
+//   interface definition language (IDL). Instead of designing REST endpoints
+//   (POST /tasks, GET /tasks/{id}), you define a service with typed methods.
+//   gRPC uses HTTP/2 under the hood, which enables:
+//   - Multiplexed streams (multiple requests on one connection)
+//   - Bidirectional streaming
+//   - Header compression
+//
+// WHY gRPC OVER REST FOR THIS PROJECT?
+//   - Compile-time safety: if the proto changes, codegen catches mismatches
+//   - Code generation: no manual JSON serialization/deserialization
+//   - Interview signal: demonstrates knowledge of modern RPC frameworks
+//   - Tradeoff: harder to debug than REST (need grpcurl instead of curl)
+//   - Tradeoff: browser support is limited (gRPC-web exists but is immature)
+//
+// PROTO3 SYNTAX
+//   We use proto3 (the latest stable version). Key differences from proto2:
+//   - All fields are optional by default (no "required"/"optional" keywords)
+//   - Enums start at 0 (the first value must be 0)
+//   - No default values for fields (you get the zero value instead)
+//   - Simpler, more consistent, recommended for new projects
+// =============================================================================
+
+syntax = "proto3";
+
+// The "package" defines the namespace for generated code.
+// In Rust (via tonic), this becomes a module: `task::CreateTaskRequest`, etc.
+package task;
+
+// =============================================================================
+// Service Definition
+// =============================================================================
+//
+// A gRPC service is a collection of RPC methods. Each method has:
+//   - A name (e.g., CreateTask)
+//   - An input message type (e.g., CreateTaskRequest)
+//   - An output message type (e.g., CreateTaskResponse)
+//
+// RPC TYPES (4 kinds in gRPC):
+//   1. Unary: client sends one request, server sends one response (we use this)
+//   2. Server streaming: client sends one request, server streams responses
+//   3. Client streaming: client streams requests, server sends one response
+//   4. Bidirectional streaming: both sides stream
+//
+// WHY UNARY?
+//   Our use case is simple: create a task and get back an ID, or query status.
+//   Streaming would add complexity without benefit here.
+// =============================================================================
+
+service TaskService {
+  // CreateTask — Command (CQRS write side)
+  //   Creates a new task with status=Pending, persists it, and publishes a
+  //   TaskCreated event so the worker can process it asynchronously.
+  rpc CreateTask(CreateTaskRequest) returns (CreateTaskResponse);
+
+  // GetTaskStatus — Query (CQRS read side)
+  //   Returns the current status of a task. This is a direct read from the
+  //   database — no events, no side effects.
+  rpc GetTaskStatus(GetTaskStatusRequest) returns (GetTaskStatusResponse);
+}
+
+// =============================================================================
+// Message Definitions
+// =============================================================================
+//
+// Each field has:
+//   - A type (string, int32, bool, etc.)
+//   - A name (snake_case by convention)
+//   - A field number (unique within the message, used for binary encoding)
+//
+// FIELD NUMBERING:
+//   Numbers 1-15 take 1 byte in the wire format (use for frequently used fields)
+//   Numbers 16-2047 take 2 bytes
+//   Numbers 19000-19999 are reserved for internal protobuf use
+//   Numbers 1-15 should be used for the most common fields for efficiency
+// =============================================================================
+
+// Request to create a new task.
+// Only needs a description — the server generates the ID and sets status=Pending.
+message CreateTaskRequest {
+  string description = 1;
+}
+
+// Response after creating a task.
+// Returns the generated UUID so the client can query status later.
+message CreateTaskResponse {
+  string task_id = 1;
+}
+
+// Request to query a task's status.
+// Uses the task_id returned from CreateTask.
+message GetTaskStatusRequest {
+  string task_id = 1;
+}
+
+// Response with the current task state.
+// status is a string ("Pending", "Processing", "Done") rather than an enum
+// because proto3 enums have quirks with unknown values. Using a string is
+// simpler and more flexible for this demo.
+message GetTaskStatusResponse {
+  string task_id = 1;
+  string status = 2;
+  string description = 3;
+}
