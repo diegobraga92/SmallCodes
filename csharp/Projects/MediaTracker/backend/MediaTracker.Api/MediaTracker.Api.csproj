@@ -1,0 +1,56 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <!--
+    TargetFramework: net10.0 means we target .NET 10.
+    The SDK "Microsoft.NET.Sdk.Web" includes ASP.NET Core libraries, web tooling,
+    and the Kestrel web server. For console apps you'd use "Microsoft.NET.Sdk".
+
+    Nullable: enable — enables nullable reference types (C# 8+).
+    This means string? and string are different types. string? can be null,
+    string cannot (without compiler warning). This helps prevent null reference exceptions.
+
+    ImplicitUsings: enable — automatically imports common namespaces
+    (System, System.Collections.Generic, System.Linq, System.Threading.Tasks, etc.)
+    so you don't need explicit "using" statements for them.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!--
+      JWT Bearer authentication — provides JWT token validation middleware.
+      Without this, we'd have to implement JWT validation manually.
+    -->
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.7" />
+
+    <!--
+      ASP.NET Core Identity with EF Core — provides user management (registration,
+      login, password hashing) with EF Core storage. This is what creates the
+      AspNetUsers, AspNetRoles, etc. tables.
+    -->
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.7" />
+
+    <!-- OpenAPI/Swagger support for API documentation -->
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.7" />
+
+    <!--
+      EF Core Design — needed for migrations (dotnet ef migrations add / update).
+      PrivateAssets=all means it's not exposed to projects that reference this one.
+    -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.7">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+
+    <!--
+      Npgsql — the PostgreSQL provider for EF Core.
+      This is what allows EF Core to talk to PostgreSQL instead of SQL Server or SQLite.
+      If we switched databases, we'd only need to change this package and the connection string.
+    -->
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.1" />
+  </ItemGroup>
+
+</Project>

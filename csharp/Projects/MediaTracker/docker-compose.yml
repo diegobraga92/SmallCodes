@@ -1,0 +1,108 @@
+/*
+ * docker-compose.yml defines the multi-container Docker setup.
+ *
+ * Docker Compose lets you define and run multiple containers as a single service.
+ * Instead of running docker run three times with complex flags, you define
+ * everything in this YAML file and run: docker compose up
+ *
+ * This project has three services:
+ * 1. db — PostgreSQL database
+ * 2. api — .NET backend (ASP.NET Core Web API)
+ * 3. frontend — React app served by Nginx
+ *
+ * The services communicate over a Docker network (created automatically by Compose).
+ * The frontend is the only service exposed to the host (port 80).
+ * The API and database are internal — they can't be accessed directly from the host.
+ */
+
+version: '3.8'
+
+services:
+  /*
+   * PostgreSQL database service.
+   *
+   * Uses the official PostgreSQL 16 image from Docker Hub.
+   * Environment variables configure the database name, user, and password.
+   * The password is hardcoded here for simplicity — in production, use Docker secrets
+   * or an external vault.
+   *
+   * The volume "pgdata" persists database data across container restarts.
+   * Without this volume, all data would be lost when the container stops.
+   *
+   * healthcheck ensures the database is ready before the API tries to connect.
+   * The API's depends_on condition waits for this healthcheck to pass.
+   */
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: mediatracker
+      POSTGRES_USER: mediatracker
+      POSTGRES_PASSWORD: mediatracker123
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mediatracker"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  /*
+   * .NET backend API service.
+   *
+   * Builds from the backend/MediaTracker.Api directory using the Dockerfile there.
+   * The Dockerfile uses a multi-stage build:
+   *   1. Build stage: compiles the C# code
+   *   2. Runtime stage: runs the compiled app (smaller image)
+   *
+   * Environment variables override appsettings.json values.
+   * ASP.NET Core reads environment variables first, then appsettings.json.
+   * This is the "Configuration Hierarchy" — env vars > appsettings.json.
+   *
+   * depends_on ensures the db service starts first, but the API still needs
+   * to wait for the database to be ready (handled by the healthcheck).
+   */
+  api:
+    build:
+      context: ./backend/MediaTracker.Api
+      dockerfile: Dockerfile
+    environment:
+      ConnectionStrings__DefaultConnection: "Host=db;Database=mediatracker;Username=mediatracker;Password=mediatracker123"
+      Jwt__Key: "ThisIsASuperSecretKeyForJwtTokenGeneration2024!"
+      Jwt__Issuer: "MediaTrackerApi"
+      Jwt__Audience: "MediaTrackerFrontend"
+      Jwt__ExpirationDays: "7"
+      ASPNETCORE_ENVIRONMENT: "Development"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  /*
+   * Frontend React app served by Nginx.
+   *
+   * Builds from the frontend directory using the Dockerfile there.
+   * The Dockerfile:
+   *   1. Build stage: compiles the React app with Vite
+   *   2. Nginx stage: serves the built static files
+   *
+   * Nginx is configured to:
+   * - Serve static files from /usr/share/nginx/html
+   * - Proxy /api/* requests to the backend (see nginx.conf)
+   * - Handle SPA routing (fallback to index.html for non-file routes)
+   *
+   * Port mapping: 80:80 — maps host port 80 to container port 80.
+   * This is the only service accessible from outside.
+   */
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+volumes:
+  pgdata:
